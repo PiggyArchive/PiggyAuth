@@ -15,27 +15,40 @@
 #  `---`     ---`-'   \   \  /   \   \  /     \  ' ;                                                   
 #                      `--`-'     `--`-'       `--`                                                    
 
-#If enabled, movement will be alowed
+#If enabled, movement will be alowed will be allowed when not authenticated
 allow-movement: false
-#If enabled, breaking/placing/using blocks will be allowed
-allow-block-interaction: false
 #If enabled, you can login without /login
 chat-login: true
+#If enabled, you will be authenticated automatically if your uuid matches the last uuid used.
+auto-authentication: false
 #Minimum password length
 minimum-password-length: 6
-#Seconds before kicked if not logged in
+#Seconds before kicked if not authenticated
 timeout: 60
+#Tries before kicked
+tries: 5
 #If enabled, a popup will be shown when not authenticated
 popup: true
 #If enabled, a tip will be shown when not authenticated
 tip: true
+#If enabled, players will be invisible til authentication
+invisible: true
+#If enabled, players will be blind til authentication
+blind: true
+#If enabled, players can see chat messages when not authenticted
+see-messages: true
+#if enabled, players joining when another player has their username is kicked
+single-session: true
 
 #Messages
-authentication: "You have been authenticated."
+authentication-success: "You have been authenticated."
+already-authenticated: "You have already logged in."
 incorrect-password: "Incorrect password."
-registered: "You have been registered."
+register-success: "You have been registered."
+already-registered: "You already registered."
 password-too-short: "Password is too short"
 confirm-password: "Please confirm your password."
+password-not-match: "Your password is not the same"
 not-registered: "You are not registered."
 dont-say-password: "Do not say your password."
 please-register: "Please register to play on this server."
