@@ -4,3 +4,24 @@ version: 1.0.0
 api: [2.0.0]
 load: POSTWORLD
 author: MCPEPIG
+permissions:
+ piggyauth:
+  default: op
+  description: "Allows using all PiggyAuth features" 
+  children:
+    piggyauth.command:
+      default: op
+      description: "Allow using all PiggyAuth commands"
+      children:
+        piggyauth.command.login:
+          default: true
+          description: "Allow using /login"
+        piggyauth.command.register:
+          default: true
+          description: "Allow using /register"
+        piggyauth.command.changepassword:
+          default: true
+          description: "Allow using /changepassword"
+        piggyauth.command.resetpassword:
+          default: op
+          description: "Allow using /resetpassword"

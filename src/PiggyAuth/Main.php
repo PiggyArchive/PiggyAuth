@@ -37,11 +37,11 @@ class Main extends PluginBase {
         return null;
     }
 
-    public function updatePlayer(Player $player){
+    public function updatePlayer(Player $player) {
         $statement = $this->db->prepare("UPDATE players SET uuid = :uuid WHERE name = :name");
-            $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
-            $statement->bindValue(":uuid", $player->getUniqueId(), SQLITE3_INTEGER);
-            $statement->execute();
+        $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
+        $statement->bindValue(":uuid", $player->getUniqueId(), SQLITE3_INTEGER);
+        $statement->execute();
     }
 
     public function isCorrectPassword(Player $player, $password) {
@@ -112,9 +112,9 @@ class Main extends PluginBase {
             return false;
         }
         $statement = $this->db->prepare("UPDATE players SET password = :password WHERE name = :name");
-            $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
-            $statement->bindValue(":password", password_hash($password, PASSWORD_BCRYPT), SQLITE3_TEXT);
-            $statement->execute();
+        $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
+        $statement->bindValue(":password", password_hash($password, PASSWORD_BCRYPT), SQLITE3_TEXT);
+        $statement->execute();
     }
 
     public function resetpassword($player) {

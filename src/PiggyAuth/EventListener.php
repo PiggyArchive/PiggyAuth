@@ -17,6 +17,7 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\Listener;
+use pocketmine\Player;
 
 class EventListener implements Listener {
     public function __construct($plugin) {
@@ -33,6 +34,33 @@ class EventListener implements Listener {
     public function onPlace(BlockPlaceEvent $event) {
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
+            $event->setCancelled();
+        }
+    }
+
+    public function onDamage(EntityDamageEvent $event) {
+        $entity = $event->getEntity();
+        if($entity instanceof Player && !$this->plugin->isAuthenticated($damager)) {
+            $event->setCancelled();
+        }
+        if($event instanceof EntityDamageByEntityEvent) {
+            $damager = $event->getDamager();
+            if($damager instanceof Player && !$this->plugin->isAuthenticated($damager)) {
+                $event->setCancelled();
+            }
+        }
+    }
+
+    public function onPickupArrow(InventoryPickupArrowEvent $event) {
+        $player = $event->getInventory()->getHolder();
+        if($player instanceof Player && !$this->plugin->isAuthenticated($damager)) {
+            $event->setCancelled();
+        }
+    }
+
+    public function onPickupItem(InventoryPickupItemEvent $event) {
+        $player = $event->getInventory()->getHolder();
+        if($player instanceof Player && !$this->plugin->isAuthenticated($damager)) {
             $event->setCancelled();
         }
     }
@@ -71,12 +99,12 @@ class EventListener implements Listener {
         $player = $event->getPlayer();
         $message = strtolower($event->getMessage());
         if(!$this->plugin->isAuthenticated($player)) {
-            if($message !== "/login" && $message !== "register"){
-               $event->setCancelled(); 
+            if($message !== "/login" && $message !== "register") {
+                $event->setCancelled();
             }
         }
     }
-    
+
     public function onDrop(PlayerDropItemEvent $event) {
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
@@ -90,7 +118,7 @@ class EventListener implements Listener {
             $event->setCancelled();
         }
     }
-    
+
     public function onInteract(PlayerInteractEvent $event) {
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
@@ -104,13 +132,13 @@ class EventListener implements Listener {
             $event->setCancelled();
         }
     }
-    
+
     public function onJoin(PlayerJoinEvent $event) {
         $player = $event->getPlayer();
         if($this->plugin->getConfig("auto-authentication")) {
             $data = $this->plugin->getPlayer($player->getName());
             if(!is_null($data)) {
-                if($player->getUniqueId() == $data["uuid"]){
+                if($player->getUniqueId() == $data["uuid"]) {
                     $this->plugin->forcelogin($player);
                 }
             }
