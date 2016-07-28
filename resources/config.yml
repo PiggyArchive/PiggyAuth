@@ -1,0 +1,42 @@
+#                                                                                                      
+#,-.----.                                                                                              
+#\    /  \                                             ,---,                        ___      ,---,     
+#|   :    \   ,--,                                    '  .' \                     ,--.'|_  ,--.' |     
+#|   |  .\ :,--.'|                                   /  ;    '.             ,--,  |  | :,' |  |  :     
+#.   :  |: ||  |,     ,----._,.  ,----._,.          :  :       \          ,'_ /|  :  : ' : :  :  :     
+#|   |   \ :`--'_    /   /  ' / /   /  ' /     .--, :  |   /\   \    .--. |  | :.;__,'  /  :  |  |,--. 
+#|   : .   /,' ,'|  |   :     ||   :     |   /_ ./| |  :  ' ;.   : ,'_ /| :  . ||  |   |   |  :  '   | 
+#;   | |`-' '  | |  |   | .\  .|   | .\  ., ' , ' : |  |  ;/  \   \|  ' | |  . .:__,'| :   |  |   /' : 
+#|   | ;    |  | :  .   ; ';  |.   ; ';  /___/ \: | '  :  | \  \ ,'|  | ' |  | |  '  : |__ '  :  | | | 
+#:   ' |    '  : |__'   .   . |'   .   . |.  \  ' | |  |  '  '--'  :  | : ;  ; |  |  | '.'||  |  ' | : 
+#:   : :    |  | '.'|`---`-'| | `---`-'| | \  ;   : |  :  :        '  :  `--'   \ ;  :    ;|  :  :_:,' 
+#|   | :    ;  :    ;.'__/\_: | .'__/\_: |  \  \  ; |  | ,'        :  ,      .-./ |  ,   / |  | ,'     
+#`---'.|    |  ,   / |   :    : |   :    :   :  \  \`--''           `--`----'      ---`-'  `--''       
+#  `---`     ---`-'   \   \  /   \   \  /     \  ' ;                                                   
+#                      `--`-'     `--`-'       `--`                                                    
+
+#If enabled, movement will be alowed
+allow-movement: false
+#If enabled, breaking/placing/using blocks will be allowed
+allow-block-interaction: false
+#If enabled, you can login without /login
+chat-login: true
+#Minimum password length
+minimum-password-length: 6
+#Seconds before kicked if not logged in
+timeout: 60
+#If enabled, a popup will be shown when not authenticated
+popup: true
+#If enabled, a tip will be shown when not authenticated
+tip: true
+
+#Messages
+authentication: "You have been authenticated."
+incorrect-password: "Incorrect password."
+registered: "You have been registered."
+password-too-short: "Password is too short"
+confirm-password: "Please confirm your password."
+not-registered: "You are not registered."
+dont-say-password: "Do not say your password."
+please-register: "Please register to play on this server."
+please-login: "Please login to play."
