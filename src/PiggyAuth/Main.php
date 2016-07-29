@@ -56,17 +56,14 @@ class Main extends PluginBase {
     public function updatePlayer(Player $player) {
         $statement = $this->db->prepare("UPDATE players SET uuid = :uuid WHERE name = :name");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
-        $statement->bindValue(":uuid", $player->getUniqueId(), SQLITE3_INTEGER);
+        $statement->bindValue(":uuid", $player->getUniqueId()->toString(), SQLITE3_INTEGER);
         $statement->execute();
     }
 
     public function isCorrectPassword(Player $player, $password) {
         $data = $this->getPlayer($player->getName());
-        var_dump($data);
         if(!is_null($data)) {
-            echo "1";
             if(password_verify($password, $data["password"])) {
-                echo "2";
                 return true;
             }
         }
@@ -102,11 +99,11 @@ class Main extends PluginBase {
     public function forcelogin(Player $player) {
         $this->authenticated[strtolower($player->getName())] = true;
         $this->updatePlayer($player);
-        if($this->getConfig("invisible")) {
+        if($this->getConfig()->get("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
             $player->setDataProperty(Entity::DATA_SHOW_NAMETAG, Entity::DATA_TYPE_BYTE, 1);
         }
-        if($this->getConfig("blindness")) {
+        if($this->getConfig()->get("blindness")) {
             $player->removeEffect(15);
             $player->removeEffect(16);
         }

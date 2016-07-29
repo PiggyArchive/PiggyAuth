@@ -83,13 +83,13 @@ class EventListener implements Listener {
                     } else {
                         if(!isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
                             $this->plugin->confirmPassword[strtolower($player->getName())] = $message;
-                            $player->sendMessage($this->plugin->getConfig("confirm-password"));
+                            $player->sendMessage($this->plugin->getConfig()->get("confirm-password"));
                         } else {
                             if($this->plugin->confirmPassword[strtolower($player->getName())] == $message) {
                                 $this->plugin->register($player, $message);
                                 unset($this->plugin->confirmPassword[strtolower($player->getName())]);
                             } else {
-                                $player->sendMessage($this->plugin->getConfig("password-not-same"));
+                                $player->sendMessage($this->plugin->getConfig()->get("password-not-match"));
                                 unset($this->plugin->confirmPassword[strtolower($player->getName())]);
                             }
                         }
@@ -99,7 +99,7 @@ class EventListener implements Listener {
             $event->setCancelled();
         } else {
             if($this->plugin->isCorrectPassword($player, $message)) {
-                $player->sendMessage($this->plugin->getConfig("dont-say-password"));
+                $player->sendMessage($this->plugin->getConfig()->get("dont-say-password"));
                 $event->setCancelled();
             }
         }
@@ -155,11 +155,11 @@ class EventListener implements Listener {
 
     public function onJoin(PlayerJoinEvent $event) {
         $player = $event->getPlayer();
-        $player->sendMessage($this->plugin->getConfig("join-message"));
+        $player->sendMessage($this->plugin->getConfig()->get("join-message"));
         if($this->plugin->isRegistered($player)) {
-            $player->sendMessage($this->plugin->getConfig("login"));
+            $player->sendMessage($this->plugin->getConfig()->get("login"));
         } else {
-            $player->sendMessage($this->plugin->getConfig("register"));
+            $player->sendMessage($this->plugin->getConfig()->get("register"));
         }
         if($this->plugin->getConfig("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
@@ -177,7 +177,7 @@ class EventListener implements Listener {
             $effect->setVisible(false);
             $player->addEffect($effect);
         }
-        if($this->plugin->getConfig("auto-authentication")) {
+        if($this->plugin->getConfig()->get("auto-authentication")) {
             $data = $this->plugin->getPlayer($player->getName());
             if(!is_null($data)) {
                 if($player->getUniqueId()->toString() == $data["uuid"]) {
