@@ -57,14 +57,14 @@ class EventListener implements Listener {
 
     public function onPickupArrow(InventoryPickupArrowEvent $event) {
         $player = $event->getInventory()->getHolder();
-        if($player instanceof Player && !$this->plugin->isAuthenticated($damager)) {
+        if($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
             $event->setCancelled();
         }
     }
 
     public function onPickupItem(InventoryPickupItemEvent $event) {
         $player = $event->getInventory()->getHolder();
-        if($player instanceof Player && !$this->plugin->isAuthenticated($damager)) {
+        if($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
             $event->setCancelled();
         }
     }
