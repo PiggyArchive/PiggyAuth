@@ -140,7 +140,7 @@ class Main extends PluginBase {
         }
         $statement = $this->db->prepare("UPDATE players SET password = :password WHERE name = :name");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
-        $statement->bindValue(":password", password_hash($password, PASSWORD_BCRYPT), SQLITE3_TEXT);
+        $statement->bindValue(":password", password_hash($newpassword, PASSWORD_BCRYPT), SQLITE3_TEXT);
         $statement->execute();
     }
 
