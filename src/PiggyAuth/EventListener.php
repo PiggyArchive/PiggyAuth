@@ -19,6 +19,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\Listener;
 use pocketmine\Player;
@@ -194,6 +195,15 @@ class EventListener implements Listener {
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
             if(!$this->plugin->getConfig()->get("allow-movement")) {
+                $event->setCancelled();
+            }
+        }
+    }
+
+    public function onPrelogin(PlayerPreLoginEvent $event) {
+        $player = $event->getPlayer();
+        if($this->plugin->getConfig()->get("single-session")) {
+            if(!is_null($p = $this->plugin->getServer()->getPlayerExact($player->getName())) && $this->plugin->isAuthenticated($p)) {
                 $event->setCancelled();
             }
         }
