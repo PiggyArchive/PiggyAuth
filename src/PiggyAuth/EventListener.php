@@ -9,6 +9,7 @@ use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\inventory\InventoryOpenEvent;
 use pocketmine\event\inventory\InventoryPickupArrowEvent;
 use pocketmine\event\inventory\InventoryPickupItemEvent;
 use pocketmine\event\player\PlayerChatEvent;
@@ -56,6 +57,13 @@ class EventListener implements Listener {
         }
     }
 
+	public function onInventoryOpen(InventoryOpenEvent $event){
+        $player = $event->getPlayer();
+        if(!$this->plugin->isAuthenticated($player)) {
+            $event->setCancelled();
+        }
+	}
+    
     public function onPickupArrow(InventoryPickupArrowEvent $event) {
         $player = $event->getInventory()->getHolder();
         if($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
