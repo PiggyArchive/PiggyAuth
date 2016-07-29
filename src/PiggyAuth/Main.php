@@ -37,8 +37,9 @@ class Main extends PluginBase {
     }
 
     public function getPlayer($player) {
+        $player = strtolower($player);
         $statement = $this->db->prepare("SELECT * FROM players WHERE name = :name");
-        $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
+        $statement->bindValue(":name", $player, SQLITE3_TEXT);
         $result = $statement->execute();
         if($result instanceof \SQLite3Result) {
             $data = $result->fetchArray(SQLITE3_ASSOC);
@@ -102,10 +103,12 @@ class Main extends PluginBase {
         if($this->getConfig()->get("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
             $player->setDataProperty(Entity::DATA_SHOW_NAMETAG, Entity::DATA_TYPE_BYTE, 1);
+            echo 0;
         }
         if($this->getConfig()->get("blindness")) {
             $player->removeEffect(15);
             $player->removeEffect(16);
+            echo 1;
         }
         if($login) {
             $player->sendMessage($this->getConfig()->get("authentication-success"));
@@ -142,18 +145,23 @@ class Main extends PluginBase {
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
         $statement->bindValue(":password", password_hash($newpassword, PASSWORD_BCRYPT), SQLITE3_TEXT);
         $statement->execute();
+        $player->sendMessage($this->getConfig()->get("password-change-success"));
+        return true;
     }
 
-    public function resetpassword($player) {
-        if($this->isRegistered($player->getName())) {
+    public function resetpassword($player, $sender) {
+        $player = strtolower($player);
+        if($this->isRegistered($player)) {
             $statement = $this->db->prepare("DELETE FROM players WHERE name = :name");
-            $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
+            $statement->bindValue(":name", $player, SQLITE3_TEXT);
             $statement->execute();
-            if(isset($this->authenticated[strtolower($player)])) {
-                unset($this->authenticated[strtolower($player)]);
+            if(isset($this->authenticated[$player])) {
+                unset($this->authenticated[$player]);
             }
+            $sender->sendMessage($this->getConfig()->get("password-reset-success"));
             return true;
         }
+        $sender->sendMessage($this->getConfig()->get("not-registered-two"));
         return false;
     }
 

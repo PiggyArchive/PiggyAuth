@@ -20,7 +20,7 @@ class ResetPasswordCommand extends VanillaCommand {
             $sender->sendMessage("/resetpassword <player>");
             return false;
         }
-        $this->plugin->resetpassword($sender, $args[0]);
+        $this->plugin->resetpassword($args[0], $sender);
         return true;
     }
 
