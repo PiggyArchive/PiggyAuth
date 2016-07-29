@@ -92,7 +92,7 @@ class Main extends PluginBase {
             $player->sendMessage($this->getConfig()->get("incorrect-password"));
             return false;
         }
-        $this->forcelogin($player);
+        $this->force($player);
         return true;
     }
 
