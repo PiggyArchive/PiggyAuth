@@ -107,9 +107,9 @@ class Main extends PluginBase {
             $player->removeEffect(15);
             $player->removeEffect(16);
         }
-        if($login){
+        if($login) {
             $player->sendMessage($this->getConfig()->get("authentication-success"));
-        }else{
+        } else {
             $player->sendMessage($this->getConfig()->get("register-success"));
         }
         return true;
