@@ -9,6 +9,7 @@ Safe & feature-rich auth plugin.
 * Invisible Feature
 * Blind Feature
 * See Messages Feature
+* Confirm Password Feature (Chat Login Only :unamused:)
 * Disables Saying Password
 * Chat Login
 * No YAML

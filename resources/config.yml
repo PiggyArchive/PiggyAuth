@@ -31,16 +31,19 @@ tries: 5
 popup: true
 #If enabled, a tip will be shown when not authenticated
 tip: true
+#Seconds til next message
+seconds-til-next-message: 5
 #If enabled, players will be invisible til authentication
 invisible: true
 #If enabled, players will be blind til authentication
 blind: true
 #If enabled, players can see chat messages when not authenticted
-see-messages: true
+see-messages: false
 #if enabled, players joining when another player has their username is kicked
 single-session: true
 
 #Messages
+join-message: "This server requires an account."
 authentication-success: "You have been authenticated."
 already-authenticated: "You have already logged in."
 incorrect-password: "Incorrect password."
@@ -51,5 +54,10 @@ confirm-password: "Please confirm your password."
 password-not-match: "Your password is not the same"
 not-registered: "You are not registered."
 dont-say-password: "Do not say your password."
-please-register: "Please register to play on this server."
-please-login: "Please login to play."
+register: "Please register by typing in /register <password>"
+login: "Please login by typing in /login <password>"
+register-popup: "Please register."
+register-tip: "Please register."
+login-popup: "Please login."
+login-tip: "Please login."
+timeout-message: "Login Timeout"

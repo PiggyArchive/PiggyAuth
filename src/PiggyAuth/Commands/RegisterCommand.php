@@ -20,7 +20,7 @@ class RegisterCommand extends VanillaCommand {
             $sender->sendMessage("§cYou must use the command in-game.");
             return false;
         }
-        if(!isset($args[0])){
+        if(!isset($args[0])) {
             $sender->sendMessage("/register <password>");
             return false;
         }

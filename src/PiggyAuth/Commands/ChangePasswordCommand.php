@@ -20,7 +20,7 @@ class ChangePasswordCommand extends VanillaCommand {
             $sender->sendMessage("§cYou must use the command in-game.");
             return false;
         }
-        if(!isset($args[1])){
+        if(!isset($args[1])) {
             $sender->sendMessage("/changepassword <old password> <new password>");
             return false;
         }

@@ -1,6 +1,10 @@
 <?php
 namespace PiggyAuth;
 
+use PiggyAuth\Tasks\TimeoutTask;
+
+use pocketmine\entity\Effect;
+use pocketmine\entity\Entity;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -68,6 +72,7 @@ class EventListener implements Listener {
     public function onChat(PlayerChatEvent $event) {
         $player = $event->getPlayer();
         $message = $event->getMessage();
+        $recipients = array();
         if(!$this->plugin->isAuthenticated($player)) {
             if($this->plugin->getConfig("chat-login")) {
                 if($this->plugin->isRegistered($player->getName())) {
@@ -92,15 +97,30 @@ class EventListener implements Listener {
                 }
             }
             $event->setCancelled();
+        } else {
+            if($this->plugin->isCorrectPassword($player, $message)) {
+                $player->sendMessage($this->plugin->getConfig("dont-say-password"));
+                $event->setCancelled();
+            }
         }
+        if(!$this->plugin->getConfig()->get("see-messages")) {
+            foreach($event->getRecipients() as $recipient) {
+                if(!$recipient instanceof Player || $this->plugin->isAuthenticated($recipient)) {
+                    array_push($recipients, $recipient);
+                }
+            }
+        }
+        $event->setRecipients($recipients);
     }
 
     public function onCommandPreprocess(PlayerCommandPreprocessEvent $event) {
         $player = $event->getPlayer();
         $message = strtolower($event->getMessage());
         if(!$this->plugin->isAuthenticated($player)) {
-            if($message !== "/login" && $message !== "register") {
-                $event->setCancelled();
+            if($message[0] == "/") {
+                if($message !== "/login" && $message !== "/register") {
+                    $event->setCancelled();
+                }
             }
         }
     }
@@ -135,14 +155,38 @@ class EventListener implements Listener {
 
     public function onJoin(PlayerJoinEvent $event) {
         $player = $event->getPlayer();
+        $player->sendMessage($this->plugin->getConfig("join-message"));
+        if($this->plugin->isRegistered($player)) {
+            $player->sendMessage($this->plugin->getConfig("login"));
+        } else {
+            $player->sendMessage($this->plugin->getConfig("register"));
+        }
+        if($this->plugin->getConfig("invisible")) {
+            $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
+            $player->setDataProperty(Entity::DATA_SHOW_NAMETAG, Entity::DATA_TYPE_BYTE, 0);
+        }
+        if($this->plugin->getConfig("blindness")) {
+            $effect = Effect::getEffect(15);
+            $effect->setAmplifier(99);
+            $effect->setDuration(999999);
+            $effect->setVisible(false);
+            $player->addEffect($effect);
+            $effect = Effect::getEffect(16);
+            $effect->setAmplifier(99);
+            $effect->setDuration(999999);
+            $effect->setVisible(false);
+            $player->addEffect($effect);
+        }
         if($this->plugin->getConfig("auto-authentication")) {
             $data = $this->plugin->getPlayer($player->getName());
             if(!is_null($data)) {
-                if($player->getUniqueId() == $data["uuid"]) {
+                if($player->getUniqueId()->toString() == $data["uuid"]) {
                     $this->plugin->forcelogin($player);
+                    return true;
                 }
             }
         }
+        $this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this->plugin, $player), $this->plugin->getConfig()->get("timeout") * 20);
     }
 
     public function onMove(PlayerMoveEvent $event) {
@@ -155,6 +199,7 @@ class EventListener implements Listener {
     }
 
     public function onQuit(PlayerQuitEvent $event) {
+        $player = $event->getPlayer();
         if($this->plugin->isAuthenticated($player)) {
             unset($this->plugin->authenticated[strtolower($player->getName())]);
         }

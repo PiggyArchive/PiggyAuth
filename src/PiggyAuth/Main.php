@@ -1,6 +1,14 @@
 <?php
 namespace PiggyAuth;
 
+use PiggyAuth\Commands\ChangePasswordCommand;
+use PiggyAuth\Commands\LoginCommand;
+use PiggyAuth\Commands\RegisterCommand;
+use PiggyAuth\Commands\ResetPasswordCommand;
+use PiggyAuth\Tasks\MessageTick;
+use PiggyAuth\Tasks\PopupTipTick;
+
+use pocketmine\entity\Entity;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Player;
 
@@ -16,18 +24,26 @@ class Main extends PluginBase {
             $this->db = new \SQLite3($this->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
         }
         $this->saveDefaultConfig();
+        $this->getServer()->getCommandMap()->register('changepassword', new ChangePasswordCommand('changepassword', $this));
+        $this->getServer()->getCommandMap()->register('login', new LoginCommand('login', $this));
+        $this->getServer()->getCommandMap()->register('register', new RegisterCommand('register', $this));
+        $this->getServer()->getCommandMap()->register('resetpassword', new ResetPasswordCommand('resetpassword', $this));
+        $this->getServer()->getScheduler()->scheduleRepeatingTask(new MessageTick($this), $this->getConfig()->get("seconds-til-next-message") * 20);
+        if($this->getConfig()->get("popup") || $this->getConfig()->get("tip")) {
+            $this->getServer()->getScheduler()->scheduleRepeatingTask(new PopupTipTick($this), 20);
+        }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         $this->getLogger()->info("§aEnabled.");
     }
 
     public function getPlayer($player) {
         $statement = $this->db->prepare("SELECT * FROM players WHERE name = :name");
-        $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
+        $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
         $result = $statement->execute();
         if($result instanceof \SQLite3Result) {
             $data = $result->fetchArray(SQLITE3_ASSOC);
             $result->finalize();
-            if(isset($data["name"]) and $data["name"] === $name) {
+            if(isset($data["name"])) {
                 unset($data["name"]);
                 $statement->close();
                 return $data;
@@ -46,8 +62,11 @@ class Main extends PluginBase {
 
     public function isCorrectPassword(Player $player, $password) {
         $data = $this->getPlayer($player->getName());
+        var_dump($data);
         if(!is_null($data)) {
+            echo "1";
             if(password_verify($password, $data["password"])) {
+                echo "2";
                 return true;
             }
         }
@@ -60,7 +79,7 @@ class Main extends PluginBase {
     }
 
     public function isRegistered($player) {
-        return $this->getPlayer($player) !== null;
+        return $this->getPlayer(strtolower($player)) !== null;
     }
 
     public function login(Player $player, $password) {
@@ -83,6 +102,14 @@ class Main extends PluginBase {
     public function forcelogin(Player $player) {
         $this->authenticated[strtolower($player->getName())] = true;
         $this->updatePlayer($player);
+        if($this->getConfig("invisible")) {
+            $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
+            $player->setDataProperty(Entity::DATA_SHOW_NAMETAG, Entity::DATA_TYPE_BYTE, 1);
+        }
+        if($this->getConfig("blindness")) {
+            $player->removeEffect(15);
+            $player->removeEffect(16);
+        }
         $player->sendMessage($this->getConfig()->get("authentication-success"));
         return true;
     }
@@ -92,12 +119,12 @@ class Main extends PluginBase {
             $player->sendMessage($this->getConfig()->get("already-registered"));
             return false;
         }
-        $this->authenticated[strtolower($player->getName())];
+        $this->authenticated[strtolower($player->getName())] = true;
         $player->sendMessage($this->getConfig()->get("register-success"));
         $statement = $this->db->prepare("INSERT INTO players (name, password, uuid) VALUES (:name, :password, :uuid)");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
         $statement->bindValue(":password", password_hash($password, PASSWORD_BCRYPT), SQLITE3_TEXT);
-        $statement->bindValue(":uuid", $player->getUniqueId(), SQLITE3_INTEGER);
+        $statement->bindValue(":uuid", $player->getUniqueId()->toString(), SQLITE3_INTEGER);
         $statement->execute();
         return true;
     }
@@ -118,7 +145,7 @@ class Main extends PluginBase {
     }
 
     public function resetpassword($player) {
-        if($this->isRegistered($player)) {
+        if($this->isRegistered($player->getName())) {
             $statement = $this->db->prepare("DELETE FROM players WHERE name = :name");
             $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
             $statement->execute();

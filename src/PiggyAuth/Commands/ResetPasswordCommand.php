@@ -16,7 +16,7 @@ class ResetPasswordCommand extends VanillaCommand {
         if(!$this->testPermission($sender)) {
             return true;
         }
-        if(!isset($args[0])){
+        if(!isset($args[0])) {
             $sender->sendMessage("/resetpassword <player>");
             return false;
         }
