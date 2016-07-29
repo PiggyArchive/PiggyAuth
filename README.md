@@ -7,10 +7,10 @@ Safe & feature-rich auth plugin.
 * Resetpassword Feature
 * Timeout Feature
 * Invisible Feature
-* Blind Feature
+* Blindness Feature
 * See Messages Feature
 * Confirm Password Feature (Chat Login Only :unamused:)
-* Disables Saying Password
+* Prevents Saying Password
 * Chat Login
 * No YAML
 * Pig-Made!!! :pig:
