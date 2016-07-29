@@ -224,6 +224,7 @@ class EventListener implements Listener {
             unset($this->plugin->authenticated[strtolower($player->getName())]);
         }else{
             if(isset($this->plugin->confirmPassword[strtolower($player->getName())])){
+                unset($this->plugin->confirmPassword[strtolower($player->getName())]);
             }
         }
     }
