@@ -103,12 +103,10 @@ class Main extends PluginBase {
         if($this->getConfig()->get("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
             $player->setDataProperty(Entity::DATA_SHOW_NAMETAG, Entity::DATA_TYPE_BYTE, 1);
-            echo 0;
         }
         if($this->getConfig()->get("blindness")) {
             $player->removeEffect(15);
             $player->removeEffect(16);
-            echo 1;
         }
         if($login) {
             $player->sendMessage($this->getConfig()->get("authentication-success"));

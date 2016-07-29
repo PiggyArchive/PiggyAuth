@@ -116,9 +116,10 @@ class EventListener implements Listener {
     public function onCommandPreprocess(PlayerCommandPreprocessEvent $event) {
         $player = $event->getPlayer();
         $message = strtolower($event->getMessage());
+        $args = explode(" ", $message);
         if(!$this->plugin->isAuthenticated($player)) {
             if($message[0] == "/") {
-                if($message !== "/login" && $message !== "/register") {
+                if($args[0] !== "/login" && $args[0] !== "/register") {
                     $event->setCancelled();
                 }
             }

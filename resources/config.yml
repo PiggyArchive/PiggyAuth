@@ -36,7 +36,7 @@ seconds-til-next-message: 5
 #If enabled, players will be invisible til authentication
 invisible: true
 #If enabled, players will be blind til authentication
-blind: true
+blindness: true
 #If enabled, players can see chat messages when not authenticted
 see-messages: false
 #if enabled, players joining when another player has their username is kicked
