@@ -11,7 +11,7 @@ class PopupTipTick extends PluginTask {
 
     public function onRun($currentTick) {
         foreach($this->plugin->getServer()->getOnlinePlayers() as $player) {
-            if(!$this->plugin->isAuthenticated($player)) {
+            if(!$this->plugin->isAuthenticated($player) && !isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
                 if($this->plugin->getConfig()->get("popup")) {
                     if($this->plugin->isRegistered($player->getName())) {
                         $player->sendPopup($this->plugin->getConfig()->get("login-popup"));

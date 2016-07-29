@@ -57,7 +57,7 @@ class EventListener implements Listener {
         }
     }
 
-	public function onInventoryOpen(InventoryOpenEvent $event){
+	public function onInventoryOpen(InventoryOpenEvent $event){ //DOESNT DO ANYTHING ._.
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
             $event->setCancelled();
