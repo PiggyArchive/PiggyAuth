@@ -204,6 +204,7 @@ class EventListener implements Listener {
         $player = $event->getPlayer();
         if($this->plugin->getConfig()->get("single-session")) {
             if(!is_null($p = $this->plugin->getServer()->getPlayerExact($player->getName())) && $this->plugin->isAuthenticated($p)) {
+                $player->close("", "Already logged in!");
                 $event->setCancelled();
             }
         }
