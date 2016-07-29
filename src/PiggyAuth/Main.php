@@ -96,7 +96,7 @@ class Main extends PluginBase {
         return true;
     }
 
-    public function forcelogin(Player $player) {
+    public function force(Player $player, $login = true) {
         $this->authenticated[strtolower($player->getName())] = true;
         $this->updatePlayer($player);
         if($this->getConfig()->get("invisible")) {
@@ -107,7 +107,11 @@ class Main extends PluginBase {
             $player->removeEffect(15);
             $player->removeEffect(16);
         }
-        $player->sendMessage($this->getConfig()->get("authentication-success"));
+        if($login){
+            $player->sendMessage($this->getConfig()->get("authentication-success"));
+        }else{
+            $player->sendMessage($this->getConfig()->get("register-success"));
+        }
         return true;
     }
 
@@ -116,8 +120,7 @@ class Main extends PluginBase {
             $player->sendMessage($this->getConfig()->get("already-registered"));
             return false;
         }
-        $this->authenticated[strtolower($player->getName())] = true;
-        $player->sendMessage($this->getConfig()->get("register-success"));
+        $this->force($player, false);
         $statement = $this->db->prepare("INSERT INTO players (name, password, uuid) VALUES (:name, :password, :uuid)");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
         $statement->bindValue(":password", password_hash($password, PASSWORD_BCRYPT), SQLITE3_TEXT);

@@ -24,6 +24,10 @@ class RegisterCommand extends VanillaCommand {
             $sender->sendMessage("/register <password>");
             return false;
         }
+                    if(strlen($args[0]) < $this->plugin->getConfig()->get("minimum-password-length")) {
+                        $sender->sendMessage($this->plugin->getConfig()->get("password-too-short"));
+                        return true;
+                    }
         $this->plugin->register($sender, $args[0]);
         return true;
     }

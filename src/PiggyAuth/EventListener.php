@@ -44,7 +44,7 @@ class EventListener implements Listener {
 
     public function onDamage(EntityDamageEvent $event) {
         $entity = $event->getEntity();
-        if($entity instanceof Player && !$this->plugin->isAuthenticated($damager)) {
+        if($entity instanceof Player && !$this->plugin->isAuthenticated($entity)) {
             $event->setCancelled();
         }
         if($event instanceof EntityDamageByEntityEvent) {
@@ -181,7 +181,7 @@ class EventListener implements Listener {
             $data = $this->plugin->getPlayer($player->getName());
             if(!is_null($data)) {
                 if($player->getUniqueId()->toString() == $data["uuid"]) {
-                    $this->plugin->forcelogin($player);
+                    $this->plugin->force($player);
                     return true;
                 }
             }
