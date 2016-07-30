@@ -110,8 +110,8 @@ class EventListener implements Listener {
                     array_push($recipients, $recipient);
                 }
             }
+            $event->setRecipients($recipients);
         }
-        $event->setRecipients($recipients);
     }
 
     public function onCommandPreprocess(PlayerCommandPreprocessEvent $event) {
