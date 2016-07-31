@@ -2,6 +2,8 @@
 namespace PiggyAuth;
 
 use PiggyAuth\Commands\ChangePasswordCommand;
+use PiggyAuth\Commands\PinCommand;
+use PiggyAuth\Commands\ForgotPasswordCommand;
 use PiggyAuth\Commands\LoginCommand;
 use PiggyAuth\Commands\RegisterCommand;
 use PiggyAuth\Commands\ResetPasswordCommand;
@@ -19,14 +21,16 @@ class Main extends PluginBase {
     public function onEnable() {
         if(!file_exists($this->getDataFolder() . "players.db")) {
             $this->db = new \SQLite3($this->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
-            $this->db->exec("CREATE TABLE players (name TEXT PRIMARY KEY, password TEXT, uuid INT);");
+            $this->db->exec("CREATE TABLE players (name TEXT PRIMARY KEY, password TEXT, pin INT, uuid INT);");
         } else {
             $this->db = new \SQLite3($this->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
         }
         $this->saveDefaultConfig();
         $this->getServer()->getCommandMap()->register('changepassword', new ChangePasswordCommand('changepassword', $this));
+        $this->getServer()->getCommandMap()->register('forgotpassword', new ForgotPasswordCommand('forgotpassword', $this));
         $this->getServer()->getCommandMap()->register('login', new LoginCommand('login', $this));
         $this->getServer()->getCommandMap()->register('register', new RegisterCommand('register', $this));
+        $this->getServer()->getCommandMap()->register('pin', new PinCommand('pin', $this));
         $this->getServer()->getCommandMap()->register('resetpassword', new ResetPasswordCommand('resetpassword', $this));
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new MessageTick($this), $this->getConfig()->get("seconds-til-next-message") * 20);
         if($this->getConfig()->get("popup") || $this->getConfig()->get("tip")) {
@@ -61,12 +65,40 @@ class Main extends PluginBase {
         $statement->execute();
     }
 
-    public function isCorrectPassword(Player $player, $password) {
+    public function getPin(Player $player) {
         $data = $this->getPlayer($player->getName());
         if(!is_null($data)) {
-            if(password_verify($password, $data["password"])) {
-                return true;
-            }
+            return $data["pin"];
+        }
+        return null;
+    }
+
+    public function generatePin(Player $player) {
+        $newpin = mt_rand(1000, 9999);
+        if($this->isCorrectPin($player, $newpin)) { //Player cant have same pin
+            return $this->generatePin($player);
+        }
+        return $newpin;
+    }
+
+    public function getPassword(Player $player) { //ENCRYPTED!
+        $data = $this->getPlayer($player->getName());
+        if(!is_null($data)) {
+            return $data["password"];
+        }
+        return null;
+    }
+
+    public function isCorrectPassword(Player $player, $password) {
+        if(password_verify($password, $this->getPassword($player))) {
+            return true;
+        }
+        return false;
+    }
+
+    public function isCorrectPin(Player $player, $pin) {
+        if($pin == $this->getPin($player)) {
+            return true;
         }
         return false;
     }
@@ -111,7 +143,7 @@ class Main extends PluginBase {
         if($login) {
             $player->sendMessage($this->getConfig()->get("authentication-success"));
         } else {
-            $player->sendMessage($this->getConfig()->get("register-success"));
+            $player->sendMessage(str_replace("{pin}", $this->getPin($player), $this->getConfig()->get("register-success")));
         }
         return true;
     }
@@ -121,12 +153,13 @@ class Main extends PluginBase {
             $player->sendMessage($this->getConfig()->get("already-registered"));
             return false;
         }
-        $this->force($player, false);
-        $statement = $this->db->prepare("INSERT INTO players (name, password, uuid) VALUES (:name, :password, :uuid)");
+        $statement = $this->db->prepare("INSERT INTO players (name, password, pin, uuid) VALUES (:name, :password, :pin, :uuid)");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
         $statement->bindValue(":password", password_hash($password, PASSWORD_BCRYPT), SQLITE3_TEXT);
+        $statement->bindValue(":pin", $this->generatePin($player), SQLITE3_INTEGER);
         $statement->bindValue(":uuid", $player->getUniqueId()->toString(), SQLITE3_INTEGER);
         $statement->execute();
+        $this->force($player, false);
         return true;
     }
 
@@ -139,12 +172,35 @@ class Main extends PluginBase {
             $player->sendMessage($this->getConfig()->get("incorrect-password"));
             return false;
         }
+        $pin = $this->generatePin($player);
         $statement = $this->db->prepare("UPDATE players SET password = :password WHERE name = :name");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
         $statement->bindValue(":password", password_hash($newpassword, PASSWORD_BCRYPT), SQLITE3_TEXT);
         $statement->execute();
         $player->sendMessage($this->getConfig()->get("password-change-success"));
         return true;
+    }
+
+    public function forgotpassword(Player $player, $pin, $newpassword) {
+        if(!$this->isRegistered($player->getName())) {
+            $player->sendMessage($this->getConfig()->get("not-registered"));
+            return false;
+        }
+        if($this->isAuthenticated($player)) {
+            $player->sendMessage($this->getConfig()->get("already-authenticated"));
+            return false;
+        }
+        if(!$this->isCorrectPin($player, $pin)) {
+            $player->sendMessage($this->getConfig()->get("incorrect-pin"));
+            return false;
+        }
+        $newpin = $this->generatePin($player);
+        $statement = $this->db->prepare("UPDATE players SET password = :password, pin = :pin WHERE name = :name");
+        $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
+        $statement->bindValue(":password", password_hash($newpassword, PASSWORD_BCRYPT), SQLITE3_TEXT);
+        $statement->bindValue(":pin", $newpin, SQLITE3_INTEGER);
+        $statement->execute();
+        $player->sendMessage(str_replace("{pin}", $newpin, $this->getConfig()->get("forgot-password-success")));
     }
 
     public function resetpassword($player, $sender) {

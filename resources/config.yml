@@ -43,21 +43,43 @@ see-messages: false
 single-session: true
 
 #Messages
+
+#Join
 join-message: "§6This server requires an account."
+
+#Login
+login: "§6Please login by typing in /login <password>\n§6Forgot your password? Use /forgotpassword <pin> <newpassword>"
+login-popup: "§6Please login."
+login-tip: "§6Please login."
 authentication-success: "§aYou have been authenticated."
 already-authenticated: "§cYou have already logged in."
 incorrect-password: "§cIncorrect password."
-register-success: "§aYou have been registered."
-already-registered: "§cYou are already registered."
-password-too-short: "§cPassword is too short"
-confirm-password: "§aPlease confirm your password."
-password-not-match: "§cYour password is not the same"
 not-registered: "§cYou are not registered."
-dont-say-password: "§cDo not say your password."
+
+#Register
 register: "§6Please register by typing in /register <password>"
-login: "§6Please login by typing in /login <password>"
 register-popup: "§6Please register."
 register-tip: "§6Please register."
-login-popup: "§6Please login."
-login-tip: "§6Please login."
+register-success: "§aYou have been registered. Your pin is {pin}."
+already-registered: "§cYou are already registered."
+password-too-short: "§cPassword is too short."
+password-not-match: "§cYour password is not the same."
+confirm-password: "§aPlease confirm your password."
+
+#Change password
+change-password-success: "§aYour password has been changed."
+
+#Forget password
+forgot-password-success: "§aYour password has been changed. Your new pin is {pin}."
+incorrect-pin: "§cIncorrect pin."
+
+#Reset password
+password-reset-success: "§aPlayer's password has been reset."
+not-registered-two: "§cPlayer not registered."
+
+#Pin
+pin: "§aYour pin: {pin}"
+
+#General
+dont-say-password: "§cDo not say your password."
 timeout-message: "§6Login Timeout"

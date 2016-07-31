@@ -5,10 +5,10 @@ use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
-class LoginCommand extends VanillaCommand {
+class PinCommand extends VanillaCommand {
     public function __construct($name, $plugin) {
-        parent::__construct($name, "Login to your account", "/login <password>");
-        $this->setPermission("piggyauth.command.login");
+        parent::__construct($name, "Get your pin", "/pin");
+        $this->setPermission("piggyauth.command.pin");
         $this->plugin = $plugin;
     }
 
@@ -20,11 +20,7 @@ class LoginCommand extends VanillaCommand {
             $sender->sendMessage("§cYou must use the command in-game.");
             return false;
         }
-        if(!isset($args[0])) {
-            $sender->sendMessage("/login <password>");
-            return false;
-        }
-        $this->plugin->login($sender, $args[0]);
+        $sender->sendMessage(str_replace("{pin}", $this->plugin->getPin($sender), $this->plugin->getConfig()->get("pin")));
         return true;
     }
 

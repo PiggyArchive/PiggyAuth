@@ -5,6 +5,7 @@ Safe & feature-rich auth plugin.
 * No permission bugs
 * Changepassword Feature
 * Resetpassword Feature
+* Forgetpassword Feature
 * Timeout Feature
 * Invisible Feature
 * Blindness Feature

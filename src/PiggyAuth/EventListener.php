@@ -118,9 +118,10 @@ class EventListener implements Listener {
         $player = $event->getPlayer();
         $message = strtolower($event->getMessage());
         $args = explode(" ", $message);
+        $forgotpasswordaliases = array("/forgotpassword", "/forgetpassword", "/forgotpw", "/forgetpw", "/forgotpwd", "/forgetpwd", "/fpw", "/fpwd");
         if(!$this->plugin->isAuthenticated($player)) {
             if($message[0] == "/") {
-                if($args[0] !== "/login" && $args[0] !== "/register") {
+                if(!in_array($args[0], $forgotpasswordaliases) && $args[0] !== "/login" && $args[0] !== "/register") {
                     $event->setCancelled();
                 }
             }

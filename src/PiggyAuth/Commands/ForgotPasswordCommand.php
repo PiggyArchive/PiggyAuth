@@ -5,10 +5,10 @@ use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
-class RegisterCommand extends VanillaCommand {
+class ForgotPasswordCommand extends VanillaCommand {
     public function __construct($name, $plugin) {
-        parent::__construct($name, "Register an account", "/register <password>");
-        $this->setPermission("piggyauth.command.register");
+        parent::__construct($name, "Change your password if you forgot it", "/forgotpassword <pin> <new password>", ["forgetpassword", "forgotpw", "forgetpw", "forgotpwd", "forgetpwd", "fpw", "fpwd"]);
+        $this->setPermission("piggyauth.command.forgotpassword");
         $this->plugin = $plugin;
     }
 
@@ -20,15 +20,11 @@ class RegisterCommand extends VanillaCommand {
             $sender->sendMessage("§cYou must use the command in-game.");
             return false;
         }
-        if(!isset($args[0])) {
-            $sender->sendMessage("/register <password>");
+        if(!isset($args[1])) {
+            $sender->sendMessage("/forgotpassword <pin> <new password>");
             return false;
         }
-        if(strlen($args[0]) < $this->plugin->getConfig()->get("minimum-password-length")) {
-            $sender->sendMessage($this->plugin->getConfig()->get("password-too-short"));
-            return true;
-        }
-        $this->plugin->register($sender, $args[0]);
+        $this->plugin->forgotpassword($sender, $args[0], $args[1]);
         return true;
     }
 
