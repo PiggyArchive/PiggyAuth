@@ -79,20 +79,16 @@ class EventListener implements Listener {
                 if($this->plugin->isRegistered($player->getName())) {
                     $this->plugin->login($player, $message);
                 } else {
-                    if(strlen($message) < $this->plugin->getConfig()->get("minimum-password-length")) {
-                        $player->sendMessage($this->plugin->getConfig()->get("password-too-short"));
+                    if(!isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
+                        $this->plugin->confirmPassword[strtolower($player->getName())] = $message;
+                        $player->sendMessage($this->plugin->getConfig()->get("confirm-password"));
                     } else {
-                        if(!isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
-                            $this->plugin->confirmPassword[strtolower($player->getName())] = $message;
-                            $player->sendMessage($this->plugin->getConfig()->get("confirm-password"));
+                        if($this->plugin->confirmPassword[strtolower($player->getName())] == $message) {
+                            $this->plugin->register($player, $message, $message);
+                            unset($this->plugin->confirmPassword[strtolower($player->getName())]);
                         } else {
-                            if($this->plugin->confirmPassword[strtolower($player->getName())] == $message) {
-                                $this->plugin->register($player, $message);
-                                unset($this->plugin->confirmPassword[strtolower($player->getName())]);
-                            } else {
-                                $player->sendMessage($this->plugin->getConfig()->get("password-not-match"));
-                                unset($this->plugin->confirmPassword[strtolower($player->getName())]);
-                            }
+                            $player->sendMessage($this->plugin->getConfig()->get("password-not-match"));
+                            unset($this->plugin->confirmPassword[strtolower($player->getName())]);
                         }
                     }
                 }
@@ -118,7 +114,15 @@ class EventListener implements Listener {
         $player = $event->getPlayer();
         $message = strtolower($event->getMessage());
         $args = explode(" ", $message);
-        $forgotpasswordaliases = array("/forgotpassword", "/forgetpassword", "/forgotpw", "/forgetpw", "/forgotpwd", "/forgetpwd", "/fpw", "/fpwd");
+        $forgotpasswordaliases = array(
+            "/forgotpassword",
+            "/forgetpassword",
+            "/forgotpw",
+            "/forgetpw",
+            "/forgotpwd",
+            "/forgetpwd",
+            "/fpw",
+            "/fpwd");
         if(!$this->plugin->isAuthenticated($player)) {
             if($message[0] == "/") {
                 if(!in_array($args[0], $forgotpasswordaliases) && $args[0] !== "/login" && $args[0] !== "/register") {

@@ -148,9 +148,17 @@ class Main extends PluginBase {
         return true;
     }
 
-    public function register(Player $player, $password) {
+    public function register(Player $player, $password, $confirmpassword) {
         if($this->isRegistered($player->getName())) {
             $player->sendMessage($this->getConfig()->get("already-registered"));
+            return false;
+        }
+        if(strlen($password) < $this->getConfig()->get("minimum-password-length")) {
+            $player->sendMessage($this->getConfig()->get("password-too-short"));
+            return false;
+        }
+        if($password !== $confirmpassword) {
+            $player->sendMessage($this->getConfig()->get("password-not-match"));
             return false;
         }
         $statement = $this->db->prepare("INSERT INTO players (name, password, pin, uuid) VALUES (:name, :password, :pin, :uuid)");

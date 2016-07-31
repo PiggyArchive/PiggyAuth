@@ -10,7 +10,7 @@ Safe & feature-rich auth plugin.
 * Invisible Feature
 * Blindness Feature
 * See Messages Feature
-* Confirm Password Feature (Chat Login Only :unamused:)
+* Confirm Password Feature 
 * Prevents Saying Password
 * Chat Login
 * No YAML
