@@ -19,13 +19,13 @@ class Main extends PluginBase {
     public $confirmPassword;
 
     public function onEnable() {
+        $this->saveDefaultConfig();
         if(!file_exists($this->getDataFolder() . "players.db")) {
             $this->db = new \SQLite3($this->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
             $this->db->exec("CREATE TABLE players (name TEXT PRIMARY KEY, password TEXT, pin INT, uuid INT);");
         } else {
             $this->db = new \SQLite3($this->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
         }
-        $this->saveDefaultConfig();
         $this->getServer()->getCommandMap()->register('changepassword', new ChangePasswordCommand('changepassword', $this));
         $this->getServer()->getCommandMap()->register('forgotpassword', new ForgotPasswordCommand('forgotpassword', $this));
         $this->getServer()->getCommandMap()->register('login', new LoginCommand('login', $this));
