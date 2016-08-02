@@ -53,7 +53,7 @@ login-popup: "§6Please login."
 login-tip: "§6Please login."
 authentication-success: "§aYou have been authenticated."
 already-authenticated: "§cYou have already logged in."
-incorrect-password: "§cIncorrect password."
+incorrect-password: "§cIncorrect password. {tries} left."
 not-registered: "§cYou are not registered."
 
 #Register
@@ -82,4 +82,5 @@ pin: "§aYour pin: {pin}"
 
 #General
 dont-say-password: "§cDo not say your password."
-timeout-message: "§6Login Timeout"
+timeout-message: "§cLogin Timeout"
+too-many-tries: "§cToo Many Tries to Login"

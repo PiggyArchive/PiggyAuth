@@ -17,6 +17,7 @@ use pocketmine\Player;
 class Main extends PluginBase {
     public $authenticated;
     public $confirmPassword;
+    public $tries;
 
     public function onEnable() {
         $this->saveDefaultConfig();
@@ -122,7 +123,17 @@ class Main extends PluginBase {
             return false;
         }
         if(!$this->isCorrectPassword($player, $password)) {
-            $player->sendMessage($this->getConfig()->get("incorrect-password"));
+            if(isset($this->tries[strtolower($player->getName())])){
+                $this->tries[strtolower($player->getName())]++;
+                if($this->tries[strtolower($player->getName())] >= $this->getConfig()->get("tries")){
+                    $player->kick($this->getConfig()->get("too-many-tries"));
+                    return false;
+                }
+            }else{
+                $this->tries[strtolower($player->getName())] = 1;
+            }
+            $tries = $this->getConfig()->get("tries") - $this->tries[strtolower($player->getName())]; 
+            $player->sendMessage(str_replace("{tries}", $tries, $this->getConfig()->get("incorrect-password")));
             return false;
         }
         $this->force($player);
