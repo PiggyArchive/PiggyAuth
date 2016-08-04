@@ -123,16 +123,16 @@ class Main extends PluginBase {
             return false;
         }
         if(!$this->isCorrectPassword($player, $password)) {
-            if(isset($this->tries[strtolower($player->getName())])){
+            if(isset($this->tries[strtolower($player->getName())])) {
                 $this->tries[strtolower($player->getName())]++;
-                if($this->tries[strtolower($player->getName())] >= $this->getConfig()->get("tries")){
+                if($this->tries[strtolower($player->getName())] >= $this->getConfig()->get("tries")) {
                     $player->kick($this->getConfig()->get("too-many-tries"));
                     return false;
                 }
-            }else{
+            } else {
                 $this->tries[strtolower($player->getName())] = 1;
             }
-            $tries = $this->getConfig()->get("tries") - $this->tries[strtolower($player->getName())]; 
+            $tries = $this->getConfig()->get("tries") - $this->tries[strtolower($player->getName())];
             $player->sendMessage(str_replace("{tries}", $tries, $this->getConfig()->get("incorrect-password")));
             return false;
         }
