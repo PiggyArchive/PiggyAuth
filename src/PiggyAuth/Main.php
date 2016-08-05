@@ -136,6 +136,9 @@ class Main extends PluginBase {
             $player->sendMessage(str_replace("{tries}", $tries, $this->getConfig()->get("incorrect-password")));
             return false;
         }
+        if(isset($this->tries[strtolower($player->getName())])) {
+            unset($this->tries[strtolower($player->getName())]);
+        }
         $this->force($player);
         return true;
     }
@@ -236,6 +239,19 @@ class Main extends PluginBase {
         }
         $sender->sendMessage($this->getConfig()->get("not-registered-two"));
         return false;
+    }
+
+    public function logout(Player $player) {
+        if($this->plugin->isAuthenticated($player)) {
+            unset($this->plugin->authenticated[strtolower($player->getName())]);
+        } else {
+            if(isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
+                unset($this->plugin->confirmPassword[strtolower($player->getName())]);
+            }
+            if(isset($this->tries[strtolower($player->getName())])) {
+                unset($this->tries[strtolower($player->getName())]);
+            }
+        }
     }
 
 }
