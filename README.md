@@ -3,6 +3,13 @@ Safe & feature-rich auth plugin.
 
 # Changelog
 
+###v1.0.3
+* Added /logout
+* Added tries
+* Added DB Updater
+* Track login attempts
+* Bug Fixes
+
 ###v1.0.2
 * Bug Fix
 * Added confirm password for /register
@@ -16,9 +23,10 @@ Safe & feature-rich auth plugin.
 
 # Why not use SimpleAuth?
 * No permission bugs
-* Changepassword Feature
-* Resetpassword Feature
-* Forgetpassword Feature
+* Changepassword Command
+* Resetpassword Command
+* Forgetpassword Command
+* Logout Command
 * Timeout Feature
 * Invisible Feature
 * Blindness Feature

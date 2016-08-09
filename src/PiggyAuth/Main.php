@@ -5,6 +5,7 @@ use PiggyAuth\Commands\ChangePasswordCommand;
 use PiggyAuth\Commands\PinCommand;
 use PiggyAuth\Commands\ForgotPasswordCommand;
 use PiggyAuth\Commands\LoginCommand;
+use PiggyAuth\Commands\LogoutCommand;
 use PiggyAuth\Commands\RegisterCommand;
 use PiggyAuth\Commands\ResetPasswordCommand;
 use PiggyAuth\Tasks\MessageTick;
@@ -23,13 +24,25 @@ class Main extends PluginBase {
         $this->saveDefaultConfig();
         if(!file_exists($this->getDataFolder() . "players.db")) {
             $this->db = new \SQLite3($this->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
-            $this->db->exec("CREATE TABLE players (name TEXT PRIMARY KEY, password TEXT, pin INT, uuid INT);");
+            $this->db->exec("CREATE TABLE players (name TEXT PRIMARY KEY, password TEXT, pin INT, uuid INT, attempts INT);");
         } else {
             $this->db = new \SQLite3($this->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
+            //Updater
+            switch($this->getConfig()->get("version")) {
+                case "v1.0.3":
+                    break;
+                default:
+                    $this->getConfig()->set("version", "v1.0.3");
+                    $this->getConfig()->save();
+                    $this->db->exec("ALTER TABLE players ADD COLUMN pins INT"); //Just in case :P
+                    $this->db->exec("ALTER TABLE players ADD COLUMN attempts INT");
+                    break;
+            }
         }
         $this->getServer()->getCommandMap()->register('changepassword', new ChangePasswordCommand('changepassword', $this));
         $this->getServer()->getCommandMap()->register('forgotpassword', new ForgotPasswordCommand('forgotpassword', $this));
         $this->getServer()->getCommandMap()->register('login', new LoginCommand('login', $this));
+        $this->getServer()->getCommandMap()->register('logout', new LogoutCommand('logout', $this));
         $this->getServer()->getCommandMap()->register('register', new RegisterCommand('register', $this));
         $this->getServer()->getCommandMap()->register('pin', new PinCommand('pin', $this));
         $this->getServer()->getCommandMap()->register('resetpassword', new ResetPasswordCommand('resetpassword', $this));
@@ -59,17 +72,53 @@ class Main extends PluginBase {
         return null;
     }
 
-    public function updatePlayer(Player $player) {
-        $statement = $this->db->prepare("UPDATE players SET uuid = :uuid WHERE name = :name");
+    public function updatePlayer(Player $player, $pin, $password, $uuid, $attempts) {
+        $statement = $this->db->prepare("UPDATE players SET pin = :pin, password = :password, uuid = :uuid, attempts = :attempts WHERE name = :name");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
-        $statement->bindValue(":uuid", $player->getUniqueId()->toString(), SQLITE3_INTEGER);
+        $statement->bindValue(":password", $password, SQLITE3_TEXT);
+        $statement->bindValue(":pin", $pin, SQLITE3_INTEGER);
+        $statement->bindValue(":uuid", $uuid, SQLITE3_INTEGER);
+        $statement->bindValue(":attempts", $attempts, SQLITE3_INTEGER);
         $statement->execute();
     }
 
     public function getPin(Player $player) {
         $data = $this->getPlayer($player->getName());
         if(!is_null($data)) {
+            if(!isset($data["pin"])) {
+                $pin = mt_rand(1000, 9999); //If you use $this->generatePin(), there will be issues!
+                $this->updatePlayer($player, $pin, $this->getPassword($player), $this->getUUID($player), $this->getAttempts($player));
+                return $pin;
+            }
             return $data["pin"];
+        }
+        return null;
+    }
+
+    public function getPassword(Player $player) { //ENCRYPTED!
+        $data = $this->getPlayer($player->getName());
+        if(!is_null($data)) {
+            return $data["password"];
+        }
+        return null;
+    }
+
+    public function getUUID(Player $player) {
+        $data = $this->getPlayer($player->getName());
+        if(!is_null($data)) {
+            return $data["uuid"];
+        }
+        return null;
+    }
+
+    public function getAttempts(Player $player) {
+        $data = $this->getPlayer($player->getName());
+        if(!is_null($data)) {
+            if(!isset($data["attempts"])) {
+                $this->updatePlayer($player, $this->getPin($player), $this->getPassword($player), $this->getUUID($player), 0);
+                return 0;
+            }
+            return $data["attempts"];
         }
         return null;
     }
@@ -80,14 +129,6 @@ class Main extends PluginBase {
             return $this->generatePin($player);
         }
         return $newpin;
-    }
-
-    public function getPassword(Player $player) { //ENCRYPTED!
-        $data = $this->getPlayer($player->getName());
-        if(!is_null($data)) {
-            return $data["password"];
-        }
-        return null;
     }
 
     public function isCorrectPassword(Player $player, $password) {
@@ -126,6 +167,7 @@ class Main extends PluginBase {
             if(isset($this->tries[strtolower($player->getName())])) {
                 $this->tries[strtolower($player->getName())]++;
                 if($this->tries[strtolower($player->getName())] >= $this->getConfig()->get("tries")) {
+                    $this->updatePlayer($player, $this->getPassword($player), $this->getPin($player), $this->getUUID($player), $this->getAttempts($player) + 1);
                     $player->kick($this->getConfig()->get("too-many-tries"));
                     return false;
                 }
@@ -145,7 +187,6 @@ class Main extends PluginBase {
 
     public function force(Player $player, $login = true) {
         $this->authenticated[strtolower($player->getName())] = true;
-        $this->updatePlayer($player);
         if($this->getConfig()->get("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
             $player->setDataProperty(Entity::DATA_SHOW_NAMETAG, Entity::DATA_TYPE_BYTE, 1);
@@ -155,10 +196,11 @@ class Main extends PluginBase {
             $player->removeEffect(16);
         }
         if($login) {
-            $player->sendMessage($this->getConfig()->get("authentication-success"));
+            $player->sendMessage(str_replace("{attempts}", $this->getAttempts($player), $this->getConfig()->get("authentication-success")));
         } else {
             $player->sendMessage(str_replace("{pin}", $this->getPin($player), $this->getConfig()->get("register-success")));
         }
+        $this->updatePlayer($player, $this->getPassword($player), $this->getPin($player), $player->getUniqueId()->toString(), 0);
         return true;
     }
 
@@ -175,11 +217,12 @@ class Main extends PluginBase {
             $player->sendMessage($this->getConfig()->get("password-not-match"));
             return false;
         }
-        $statement = $this->db->prepare("INSERT INTO players (name, password, pin, uuid) VALUES (:name, :password, :pin, :uuid)");
+        $statement = $this->db->prepare("INSERT INTO players (name, password, pin, uuid, attempts) VALUES (:name, :password, :pin, :uuid, :attempts)");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
         $statement->bindValue(":password", password_hash($password, PASSWORD_BCRYPT), SQLITE3_TEXT);
         $statement->bindValue(":pin", $this->generatePin($player), SQLITE3_INTEGER);
         $statement->bindValue(":uuid", $player->getUniqueId()->toString(), SQLITE3_INTEGER);
+        $statement->bindValue(":attempts", 0, SQLITE3_INTEGER);
         $statement->execute();
         $this->force($player, false);
         return true;
@@ -195,10 +238,7 @@ class Main extends PluginBase {
             return false;
         }
         $pin = $this->generatePin($player);
-        $statement = $this->db->prepare("UPDATE players SET password = :password WHERE name = :name");
-        $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
-        $statement->bindValue(":password", password_hash($newpassword, PASSWORD_BCRYPT), SQLITE3_TEXT);
-        $statement->execute();
+        $this->updatePlayer($player, password_hash($newpassword, PASSWORD_BCRYPT), $newpin, $player->getUniqueId()->toString(), 0);
         $player->sendMessage($this->getConfig()->get("password-change-success"));
         return true;
     }
@@ -217,11 +257,7 @@ class Main extends PluginBase {
             return false;
         }
         $newpin = $this->generatePin($player);
-        $statement = $this->db->prepare("UPDATE players SET password = :password, pin = :pin WHERE name = :name");
-        $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
-        $statement->bindValue(":password", password_hash($newpassword, PASSWORD_BCRYPT), SQLITE3_TEXT);
-        $statement->bindValue(":pin", $newpin, SQLITE3_INTEGER);
-        $statement->execute();
+        $this->updatePlayer($player, password_hash($newpassword, PASSWORD_BCRYPT), $newpin, $this->getUUID($player), $this->getPlayer($player)["attempts"]);
         $player->sendMessage(str_replace("{pin}", $newpin, $this->getConfig()->get("forgot-password-success")));
     }
 
@@ -242,11 +278,11 @@ class Main extends PluginBase {
     }
 
     public function logout(Player $player) {
-        if($this->plugin->isAuthenticated($player)) {
-            unset($this->plugin->authenticated[strtolower($player->getName())]);
+        if($this->isAuthenticated($player)) {
+            unset($this->authenticated[strtolower($player->getName())]);
         } else {
-            if(isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
-                unset($this->plugin->confirmPassword[strtolower($player->getName())]);
+            if(isset($this->confirmPassword[strtolower($player->getName())])) {
+                unset($this->confirmPassword[strtolower($player->getName())]);
             }
             if(isset($this->tries[strtolower($player->getName())])) {
                 unset($this->tries[strtolower($player->getName())]);

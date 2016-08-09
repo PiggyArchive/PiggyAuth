@@ -39,8 +39,10 @@ invisible: true
 blindness: true
 #If enabled, players can see chat messages when not authenticted
 see-messages: false
-#if enabled, players joining when another player has their username is kicked
+#If enabled, players joining when another player has their username is kicked
 single-session: true
+#Version
+version: v1.0.3
 
 #Messages
 
@@ -51,7 +53,7 @@ join-message: "§6This server requires an account."
 login: "§6Please login by typing in /login <password>\n§6Forgot your password? Use /forgotpassword <pin> <newpassword>"
 login-popup: "§6Please login."
 login-tip: "§6Please login."
-authentication-success: "§aYou have been authenticated."
+authentication-success: "§aYou have been authenticated.\n§6There have been {attempts} attempts to login into your account."
 already-authenticated: "§cYou have already logged in."
 incorrect-password: "§cIncorrect password. {tries} left."
 not-registered: "§cYou are not registered."
