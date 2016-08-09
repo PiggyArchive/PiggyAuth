@@ -42,7 +42,7 @@ see-messages: false
 #If enabled, players joining when another player has their username is kicked
 single-session: true
 #Version
-version: v1.0.3
+version: v1.0.4
 
 #Messages
 
