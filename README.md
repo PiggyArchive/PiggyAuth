@@ -3,6 +3,9 @@ Safe & feature-rich auth plugin.
 
 # Changelog
 
+###v1.0.4
+* Big Fix
+
 ###v1.0.3
 * Added /logout
 * Added tries

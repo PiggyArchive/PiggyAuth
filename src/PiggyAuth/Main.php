@@ -72,7 +72,7 @@ class Main extends PluginBase {
         return null;
     }
 
-    public function updatePlayer(Player $player, $pin, $password, $uuid, $attempts) {
+    public function updatePlayer(Player $player, $password, $pin, $uuid, $attempts) {
         $statement = $this->db->prepare("UPDATE players SET pin = :pin, password = :password, uuid = :uuid, attempts = :attempts WHERE name = :name");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
         $statement->bindValue(":password", $password, SQLITE3_TEXT);
