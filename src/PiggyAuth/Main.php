@@ -29,10 +29,14 @@ class Main extends PluginBase {
             $this->db = new \SQLite3($this->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
             //Updater
             switch($this->getConfig()->get("version")) {
+                case "v1.0.4":
+                    break;
                 case "v1.0.3":
+                    $this->getConfig()->set("version", "v1.0.4");
+                    $this->getConfig()->save();
                     break;
                 default:
-                    $this->getConfig()->set("version", "v1.0.3");
+                    $this->getConfig()->set("version", "v1.0.4");
                     $this->getConfig()->save();
                     $this->db->exec("ALTER TABLE players ADD COLUMN pins INT"); //Just in case :P
                     $this->db->exec("ALTER TABLE players ADD COLUMN attempts INT");
