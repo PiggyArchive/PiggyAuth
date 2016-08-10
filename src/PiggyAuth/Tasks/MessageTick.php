@@ -11,11 +11,16 @@ class MessageTick extends PluginTask {
 
     public function onRun($currentTick) {
         foreach($this->plugin->getServer()->getOnlinePlayers() as $player) {
-            if(!$this->plugin->isAuthenticated($player) && !isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
-                if($this->plugin->isRegistered($player->getName())) {
-                    $player->sendMessage($this->plugin->getConfig()->get("login"));
+            if(!$this->plugin->isAuthenticated($player) && !isset($this->plugin->confirmPassword[strtolower($player->getName())]) && isset($this->plugin->messagetick[strtolower($player->getName())])) {
+                if($this->plugin->messagetick[strtolower($player->getName())] == $this->plugin->getConfig()->get("seconds-til-next-message")) {
+                    $this->plugin->messagetick[strtolower($player->getName())] = 0;
+                    if($this->plugin->isRegistered($player->getName())) {
+                        $player->sendMessage($this->plugin->getConfig()->get("login"));
+                    } else {
+                        $player->sendMessage($this->plugin->getConfig()->get("register"));
+                    }
                 } else {
-                    $player->sendMessage($this->plugin->getConfig()->get("register"));
+                    $this->plugin->messagetick[strtolower($player->getName())] += 1;
                 }
             }
         }

@@ -163,6 +163,7 @@ class EventListener implements Listener {
     public function onJoin(PlayerJoinEvent $event) {
         $player = $event->getPlayer();
         $player->sendMessage($this->plugin->getConfig()->get("join-message"));
+        $this->plugin->messagetick[strtolower($player->getName())] = 0;
         if($this->plugin->isRegistered($player->getName())) {
             $player->sendMessage($this->plugin->getConfig()->get("login"));
         } else {

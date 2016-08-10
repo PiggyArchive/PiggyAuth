@@ -18,6 +18,7 @@ use pocketmine\Player;
 class Main extends PluginBase {
     public $authenticated;
     public $confirmPassword;
+    public $messagetick;
     public $tries;
 
     public function onEnable() {
@@ -50,7 +51,7 @@ class Main extends PluginBase {
         $this->getServer()->getCommandMap()->register('register', new RegisterCommand('register', $this));
         $this->getServer()->getCommandMap()->register('pin', new PinCommand('pin', $this));
         $this->getServer()->getCommandMap()->register('resetpassword', new ResetPasswordCommand('resetpassword', $this));
-        $this->getServer()->getScheduler()->scheduleRepeatingTask(new MessageTick($this), $this->getConfig()->get("seconds-til-next-message") * 20);
+        $this->getServer()->getScheduler()->scheduleRepeatingTask(new MessageTick($this), 20);
         if($this->getConfig()->get("popup") || $this->getConfig()->get("tip")) {
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new PopupTipTick($this), 20);
         }
@@ -182,14 +183,17 @@ class Main extends PluginBase {
             $player->sendMessage(str_replace("{tries}", $tries, $this->getConfig()->get("incorrect-password")));
             return false;
         }
-        if(isset($this->tries[strtolower($player->getName())])) {
-            unset($this->tries[strtolower($player->getName())]);
-        }
         $this->force($player);
         return true;
     }
 
     public function force(Player $player, $login = true) {
+        if(isset($this->messagetick[strtolower($player->getName())])) {
+            unset($this->messagetick[strtolower($player->getName())]);
+        }
+        if(isset($this->tries[strtolower($player->getName())])) {
+            unset($this->tries[strtolower($player->getName())]);
+        }
         $this->authenticated[strtolower($player->getName())] = true;
         if($this->getConfig()->get("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
@@ -287,6 +291,9 @@ class Main extends PluginBase {
         } else {
             if(isset($this->confirmPassword[strtolower($player->getName())])) {
                 unset($this->confirmPassword[strtolower($player->getName())]);
+            }
+            if(isset($this->messagetick[strtolower($player->getName())])) {
+                unset($this->messagetick[strtolower($player->getName())]);
             }
             if(isset($this->tries[strtolower($player->getName())])) {
                 unset($this->tries[strtolower($player->getName())]);
