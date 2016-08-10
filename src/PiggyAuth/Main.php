@@ -10,6 +10,7 @@ use PiggyAuth\Commands\RegisterCommand;
 use PiggyAuth\Commands\ResetPasswordCommand;
 use PiggyAuth\Tasks\MessageTick;
 use PiggyAuth\Tasks\PopupTipTick;
+use PiggyAuth\Tasks\TimeoutTask;
 
 use pocketmine\entity\Entity;
 use pocketmine\plugin\PluginBase;
@@ -285,9 +286,13 @@ class Main extends PluginBase {
         return false;
     }
 
-    public function logout(Player $player) {
+    public function logout(Player $player, $quit = true) {
         if($this->isAuthenticated($player)) {
             unset($this->authenticated[strtolower($player->getName())]);
+            if(!$quit) {
+                $this->messagetick[strtolower($player->getName())] = 5;
+                $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $player), $this->getConfig()->get("timeout") * 20);
+            }
         } else {
             if(isset($this->confirmPassword[strtolower($player->getName())])) {
                 unset($this->confirmPassword[strtolower($player->getName())]);

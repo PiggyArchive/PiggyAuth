@@ -20,7 +20,7 @@ class LogoutCommand extends VanillaCommand {
             $sender->sendMessage("§cYou must use the command in-game.");
             return false;
         }
-        $this->plugin->logout($sender);
+        $this->plugin->logout($sender, false);
         return true;
     }
 
