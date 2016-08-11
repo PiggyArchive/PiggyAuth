@@ -4,7 +4,7 @@ Safe & feature-rich auth plugin.
 # Changelog
 
 ###v1.0.5
-* Xbox only feature
+* Xbox only feature (ClearSky only :unamused:)
 * Upgraded DB updater
 * Improved /logout
 * Improved messages
