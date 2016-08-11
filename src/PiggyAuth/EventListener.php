@@ -81,13 +81,13 @@ class EventListener implements Listener {
                 } else {
                     if(!isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
                         $this->plugin->confirmPassword[strtolower($player->getName())] = $message;
-                        $player->sendMessage($this->plugin->getConfig()->get("confirm-password"));
+                        $player->sendMessage($this->plugin->getMessage("confirm-password"));
                     } else {
                         if($this->plugin->confirmPassword[strtolower($player->getName())] == $message) {
                             $this->plugin->register($player, $message, $message);
                             unset($this->plugin->confirmPassword[strtolower($player->getName())]);
                         } else {
-                            $player->sendMessage($this->plugin->getConfig()->get("password-not-match"));
+                            $player->sendMessage($this->plugin->getMessage("password-not-match"));
                             unset($this->plugin->confirmPassword[strtolower($player->getName())]);
                         }
                     }
@@ -96,7 +96,7 @@ class EventListener implements Listener {
             $event->setCancelled();
         } else {
             if($this->plugin->isCorrectPassword($player, $message)) {
-                $player->sendMessage($this->plugin->getConfig()->get("dont-say-password"));
+                $player->sendMessage($this->plugin->getMessage("dont-say-password"));
                 $event->setCancelled();
             }
         }
@@ -162,12 +162,12 @@ class EventListener implements Listener {
 
     public function onJoin(PlayerJoinEvent $event) {
         $player = $event->getPlayer();
-        $player->sendMessage($this->plugin->getConfig()->get("join-message"));
+        $player->sendMessage($this->plugin->getMessage("join-message"));
         $this->plugin->messagetick[strtolower($player->getName())] = 0;
         if($this->plugin->isRegistered($player->getName())) {
-            $player->sendMessage($this->plugin->getConfig()->get("login"));
+            $player->sendMessage($this->plugin->getMessage("login"));
         } else {
-            $player->sendMessage($this->plugin->getConfig()->get("register"));
+            $player->sendMessage($this->plugin->getMessage("register"));
         }
         if($this->plugin->getConfig("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);

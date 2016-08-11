@@ -49,42 +49,42 @@ version: v1.0.5
 #Messages
 
 #Join
-join-message: "§6This server requires an account."
+join-message: "&6This server requires an account."
 
 #Login
-login: "§6Please login by typing in /login <password>\n§6Forgot your password? Use /forgotpassword <pin> <newpassword>"
-login-popup: "§6Please login."
-login-tip: "§6Please login."
-authentication-success: "§aYou have been authenticated.\n§6There have been {attempts} attempts to login into your account."
-already-authenticated: "§cYou have already logged in."
-incorrect-password: "§cIncorrect password. {tries} left."
-not-registered: "§cYou are not registered."
+login: "&6Please login by typing in /login <password>\n&6Forgot your password? Use /forgotpassword <pin> <newpassword>"
+login-popup: "&6Please login."
+login-tip: "&6Please login."
+authentication-success: "&aYou have been authenticated.\n&6There have been {attempts} attempts to login into your account."
+already-authenticated: "&cYou have already logged in."
+incorrect-password: "&cIncorrect password. {tries} left."
+not-registered: "&cYou are not registered."
 
 #Register
-register: "§6Please register by typing in /register <password>"
-register-popup: "§6Please register."
-register-tip: "§6Please register."
-register-success: "§aYou have been registered. Your pin is {pin}."
-already-registered: "§cYou are already registered."
-password-too-short: "§cPassword is too short."
-password-not-match: "§cYour password is not the same."
-confirm-password: "§aPlease confirm your password."
+register: "&6Please register by typing in /register <password>"
+register-popup: "&6Please register."
+register-tip: "&6Please register."
+register-success: "&aYou have been registered. Your pin is {pin}."
+already-registered: "&cYou are already registered."
+password-too-short: "&cPassword is too short."
+password-not-match: "&cYour password is not the same."
+confirm-password: "&aPlease confirm your password."
 
 #Change password
-change-password-success: "§aYour password has been changed."
+change-password-success: "&aYour password has been changed."
 
 #Forget password
-forgot-password-success: "§aYour password has been changed. Your new pin is {pin}."
-incorrect-pin: "§cIncorrect pin."
+forgot-password-success: "&aYour password has been changed. Your new pin is {pin}."
+incorrect-pin: "&cIncorrect pin."
 
 #Reset password
-password-reset-success: "§aPlayer's password has been reset."
-not-registered-two: "§cPlayer not registered."
+password-reset-success: "&aPlayer's password has been reset."
+not-registered-two: "&cPlayer not registered."
 
 #Pin
-pin: "§aYour pin: {pin}"
+pin: "&aYour pin: {pin}"
 
 #General
-dont-say-password: "§cDo not say your password."
-timeout-message: "§cLogin Timeout"
-too-many-tries: "§cToo Many Tries to Login"
+dont-say-password: "&cDo not say your password."
+timeout-message: "&cLogin Timeout"
+too-many-tries: "&cToo Many Tries to Login"

@@ -161,11 +161,11 @@ class Main extends PluginBase {
 
     public function login(Player $player, $password) {
         if($this->isAuthenticated($player)) {
-            $player->sendMessage($this->getConfig()->get("already-authenticated"));
+            $player->sendMessage($this->getMessage("already-authenticated"));
             return false;
         }
         if(!$this->isRegistered($player->getName())) {
-            $player->sendMessage($this->getConfig()->get("not-registered"));
+            $player->sendMessage($this->getMessage("not-registered"));
             return false;
         }
         if(!$this->isCorrectPassword($player, $password)) {
@@ -173,14 +173,14 @@ class Main extends PluginBase {
                 $this->tries[strtolower($player->getName())]++;
                 if($this->tries[strtolower($player->getName())] >= $this->getConfig()->get("tries")) {
                     $this->updatePlayer($player, $this->getPassword($player), $this->getPin($player), $this->getUUID($player), $this->getAttempts($player) + 1);
-                    $player->kick($this->getConfig()->get("too-many-tries"));
+                    $player->kick($this->getMessage("too-many-tries"));
                     return false;
                 }
             } else {
                 $this->tries[strtolower($player->getName())] = 1;
             }
             $tries = $this->getConfig()->get("tries") - $this->tries[strtolower($player->getName())];
-            $player->sendMessage(str_replace("{tries}", $tries, $this->getConfig()->get("incorrect-password")));
+            $player->sendMessage(str_replace("{tries}", $tries, $this->getMessage("incorrect-password")));
             return false;
         }
         $this->force($player);
@@ -204,9 +204,9 @@ class Main extends PluginBase {
             $player->removeEffect(16);
         }
         if($login) {
-            $player->sendMessage(str_replace("{attempts}", $this->getAttempts($player), $this->getConfig()->get("authentication-success")));
+            $player->sendMessage(str_replace("{attempts}", $this->getAttempts($player), $this->getMessage("authentication-success")));
         } else {
-            $player->sendMessage(str_replace("{pin}", $this->getPin($player), $this->getConfig()->get("register-success")));
+            $player->sendMessage(str_replace("{pin}", $this->getPin($player), $this->getMessage("register-success")));
         }
         $this->updatePlayer($player, $this->getPassword($player), $this->getPin($player), $player->getUniqueId()->toString(), 0);
         return true;
@@ -214,15 +214,15 @@ class Main extends PluginBase {
 
     public function register(Player $player, $password, $confirmpassword) {
         if($this->isRegistered($player->getName())) {
-            $player->sendMessage($this->getConfig()->get("already-registered"));
+            $player->sendMessage($this->getMessage("already-registered"));
             return false;
         }
         if(strlen($password) < $this->getConfig()->get("minimum-password-length")) {
-            $player->sendMessage($this->getConfig()->get("password-too-short"));
+            $player->sendMessage($this->getMessage("password-too-short"));
             return false;
         }
         if($password !== $confirmpassword) {
-            $player->sendMessage($this->getConfig()->get("password-not-match"));
+            $player->sendMessage($this->getMessage("password-not-match"));
             return false;
         }
         $statement = $this->db->prepare("INSERT INTO players (name, password, pin, uuid, attempts) VALUES (:name, :password, :pin, :uuid, :attempts)");
@@ -238,35 +238,35 @@ class Main extends PluginBase {
 
     public function changepassword(Player $player, $oldpassword, $newpassword) {
         if(!$this->isRegistered($player->getName())) {
-            $player->sendMessage($this->getConfig()->get("not-registered"));
+            $player->sendMessage($this->getMessage("not-registered"));
             return false;
         }
         if(!$this->isCorrectPassword($player, $oldpassword)) {
-            $player->sendMessage($this->getConfig()->get("incorrect-password"));
+            $player->sendMessage($this->getMessage("incorrect-password"));
             return false;
         }
         $pin = $this->generatePin($player);
         $this->updatePlayer($player, password_hash($newpassword, PASSWORD_BCRYPT), $newpin, $player->getUniqueId()->toString(), 0);
-        $player->sendMessage($this->getConfig()->get("password-change-success"));
+        $player->sendMessage($this->getMessage("password-change-success"));
         return true;
     }
 
     public function forgotpassword(Player $player, $pin, $newpassword) {
         if(!$this->isRegistered($player->getName())) {
-            $player->sendMessage($this->getConfig()->get("not-registered"));
+            $player->sendMessage($this->getMessage("not-registered"));
             return false;
         }
         if($this->isAuthenticated($player)) {
-            $player->sendMessage($this->getConfig()->get("already-authenticated"));
+            $player->sendMessage($this->getMessage("already-authenticated"));
             return false;
         }
         if(!$this->isCorrectPin($player, $pin)) {
-            $player->sendMessage($this->getConfig()->get("incorrect-pin"));
+            $player->sendMessage($this->getMessage("incorrect-pin"));
             return false;
         }
         $newpin = $this->generatePin($player);
         $this->updatePlayer($player, password_hash($newpassword, PASSWORD_BCRYPT), $newpin, $this->getUUID($player), $this->getPlayer($player)["attempts"]);
-        $player->sendMessage(str_replace("{pin}", $newpin, $this->getConfig()->get("forgot-password-success")));
+        $player->sendMessage(str_replace("{pin}", $newpin, $this->getMessage("forgot-password-success")));
     }
 
     public function resetpassword($player, $sender) {
@@ -278,10 +278,10 @@ class Main extends PluginBase {
             if(isset($this->authenticated[$player])) {
                 unset($this->authenticated[$player]);
             }
-            $sender->sendMessage($this->getConfig()->get("password-reset-success"));
+            $sender->sendMessage($this->getMessage("password-reset-success"));
             return true;
         }
-        $sender->sendMessage($this->getConfig()->get("not-registered-two"));
+        $sender->sendMessage($this->getMessage("not-registered-two"));
         return false;
     }
 
@@ -303,6 +303,10 @@ class Main extends PluginBase {
                 unset($this->tries[strtolower($player->getName())]);
             }
         }
+    }
+    
+    public function getMessage($message){
+        return str_replace("&", "§", $this->getConfig()->get($message));
     }
 
 }

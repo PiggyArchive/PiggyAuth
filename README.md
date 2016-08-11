@@ -3,6 +3,9 @@ Safe & feature-rich auth plugin.
 
 # Changelog
 
+###v1.0.6
+* You can now use & for color codes
+
 ###v1.0.5
 * Xbox only feature (ClearSky only :unamused:)
 * Upgraded DB updater
@@ -42,6 +45,7 @@ Safe & feature-rich auth plugin.
 * See Messages Feature
 * Confirm Password Feature 
 * Prevents Saying Password
+* Xbox Only Feature
 * Chat Login
 * No YAML
 * Pig-Made!!! :pig:
