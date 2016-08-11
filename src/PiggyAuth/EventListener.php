@@ -214,6 +214,14 @@ class EventListener implements Listener {
                 $event->setCancelled();
             }
         }
+        if($this->plugin->getConfig()->get("xbox-only")) {
+            if($this->plugin->getServer()->getName() == "ClearSky") {
+                if(!$player->isLoggedIntoXbox()) {
+                    $player->close("", "You must use Xbox to login.");
+                    $event->setCancelled();
+                }
+            }
+        }
     }
 
     public function onQuit(PlayerQuitEvent $event) {

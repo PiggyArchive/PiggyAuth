@@ -3,6 +3,12 @@ Safe & feature-rich auth plugin.
 
 # Changelog
 
+###v1.0.5
+* Xbox only feature
+* Upgraded DB updater
+* Improved /logout
+* Improved messages
+
 ###v1.0.4
 * Big Fix
 

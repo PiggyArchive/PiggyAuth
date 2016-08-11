@@ -41,8 +41,10 @@ blindness: true
 see-messages: false
 #If enabled, players joining when another player has their username is kicked
 single-session: true
+#If enabled, only players with xbox can login (ClearSky only!)
+xbox-only: false
 #Version
-version: v1.0.4
+version: v1.0.5
 
 #Messages
 
