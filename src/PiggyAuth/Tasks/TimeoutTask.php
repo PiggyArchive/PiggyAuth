@@ -12,7 +12,7 @@ class TimeoutTask extends PluginTask {
 
     public function onRun($currentTick) {
         if(!$this->plugin->isAuthenticated($this->player)) {
-            $this->player->kick($this->plugin->getConfig()->get("timeout-message"));
+            $this->player->kick($this->plugin->getMessage("timeout-message"));
         }
     }
 

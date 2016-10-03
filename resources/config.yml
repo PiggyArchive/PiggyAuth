@@ -41,10 +41,12 @@ blindness: true
 see-messages: false
 #If enabled, players joining when another player has their username is kicked
 single-session: true
-#If enabled, only players with xbox can login (ClearSky only!)
-xbox-only: false
+#If enabled, players with logged in with xbox are automatically registered/logged in. (ClearSky only!)
+xbox-bypass: false
+#Database (sqlite3)
+database: sqlite3
 #Version
-version: v1.0.5
+version: v1.0.7
 
 #Messages
 
@@ -65,6 +67,7 @@ register: "&6Please register by typing in /register <password>"
 register-popup: "&6Please register."
 register-tip: "&6Please register."
 register-success: "&aYou have been registered. Your pin is {pin}."
+auto-register: "&aYou were automatically registered. Your password is {password}. Change it with /changepassword."
 already-registered: "&cYou are already registered."
 password-too-short: "&cPassword is too short."
 password-not-match: "&cYour password is not the same."

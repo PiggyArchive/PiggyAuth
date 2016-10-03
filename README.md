@@ -3,6 +3,11 @@ Safe & feature-rich auth plugin.
 
 # Changelog
 
+###v1.0.7
+* Preparation for MySQL support!MySQL support!
+* Fixed messages
+* Xbox bypass (not finished)
+
 ###v1.0.6
 * You can now use & for color codes
 

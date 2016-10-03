@@ -185,14 +185,23 @@ class EventListener implements Listener {
             $effect->setVisible(false);
             $player->addEffect($effect);
         }
-        if($this->plugin->getConfig()->get("auto-authentication")) {
-            $data = $this->plugin->getPlayer($player->getName());
-            if(!is_null($data)) {
-                if($player->getUniqueId()->toString() == $data["uuid"]) {
-                    $this->plugin->force($player);
-                    return true;
-                }
+        $data = $this->plugin->database->getPlayer($player->getName());
+        if($this->plugin->getConfig()->get("auto-authentication") && !is_null($data) && $player->getUniqueId()->toString() == $data["uuid"]) {
+            $this->plugin->force($player);
+            return true;
+        }
+        if($this->plugin->getConfig()->get("xbox-bypass") && $this->plugin->getServer()->getName() == "ClearSky" && $player->isAuthenticated()) {
+            $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+            $randompassword = [];
+            $characteramount = strlen($alphabet) - 1;
+            for($i = 0; $i < $this->getConfig()->get("minimum-password-length") - 1; $i++) {
+                $character = mt_rand(0, $alphaLength);
+                array_push($randompassword, $characters[$character]);
             }
+            $randompassword = implode($randompassword);
+            $this->plugin->register($player, $randompassword, $randompassword);
+            $player->sendMessage(str_replace("{password}", $randompassword, $this->plugin->getMessage("auto-registered")));
+            return true;
         }
         $this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this->plugin, $player), $this->plugin->getConfig()->get("timeout") * 20);
     }
@@ -212,14 +221,6 @@ class EventListener implements Listener {
             if(!is_null($p = $this->plugin->getServer()->getPlayerExact($player->getName())) && $this->plugin->isAuthenticated($p)) {
                 $player->close("", "Already logged in!");
                 $event->setCancelled();
-            }
-        }
-        if($this->plugin->getConfig()->get("xbox-only")) {
-            if($this->plugin->getServer()->getName() == "ClearSky") {
-                if(!$player->isXboxAuthenticated()) {
-                    $player->close("", "You must use Xbox to login.");
-                    $event->setCancelled();
-                }
             }
         }
     }

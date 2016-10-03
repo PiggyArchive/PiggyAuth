@@ -20,7 +20,7 @@ class PinCommand extends VanillaCommand {
             $sender->sendMessage("§cYou must use the command in-game.");
             return false;
         }
-        $sender->sendMessage(str_replace("{pin}", $this->plugin->getPin($sender), $this->plugin->getConfig()->get("pin")));
+        $sender->sendMessage(str_replace("{pin}", $this->plugin->database->getPin($sender->getName()), $this->plugin->getMessage("pin")));
         return true;
     }
 
