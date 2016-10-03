@@ -50,7 +50,7 @@ Safe & feature-rich auth plugin.
 * See Messages Feature
 * Confirm Password Feature 
 * Prevents Saying Password
-* Xbox Only Feature
+* Xbox Bypass Feature (ClearSky Only)
 * Chat Login
 * No YAML
 * Pig-Made!!! :pig:
