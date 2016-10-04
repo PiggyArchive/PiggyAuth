@@ -3,6 +3,9 @@ Safe & feature-rich auth plugin.
 
 # Changelog
 
+###v1.0.8
+* MySQL support!
+
 ###v1.0.7
 * Preparation for MySQL support!MySQL support!
 * Fixed messages

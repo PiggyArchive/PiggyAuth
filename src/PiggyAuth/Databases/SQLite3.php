@@ -2,17 +2,19 @@
 namespace PiggyAuth\Databases;
 
 use PiggyAuth\Main;
+use pocketmine\Player;
 
 class SQLite3 implements Database {
     public $plugin;
     public $db;
 
     public function __construct(Main $plugin, $outdated) {
-        if(!file_exists($plugin->getDataFolder() . "players.db")) {
-            $this->db = new \SQLite3($plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+        $this->plugin = $plugin;
+        if(!file_exists($this->plugin->getDataFolder() . "players.db")) {
+            $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
             $this->db->exec("CREATE TABLE players (name TEXT PRIMARY KEY, password TEXT, pin INT, uuid INT, attempts INT);");
         } else {
-            $this->db = new \SQLite3($plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
+            $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
             //Updater
         }
         if($outdated) {
@@ -49,6 +51,16 @@ class SQLite3 implements Database {
         $statement->execute();
     }
 
+    public function insertData(Player $player, $password) {
+        $statement = $this->db->prepare("INSERT INTO players (name, password, pin, uuid, attempts) VALUES (:name, :password, :pin, :uuid, :attempts)");
+        $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
+        $statement->bindValue(":password", password_hash($password, PASSWORD_BCRYPT), SQLITE3_TEXT);
+        $statement->bindValue(":pin", $this->plugin->generatePin($player), SQLITE3_INTEGER);
+        $statement->bindValue(":uuid", $player->getUniqueId()->toString(), SQLITE3_INTEGER);
+        $statement->bindValue(":attempts", 0, SQLITE3_INTEGER);
+        $statement->execute();
+    }
+
     public function getPin($player) {
         $data = $this->getPlayer($player);
         if(!is_null($data)) {
@@ -68,6 +80,12 @@ class SQLite3 implements Database {
             return $data["password"];
         }
         return null;
+    }
+
+    public function clearPassword($player) {
+        $statement = $this->db->prepare("DELETE FROM players WHERE name = :name");
+        $statement->bindValue(":name", $player, SQLITE3_TEXT);
+        $statement->execute();
     }
 
     public function getUUID($player) {

@@ -43,10 +43,17 @@ see-messages: false
 single-session: true
 #If enabled, players with logged in with xbox are automatically registered/logged in. (ClearSky only!)
 xbox-bypass: false
-#Database (sqlite3)
+#Database (sqlite3, mysql)
 database: sqlite3
+#MySQL login
+mysql:
+  host: host
+  user: user
+  name: name
+  password: password
+  port: 3306
 #Version
-version: v1.0.7
+version: v1.0.8
 
 #Messages
 

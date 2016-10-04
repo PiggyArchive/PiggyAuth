@@ -8,6 +8,7 @@ use PiggyAuth\Commands\LoginCommand;
 use PiggyAuth\Commands\LogoutCommand;
 use PiggyAuth\Commands\RegisterCommand;
 use PiggyAuth\Commands\ResetPasswordCommand;
+use PiggyAuth\Databases\MySQL;
 use PiggyAuth\Databases\SQLite3;
 use PiggyAuth\Tasks\MessageTick;
 use PiggyAuth\Tasks\PopupTipTick;
@@ -51,6 +52,9 @@ class Main extends PluginBase {
             }
         }
         switch($this->getConfig()->get("database")) {
+            case "mysql":
+                $this->database = new MySQL($this);
+                break;
             case "sqlite3":
                 $this->database = new SQLite3($this, $outdated);
                 break;
@@ -164,13 +168,7 @@ class Main extends PluginBase {
             $player->sendMessage($this->getMessage("password-not-match"));
             return false;
         }
-        $statement = $this->database->db->prepare("INSERT INTO players (name, password, pin, uuid, attempts) VALUES (:name, :password, :pin, :uuid, :attempts)");
-        $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
-        $statement->bindValue(":password", password_hash($password, PASSWORD_BCRYPT), SQLITE3_TEXT);
-        $statement->bindValue(":pin", $this->generatePin($player), SQLITE3_INTEGER);
-        $statement->bindValue(":uuid", $player->getUniqueId()->toString(), SQLITE3_INTEGER);
-        $statement->bindValue(":attempts", 0, SQLITE3_INTEGER);
-        $statement->execute();
+        $this->database->insertData($player, $password);
         $this->force($player, false);
         return true;
     }
@@ -211,11 +209,15 @@ class Main extends PluginBase {
     public function resetpassword($player, $sender) {
         $player = strtolower($player);
         if($this->isRegistered($player)) {
-            $statement = $this->database->db->prepare("DELETE FROM players WHERE name = :name");
-            $statement->bindValue(":name", $player, SQLITE3_TEXT);
-            $statement->execute();
+            $this->database->clearPassword($player);
             if(isset($this->authenticated[$player])) {
                 unset($this->authenticated[$player]);
+            }
+            $playerobject = $this->getServer()->getPlayerExact($player);
+            if($playerobject instanceof Player) {
+                $playerobject->sendMessage($this->getMessage("join-message"));
+                $this->messagetick[$player] = 5;
+                $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $playerobject), $this->getConfig()->get("timeout") * 20);
             }
             $sender->sendMessage($this->getMessage("password-reset-success"));
             return true;
@@ -228,6 +230,7 @@ class Main extends PluginBase {
         if($this->isAuthenticated($player)) {
             unset($this->authenticated[strtolower($player->getName())]);
             if(!$quit) {
+                $player->sendMessage($this->getMessage("join-message"));
                 $this->messagetick[strtolower($player->getName())] = 5;
                 $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $player), $this->getConfig()->get("timeout") * 20);
             }

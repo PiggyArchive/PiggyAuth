@@ -10,6 +10,8 @@ interface Database {
 
     public function getPassword($player);
 
+    public function clearPassword($player);
+
     public function getUUID($player);
 
     public function getAttempts($player);
