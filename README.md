@@ -13,7 +13,7 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server.
 * MySQL support!
 
 ###v1.0.7
-* Preparation for MySQL support!MySQL support!
+* Preparation for MySQL support!
 * Fixed messages
 * Xbox bypass, removed Xbox only (ClearSky only :unamused:, broken :expressionless:)
 
