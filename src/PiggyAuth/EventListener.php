@@ -200,17 +200,23 @@ class EventListener implements Listener {
             $this->plugin->force($player);
             return true;
         }
-        if($this->plugin->getConfig()->get("xbox-bypass") && $this->plugin->getServer()->getName() == "ClearSky" && $player->isAuthenticated()) {
-            $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-            $randompassword = [];
-            $characteramount = strlen($alphabet) - 1;
-            for($i = 0; $i < $this->getConfig()->get("minimum-password-length") - 1; $i++) {
-                $character = mt_rand(0, $alphaLength);
-                array_push($randompassword, $characters[$character]);
+        if($this->plugin->getConfig()->get("xbox-bypass") && $this->plugin->getServer()->getName() == "ClearSky") {
+            if(!$player->isRegistered()) {
+                $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+                $randompassword = [];
+                $characteramount = strlen($alphabet) - 1;
+                for($i = 0; $i < $this->getConfig()->get("minimum-password-length") - 1; $i++) {
+                    $character = mt_rand(0, $alphaLength);
+                    array_push($randompassword, $characters[$character]);
+                }
+                $randompassword = implode($randompassword);
+                $this->plugin->register($player, $randompassword, $randompassword, "none", "true");
+                $player->sendMessage(str_replace("{password}", $randompassword, $this->plugin->getMessage("auto-registered")));
+            } else {
+                if(!is_null($data) && $data["xbox"] == "true") {
+                    $this->plugin->force($player);
+                }
             }
-            $randompassword = implode($randompassword);
-            $this->plugin->register($player, $randompassword, $randompassword);
-            $player->sendMessage(str_replace("{password}", $randompassword, $this->plugin->getMessage("auto-registered")));
             return true;
         }
         $this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this->plugin, $player), $this->plugin->getConfig()->get("timeout") * 20);

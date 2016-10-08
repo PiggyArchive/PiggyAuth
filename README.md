@@ -3,10 +3,17 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server.
 
 # Changelog
 
+###v2.0.0
+* Imporved xbox bypass (Still not working though :expresionless:)
+* Config updater!
+* Emails now send! 
+* Emails get send for /changepassword, /forgotpassword, /resetpassword, or an attempt to get into your account.
+* Now reconnects to MySQL when disconnected.
+
 ###v1.0.9
 * Fixed MySQL table not being created
-* Email support! (Email server being fixed by @xBeastMode)
-* SendPin Command (Emailing not working yet)
+* Email support! 
+* SendPin Command 
 * ChangeEmail Command
 
 ###v1.0.8

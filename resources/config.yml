@@ -81,7 +81,7 @@ password-not-match: "&cYour password is not the same."
 confirm-password: "&aPlease confirm your password."
 
 #Change password
-change-password-success: "&aYour password has been changed."
+change-password-success: "&aYour password has been changed. Your new pin is {pin}."
 
 #Forget password
 forgot-password-success: "&aYour password has been changed. Your new pin is {pin}."
@@ -92,15 +92,22 @@ password-reset-success: "&aPlayer's password has been reset."
 not-registered-two: "&cPlayer not registered."
 
 #Email
+email: "&6Now type in your email. Type 'none' to skip."
+email-set: "&aEmail has been set."
+email-change-success:  "&aEmail changed."
+email-success: "&aEmail has been sent."
+email-fail: "&cEmail could not send."
 invalid-email: "&cInvalid email."
 no-email: "&cThere is no email connected to this account."
-email: "&6Now type in your email. Type 'none' to skip."
-email-change-success:  "&aEmail changed."
+
 email-subject-sendpin: "PiggyAuth Pin Request"
 email-sendpin: "Your pin is {pin}. If you did not request to send your pin, please ignore this."
-email-success: "&aEmail has been sent."
-email-set: "&aEmail has been set."
-email-fail: "&cEmail could not send."
+email-subject-attemptedlogin: "PiggyAuth Attempted Login Notice"
+email-attemptedlogin: "Someone has attempted to login to your account. If that was not you, please do /sendpin. You will recieve a 4 digit pin number to reset your password."
+email-subject-changedpassword: "PiggyAuth Password Changed Notice"
+email-changedpassword: "Your password was changed. If that was not you, please do /sendpin. You will recieve a 4 digit pin number to reset your password."
+email-subject-passwordreset: "PiggyAuth Password Reset Notice"
+email-passwordreset: "Your password was reset by a staff member. Please go on and register to claim your account."
 
 #Pin
 pin: "&aYour pin: {pin}"

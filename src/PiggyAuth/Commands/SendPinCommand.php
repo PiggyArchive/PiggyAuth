@@ -21,12 +21,7 @@ class SendPinCommand extends VanillaCommand {
             return false;
         }
         if($this->plugin->database->getEmail($sender->getName()) !== "none") {
-            /*
-            $to = $this->plugin->database->getEmail($sender->getName());
-            $subject = $this->plugin->getConfig()->get("email-subject-sendpin");
-            $body = str_replace("{pin", $this->plugin->database->getPin($sender->getName()), $this->plugin->getMessage("email-sendpin"));
-            $result = file_get_contents("http://evmcpe.pe.hu/ev_send.php?to=$to&subject=$subject&body=$body");
-            */
+            $result = $this->plugin->emailUser($this->plugin->database->getEmail($sender->getName()), $this->plugin->getMessage("email-subject-sendpin"), str_replace("{pin}", $this->plugin->database->getPin($sender->getName()), $this->plugin->getMessage("email-sendpin")));
             if($result == "success") {
                 $sender->sendMessage($this->plugin->getMessage("email-success"));
                 return true;

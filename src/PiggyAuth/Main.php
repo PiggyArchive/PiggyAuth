@@ -13,6 +13,7 @@ use PiggyAuth\Commands\SendPinCommand;
 use PiggyAuth\Databases\MySQL;
 use PiggyAuth\Databases\SQLite3;
 use PiggyAuth\Tasks\MessageTick;
+use PiggyAuth\Tasks\PingTask;
 use PiggyAuth\Tasks\PopupTipTick;
 use PiggyAuth\Tasks\TimeoutTask;
 
@@ -45,13 +46,16 @@ class Main extends PluginBase {
         }
         $outdated = false;
         if(!$this->getConfig()->exists("version")) {
-            $this->getConfig()->set("version", $this->getDescription()->getVersion());
-            $this->getConfig()->save();
+            rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config_old.yml");
+            $this->saveDefaultConfig();
             $outdated = true;
         } elseif($this->getConfig()->get("version") !== $this->getDescription()->getVersion()) {
             switch($this->getConfig()->get("version")) {
+                case "1.0.9":
                 case "1.0.8":
-                    $outdated = true;
+                    rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config_old.yml");
+                    $this->saveDefaultConfig();
+                    $outdated = true; //DB Updater
                     break;
             }
             $this->getConfig()->set("version", $this->getDescription()->getVersion());
@@ -60,6 +64,7 @@ class Main extends PluginBase {
         switch($this->getConfig()->get("database")) {
             case "mysql":
                 $this->database = new MySQL($this, $outdated);
+                $this->getServer()->getScheduler()->scheduleRepeatingTask(new PingTask($this), 300);
                 break;
             case "sqlite3":
                 $this->database = new SQLite3($this, $outdated);
@@ -123,6 +128,9 @@ class Main extends PluginBase {
                 if($this->tries[strtolower($player->getName())] >= $this->getConfig()->get("tries")) {
                     $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()) + 1);
                     $player->kick($this->getMessage("too-many-tries"));
+                    if($this->database->getEmail($player->getName()) !== "none") {
+                        $this->emailUser($this->database->getEmail($player->getName()), $this->getMessage("email-subject-attemptedlogin"), $this->getMessage("email-attemptedlogin"));
+                    }
                     return false;
                 }
             } else {
@@ -161,7 +169,7 @@ class Main extends PluginBase {
         return true;
     }
 
-    public function register(Player $player, $password, $confirmpassword, $email = "none") {
+    public function register(Player $player, $password, $confirmpassword, $email = "none", $xbox = "false") {
         if($this->isRegistered($player->getName())) {
             $player->sendMessage($this->getMessage("already-registered"));
             return false;
@@ -178,7 +186,7 @@ class Main extends PluginBase {
             $this->giveEmail[strtolower($player->getName())] = true;
             $player->sendMessage($this->getMessage("email"));
         }
-        $this->database->insertData($player, $password, $email);
+        $this->database->insertData($player, $password, $email, $xbox);
         $this->force($player, false);
         return true;
     }
@@ -193,8 +201,11 @@ class Main extends PluginBase {
             return false;
         }
         $pin = $this->generatePin($player);
-        $this->database->updatePlayer($player->getName(), password_hash($newpassword, PASSWORD_BCRYPT), $pin, $player->getUniqueId()->toString(), 0);
-        $player->sendMessage($this->getMessage("change-password-success"));
+        $this->database->updatePlayer($player->getName(), password_hash($newpassword, PASSWORD_BCRYPT), $this->database->getEmail($player->getName()), $pin, $player->getUniqueId()->toString(), 0);
+        $player->sendMessage(str_replace("{pin}", $pin, $this->getMessage("change-password-success")));
+        if($this->database->getEmail($player->getName()) !== "none") {
+            $this->emailUser($this->database->getEmail($player->getName()), $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
+        }
         return true;
     }
 
@@ -212,13 +223,15 @@ class Main extends PluginBase {
             return false;
         }
         $newpin = $this->generatePin($player);
-        $this->database->updatePlayer($player->getName(), password_hash($newpassword, PASSWORD_BCRYPT), $newpin, $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()));
+        $this->database->updatePlayer($player->getName(), password_hash($newpassword, PASSWORD_BCRYPT), $this->database->getEmail($player->getName()), $newpin, $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()));
         $player->sendMessage(str_replace("{pin}", $newpin, $this->getMessage("forgot-password-success")));
+        $this->emailUser($this->database->getEmail($player->getName()), $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
     }
 
     public function resetpassword($player, $sender) {
         $player = strtolower($player);
         if($this->isRegistered($player)) {
+            $this->emailUser($this->database->getEmail($player), $this->getMessage("email-subject-passwordreset"), $this->getMessage("email-passwordreset"));
             $this->database->clearPassword($player);
             if(isset($this->authenticated[$player])) {
                 unset($this->authenticated[$player]);
@@ -259,6 +272,23 @@ class Main extends PluginBase {
 
     public function getMessage($message) {
         return str_replace("&", "§", $this->getConfig()->get($message));
+    }
+
+    //Code by @xBeastMode
+    public function emailUser($to, $title, $body) {
+        $ch = curl_init();
+        $title = str_replace(" ", "+", $title);
+        $body = str_replace(" ", "+", $body);
+        $url = 'https://mcpefun.com/mailserver/?to=' . $to . '&subject=' . $title . '&body=' . $body;
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_REFERER, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return $result;
     }
 
 }

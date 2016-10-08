@@ -15,10 +15,11 @@ class MySQL implements Database {
         if($this->db->connect_error) {
             $this->plugin->getLogger()->error($this->db->connect_error);
         } else {
-            $this->db->query("CREATE TABLE IF NOT EXISTS players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT);");
+            $this->db->query("CREATE TABLE IF NOT EXISTS players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT, xbox VARCHAR(5));");
         }
         if($outdated) {
             $this->db->query("ALTER TABLE players ADD email VARCHAR(100) after password");
+            $this->db->query("ALTER TABLE players ADD xbox VARCHAR(5) after attempts");
         }
     }
 
@@ -40,8 +41,8 @@ class MySQL implements Database {
         $this->db->query("UPDATE players SET password = '" . $this->db->escape_string($password) . "', email = '" . $this->db->escape_string($email) . "', pin = '" . intval($pin) . "', uuid = '" . $this->db->escape_string($uuid) . "', attempts = '" . intval($attempts) . "' WHERE name = '" . $this->db->escape_string($player) . "'");
     }
 
-    public function insertData(Player $player, $password, $email) {
-        $this->db->query("INSERT INTO players (name, password, email, pin, uuid, attempts) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string(password_hash($password, PASSWORD_BCRYPT)) . "', '" . $this->db->escape_string($email) . "', '" . $this->plugin->generatePin($player) . "', '" . $player->getUniqueId()->toString() . "', '0')");
+    public function insertData(Player $player, $password, $email, $xbox) {
+        $this->db->query("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string(password_hash($password, PASSWORD_BCRYPT)) . "', '" . $this->db->escape_string($email) . "', '" . $this->plugin->generatePin($player) . "', '" . $player->getUniqueId()->toString() . "', '0', '" . $xbox . "')");
     }
 
     public function getPin($player) {
