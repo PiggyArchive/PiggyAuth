@@ -4,10 +4,10 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server.
 # Changelog
 
 ###v2.0.0
-* Imporved xbox bypass (Still not working though :expresionless:)
+* Imporved xbox bypass (Still not working though :expressionless:)
 * Config updater!
 * Emails now send! 
-* Emails get send for /changepassword, /forgotpassword, /resetpassword, or an attempt to get into your account.
+* Emails get sent for /changepassword, /forgotpassword, /resetpassword, or an attempt to get into your account.
 * Now reconnects to MySQL when disconnected.
 
 ###v1.0.9

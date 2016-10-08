@@ -53,7 +53,7 @@ mysql:
   password: password
   port: 3306
 #Version
-version: v1.0.9
+version: v2.0.0
 
 #Messages
 
