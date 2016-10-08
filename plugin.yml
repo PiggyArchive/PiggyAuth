@@ -1,6 +1,6 @@
 name: PiggyAuth
 main: PiggyAuth\Main
-version: 1.0.8
+version: 1.0.9
 api: [2.0.0]
 load: POSTWORLD
 author: MCPEPIG
@@ -19,6 +19,9 @@ permissions:
         piggyauth.command.register:
           default: true
           description: "Allow using /register"
+        piggyauth.command.changeemail:
+          default: true
+          description: "Allow using /changeemail"
         piggyauth.command.changepassword:
           default: true
           description: "Allow using /changepassword"
@@ -31,6 +34,9 @@ permissions:
         piggyauth.command.resetpassword:
           default: op
           description: "Allow using /resetpassword"
+        piggyauth.command.sendpin:
+          default: true
+          description: "Allow using /sendpin"
         piggyauth.command.logout:
           default: op
           description: "Allow using /logout"

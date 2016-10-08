@@ -12,13 +12,14 @@ class SQLite3 implements Database {
         $this->plugin = $plugin;
         if(!file_exists($this->plugin->getDataFolder() . "players.db")) {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
-            $this->db->exec("CREATE TABLE players (name TEXT PRIMARY KEY, password TEXT, pin INT, uuid INT, attempts INT);");
+            $this->db->exec("CREATE TABLE players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT);");
         } else {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
             //Updater
         }
         if($outdated) {
-            $this->db->exec("ALTER TABLE players ADD COLUMN pins INT"); //Just in case :P
+            $this->db->exec("ALTER TABLE players ADD COLUMN email INT");
+            $this->db->exec("ALTER TABLE players ADD COLUMN pins INT");
             $this->db->exec("ALTER TABLE players ADD COLUMN attempts INT");
         }
     }
@@ -41,22 +42,24 @@ class SQLite3 implements Database {
         return null;
     }
 
-    public function updatePlayer($player, $password, $pin, $uuid, $attempts) {
-        $statement = $this->db->prepare("UPDATE players SET pin = :pin, password = :password, uuid = :uuid, attempts = :attempts WHERE name = :name");
+    public function updatePlayer($player, $password, $email, $pin, $uuid, $attempts) {
+        $statement = $this->db->prepare("UPDATE players SET pin = :pin, password = :password, email = :email, uuid = :uuid, attempts = :attempts WHERE name = :name");
         $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
         $statement->bindValue(":password", $password, SQLITE3_TEXT);
+        $statement->bindValue(":email", $email, SQLITE3_TEXT);
         $statement->bindValue(":pin", $pin, SQLITE3_INTEGER);
-        $statement->bindValue(":uuid", $uuid, SQLITE3_INTEGER);
+        $statement->bindValue(":uuid", $uuid, SQLITE3_TEXT);
         $statement->bindValue(":attempts", $attempts, SQLITE3_INTEGER);
         $statement->execute();
     }
 
-    public function insertData(Player $player, $password) {
-        $statement = $this->db->prepare("INSERT INTO players (name, password, pin, uuid, attempts) VALUES (:name, :password, :pin, :uuid, :attempts)");
+    public function insertData(Player $player, $password, $email) {
+        $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts) VALUES (:name, :password, :email, :pin, :uuid, :attempts)");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
         $statement->bindValue(":password", password_hash($password, PASSWORD_BCRYPT), SQLITE3_TEXT);
+        $statement->bindValue(":email", $email, SQLITE3_TEXT);
         $statement->bindValue(":pin", $this->plugin->generatePin($player), SQLITE3_INTEGER);
-        $statement->bindValue(":uuid", $player->getUniqueId()->toString(), SQLITE3_INTEGER);
+        $statement->bindValue(":uuid", $player->getUniqueId()->toString(), SQLITE3_TEXT);
         $statement->bindValue(":attempts", 0, SQLITE3_INTEGER);
         $statement->execute();
     }
@@ -66,7 +69,7 @@ class SQLite3 implements Database {
         if(!is_null($data)) {
             if(!isset($data["pin"])) {
                 $pin = mt_rand(1000, 9999); //If you use $this->generatePin(), there will be issues!
-                $this->updatePlayer($player, $pin, $this->getPassword($player), $this->getUUID($player), $this->getAttempts($player));
+                $this->updatePlayer($player, $this->getPassword($player), $pin, $this->getUUID($player), $this->getAttempts($player));
                 return $pin;
             }
             return $data["pin"];
@@ -88,6 +91,17 @@ class SQLite3 implements Database {
         $statement->execute();
     }
 
+    public function getEmail($player) {
+        $data = $this->getPlayer($player);
+        if(!is_null($data)) {
+            if(!isset($data["email"])) {
+                return "none";
+            }
+            return $data["email"];
+        }
+        return "none";
+    }
+
     public function getUUID($player) {
         $data = $this->getPlayer($player);
         if(!is_null($data)) {
@@ -100,7 +114,7 @@ class SQLite3 implements Database {
         $data = $this->getPlayer($player);
         if(!is_null($data)) {
             if(!isset($data["attempts"])) {
-                $this->updatePlayer($player, $this->getPin($player), $this->getPassword($player), $this->getUUID($player), 0);
+                $this->updatePlayer($player, $this->getPassword($player), $this->getPin($player), $this->getUUID($player), 0);
                 return 0;
             }
             return $data["attempts"];

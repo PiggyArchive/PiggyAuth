@@ -5,10 +5,10 @@ use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
-class RegisterCommand extends VanillaCommand {
+class ChangeEmailCommand extends VanillaCommand {
     public function __construct($name, $plugin) {
-        parent::__construct($name, "Register an account", "/register <password> <confirm password> [email]");
-        $this->setPermission("piggyauth.command.register");
+        parent::__construct($name, "Change your email", "/changeemail <email>");
+        $this->setPermission("piggyauth.command.changeemail");
         $this->plugin = $plugin;
     }
 
@@ -20,19 +20,17 @@ class RegisterCommand extends VanillaCommand {
             $sender->sendMessage("§cYou must use the command in-game.");
             return false;
         }
-        if(!isset($args[1])) {
-            $sender->sendMessage("/register <password> <confirm password> [email]");
+        if(!isset($args[0])) {
+            $sender->sendMessage("/changeemail <email>");
             return false;
-        }
-        if(!isset($args[2])) {
-            $args[2] = "";
         } else {
-            if(!filter_var($args[2], FILTER_VALIDATE_EMAIL)) {
+            if(!filter_var($args[0], FILTER_VALIDATE_EMAIL)) {
                 $sender->sendMessage($this->plugin->getMessage("invalid-email"));
                 return false;
             }
         }
-        $this->plugin->register($sender, $args[0], $args[1], $args[2]);
+        $this->plugin->database->updatePlayer($sender->getName(), $this->plugin->database->getPassword($sender->getName()), $args[0], $this->plugin->database->getPin($sender->getName()), $this->plugin->database->getUUID($sender->getName()), $this->plugin->database->getAttempts($sender->getName()));
+        $sender->sendMessage($this->plugin->getMessage("email-change-success"));
         return true;
     }
 

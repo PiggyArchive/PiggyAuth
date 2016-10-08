@@ -2,12 +2,14 @@
 namespace PiggyAuth;
 
 use PiggyAuth\Commands\ChangePasswordCommand;
+use PiggyAuth\Commands\ChangeEmailCommand;
 use PiggyAuth\Commands\PinCommand;
 use PiggyAuth\Commands\ForgotPasswordCommand;
 use PiggyAuth\Commands\LoginCommand;
 use PiggyAuth\Commands\LogoutCommand;
 use PiggyAuth\Commands\RegisterCommand;
 use PiggyAuth\Commands\ResetPasswordCommand;
+use PiggyAuth\Commands\SendPinCommand;
 use PiggyAuth\Databases\MySQL;
 use PiggyAuth\Databases\SQLite3;
 use PiggyAuth\Tasks\MessageTick;
@@ -21,6 +23,7 @@ use pocketmine\Player;
 class Main extends PluginBase {
     public $authenticated;
     public $confirmPassword;
+    public $giveEmail;
     public $messagetick;
     public $tries;
     public $database;
@@ -28,12 +31,14 @@ class Main extends PluginBase {
     public function onEnable() {
         $this->saveDefaultConfig();
         $this->getServer()->getCommandMap()->register('changepassword', new ChangePasswordCommand('changepassword', $this));
+        $this->getServer()->getCommandMap()->register('changeemail', new ChangeEmailCommand('changeemail', $this));
         $this->getServer()->getCommandMap()->register('forgotpassword', new ForgotPasswordCommand('forgotpassword', $this));
         $this->getServer()->getCommandMap()->register('login', new LoginCommand('login', $this));
         $this->getServer()->getCommandMap()->register('logout', new LogoutCommand('logout', $this));
         $this->getServer()->getCommandMap()->register('register', new RegisterCommand('register', $this));
         $this->getServer()->getCommandMap()->register('pin', new PinCommand('pin', $this));
         $this->getServer()->getCommandMap()->register('resetpassword', new ResetPasswordCommand('resetpassword', $this));
+        $this->getServer()->getCommandMap()->register('sendpin', new SendPinCommand('sendpin', $this));
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new MessageTick($this), 20);
         if($this->getConfig()->get("popup") || $this->getConfig()->get("tip")) {
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new PopupTipTick($this), 20);
@@ -43,17 +48,18 @@ class Main extends PluginBase {
             $this->getConfig()->set("version", $this->getDescription()->getVersion());
             $this->getConfig()->save();
             $outdated = true;
-        } elseif($this->getConfig()->get("version") < $this->getDescription()->getVersion()) {
+        } elseif($this->getConfig()->get("version") !== $this->getDescription()->getVersion()) {
             switch($this->getConfig()->get("version")) {
-                default:
-                    $this->getConfig()->set("version", $this->getDescription()->getVersion());
-                    $this->getConfig()->save();
+                case "1.0.8":
+                    $outdated = true;
                     break;
             }
+            $this->getConfig()->set("version", $this->getDescription()->getVersion());
+            $this->getConfig()->save();
         }
         switch($this->getConfig()->get("database")) {
             case "mysql":
-                $this->database = new MySQL($this);
+                $this->database = new MySQL($this, $outdated);
                 break;
             case "sqlite3":
                 $this->database = new SQLite3($this, $outdated);
@@ -115,7 +121,7 @@ class Main extends PluginBase {
             if(isset($this->tries[strtolower($player->getName())])) {
                 $this->tries[strtolower($player->getName())]++;
                 if($this->tries[strtolower($player->getName())] >= $this->getConfig()->get("tries")) {
-                    $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getPin($player->getName()), $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()) + 1);
+                    $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()) + 1);
                     $player->kick($this->getMessage("too-many-tries"));
                     return false;
                 }
@@ -151,11 +157,11 @@ class Main extends PluginBase {
         } else {
             $player->sendMessage(str_replace("{pin}", $this->database->getPin($player->getName()), $this->getMessage("register-success")));
         }
-        $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getPin($player->getName()), $player->getUniqueId()->toString(), 0);
+        $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $player->getUniqueId()->toString(), 0);
         return true;
     }
 
-    public function register(Player $player, $password, $confirmpassword) {
+    public function register(Player $player, $password, $confirmpassword, $email = "none") {
         if($this->isRegistered($player->getName())) {
             $player->sendMessage($this->getMessage("already-registered"));
             return false;
@@ -168,7 +174,11 @@ class Main extends PluginBase {
             $player->sendMessage($this->getMessage("password-not-match"));
             return false;
         }
-        $this->database->insertData($player, $password);
+        if($email == "enter") {
+            $this->giveEmail[strtolower($player->getName())] = true;
+            $player->sendMessage($this->getMessage("email"));
+        }
+        $this->database->insertData($player, $password, $email);
         $this->force($player, false);
         return true;
     }

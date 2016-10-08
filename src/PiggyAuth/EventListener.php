@@ -84,8 +84,8 @@ class EventListener implements Listener {
                         $player->sendMessage($this->plugin->getMessage("confirm-password"));
                     } else {
                         if($this->plugin->confirmPassword[strtolower($player->getName())] == $message) {
-                            $this->plugin->register($player, $message, $message);
                             unset($this->plugin->confirmPassword[strtolower($player->getName())]);
+                            $this->plugin->register($player, $message, $message, "enter");
                         } else {
                             $player->sendMessage($this->plugin->getMessage("password-not-match"));
                             unset($this->plugin->confirmPassword[strtolower($player->getName())]);
@@ -97,6 +97,16 @@ class EventListener implements Listener {
         } else {
             if($this->plugin->isCorrectPassword($player, $message)) {
                 $player->sendMessage($this->plugin->getMessage("dont-say-password"));
+                $event->setCancelled();
+            }
+            if(isset($this->plugin->giveEmail[strtolower($player->getName())])) {
+                if(strtolower($message) !== "none" && !filter_var($message, FILTER_VALIDATE_EMAIL)) {
+                    $player->sendMessage($this->plugin->getMessage("invalid-email"));
+                } else {
+                    unset($this->plugin->giveEmail[strtolower($player->getName())]);
+                    $this->plugin->database->updatePlayer($player->getName(), $this->plugin->database->getPassword($player->getName()), $message, $this->plugin->database->getPin($player->getName()), $player->getUniqueId()->toString(), $this->plugin->database->getUUID($player->getName()));
+                    $player->sendMessage($this->plugin->getMessage("email-set"));
+                }
                 $event->setCancelled();
             }
         }
@@ -125,7 +135,7 @@ class EventListener implements Listener {
             "/fpwd");
         if(!$this->plugin->isAuthenticated($player)) {
             if($message[0] == "/") {
-                if(!in_array($args[0], $forgotpasswordaliases) && $args[0] !== "/login" && $args[0] !== "/register") {
+                if(!in_array($args[0], $forgotpasswordaliases) && $args[0] !== "/login" && $args[0] !== "/register" && $args[0] !== "/sendpin") {
                     $event->setCancelled();
                 }
             }

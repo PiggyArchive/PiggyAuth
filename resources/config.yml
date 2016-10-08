@@ -53,7 +53,7 @@ mysql:
   password: password
   port: 3306
 #Version
-version: v1.0.8
+version: v1.0.9
 
 #Messages
 
@@ -70,7 +70,7 @@ incorrect-password: "&cIncorrect password. {tries} left."
 not-registered: "&cYou are not registered."
 
 #Register
-register: "&6Please register by typing in /register <password>"
+register: "&6Please register by typing in /register <password> <confirm password> [email]"
 register-popup: "&6Please register."
 register-tip: "&6Please register."
 register-success: "&aYou have been registered. Your pin is {pin}."
@@ -90,6 +90,17 @@ incorrect-pin: "&cIncorrect pin."
 #Reset password
 password-reset-success: "&aPlayer's password has been reset."
 not-registered-two: "&cPlayer not registered."
+
+#Email
+invalid-email: "&cInvalid email."
+no-email: "&cThere is no email connected to this account."
+email: "&6Now type in your email. Type 'none' to skip."
+email-change-success:  "&aEmail changed."
+email-subject-sendpin: "PiggyAuth Pin Request"
+email-sendpin: "Your pin is {pin}. If you did not request to send your pin, please ignore this."
+email-success: "&aEmail has been sent."
+email-set: "&aEmail has been set."
+email-fail: "&cEmail could not send."
 
 #Pin
 pin: "&aYour pin: {pin}"

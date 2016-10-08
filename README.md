@@ -1,7 +1,13 @@
 # PiggyAuth
-Safe & feature-rich auth plugin.
+Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server.
 
 # Changelog
+
+###v1.0.9
+* Fixed MySQL table not being created
+* Email support! (Email server being fixed by @xBeastMode)
+* SendPin Command (Emailing not working yet)
+* ChangeEmail Command
 
 ###v1.0.8
 * MySQL support!
@@ -9,7 +15,7 @@ Safe & feature-rich auth plugin.
 ###v1.0.7
 * Preparation for MySQL support!MySQL support!
 * Fixed messages
-* Xbox bypass (not finished)
+* Xbox bypass, removed Xbox only (ClearSky only :unamused:, broken :expressionless:)
 
 ###v1.0.6
 * You can now use & for color codes
