@@ -58,7 +58,7 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 ###v1.0.0
 * First Release
 
-# Why not use SimpleAuth?
+# Why use PiggyAuth?
 * No permission bugs
 * Changepassword Command
 * Changeemail Command
