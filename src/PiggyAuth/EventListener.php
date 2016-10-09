@@ -21,7 +21,10 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\Listener;
+use pocketmine\item\Item;
+use pocketmine\network\protocol\ContainerSetSlotPacket;
 use pocketmine\Player;
 
 class EventListener implements Listener {
@@ -234,9 +237,13 @@ class EventListener implements Listener {
     public function onPrelogin(PlayerPreLoginEvent $event) {
         $player = $event->getPlayer();
         if($this->plugin->getConfig()->get("single-session")) {
-            if(!is_null($p = $this->plugin->getServer()->getPlayerExact($player->getName())) && $this->plugin->isAuthenticated($p)) {
-                $player->close("", "Already logged in!");
-                $event->setCancelled();
+            if(!is_null($p = $this->plugin->getServer()->getPlayerExact($player->getName()))) {
+                if($this->plugin->isAuthenticated($p) && $player->getUniqueId()->toString() !== $p->getUniqueId()->toString()) {
+                    $player->close("", "Already logged in!");
+                    $event->setCancelled();
+                } else {
+                    $p->close("", "Someone else is connecting to this account.");
+                }
             }
         }
     }
@@ -244,6 +251,26 @@ class EventListener implements Listener {
     public function onQuit(PlayerQuitEvent $event) {
         $player = $event->getPlayer();
         $this->plugin->logout($player);
+    }
+
+    public function onReceive(DataPacketReceiveEvent $event) {
+        $player = $event->getPlayer();
+        $packet = $event->getPacket();
+        if($packet instanceof ContainerSetSlotPacket) {
+            if(!$this->plugin->isAuthenticated($player)) {
+                if($player->isSurvival()) {
+                    if($packet->item !== Item::get(Item::AIR)) {
+                        $pk = new ContainerSetSlotPacket();
+                        $pk->windowid = $packet->windowid;
+                        $pk->slot = $packet->slot;
+                        $pk->hotbarSlot = $packet->hotbarSlot;
+                        $pk->item = Item::get(Item::AIR);
+                        $player->dataPacket($pk);
+                        $event->setCancelled();
+                    }
+                }
+            }
+        }
     }
 
 }

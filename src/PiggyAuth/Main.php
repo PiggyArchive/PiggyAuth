@@ -165,6 +165,7 @@ class Main extends PluginBase {
         } else {
             $player->sendMessage(str_replace("{pin}", $this->database->getPin($player->getName()), $this->getMessage("register-success")));
         }
+        $player->getInventory()->sendContents($player);
         $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $player->getUniqueId()->toString(), 0);
         return true;
     }

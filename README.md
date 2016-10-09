@@ -3,8 +3,12 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server.
 
 # Changelog
 
+###v2.0.1
+* Checks if player trying to connect has same uuid as current player with same name
+* Hides items til authenticated
+
 ###v2.0.0
-* Imporved xbox bypass (Still not working though :expressionless:)
+* Improved xbox bypass (Still not working though :expressionless:)
 * Config updater!
 * Emails now send! 
 * Emails get sent for /changepassword, /forgotpassword, /resetpassword, or an attempt to get into your account.
@@ -57,9 +61,11 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server.
 # Why not use SimpleAuth?
 * No permission bugs
 * Changepassword Command
+* Changeemail Command
 * Resetpassword Command
 * Forgetpassword Command
 * Logout Command
+* Sendpin Command
 * Timeout Feature
 * Invisible Feature
 * Blindness Feature
@@ -68,5 +74,8 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server.
 * Prevents Saying Password
 * Xbox Bypass Feature (ClearSky Only)
 * Chat Login
+* Email Support
+* Config Updater
+* Items dont't show til logged in
 * No YAML
 * Pig-Made!!! :pig:
