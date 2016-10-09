@@ -1,5 +1,5 @@
 # PiggyAuth
-Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server.
+Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Sugguest features at #10.
 
 # Changelog
 
