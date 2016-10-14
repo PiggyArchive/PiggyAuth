@@ -33,6 +33,8 @@ popup: true
 tip: true
 #Seconds til next message
 seconds-til-next-message: 5
+#Passwords you want blocked
+blocked-passwords: ["password", "123456", "abcdef"]
 #If enabled, players will be invisible til authentication
 invisible: true
 #If enabled, players will be blind til authentication
@@ -70,6 +72,8 @@ authentication-success: "&aYou have been authenticated.\n&6There have been {atte
 already-authenticated: "&cYou have already logged in."
 incorrect-password: "&cIncorrect password. {tries} left."
 not-registered: "&cYou are not registered."
+too-many-tries: "&cToo Many Tries to Login"
+timeout-message: "&cLogin Timeout"
 
 #Register
 register: "&6Please register by typing in /register <password> <confirm password> [email]"
@@ -79,6 +83,7 @@ register-success: "&aYou have been registered. Your pin is {pin}."
 auto-register: "&aYou were automatically registered. Your password is {password}. Change it with /changepassword."
 already-registered: "&cYou are already registered."
 password-too-short: "&cPassword is too short."
+password-blocked: "&cPassword is blocked."
 password-not-match: "&cYour password is not the same."
 confirm-password: "&aPlease confirm your password."
 
@@ -116,5 +121,3 @@ pin: "&aYour pin: {pin}"
 
 #General
 dont-say-password: "&cDo not say your password."
-timeout-message: "&cLogin Timeout"
-too-many-tries: "&cToo Many Tries to Login"

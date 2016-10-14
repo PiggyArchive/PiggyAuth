@@ -179,6 +179,10 @@ class Main extends PluginBase {
             $player->sendMessage($this->getMessage("password-too-short"));
             return false;
         }
+        if(in_array(strtolower($password), $this->getConfig()->get("blocked-passwords")) || in_array(strtolower($confirmpassword), $this->getConfig()->get("blocked-passwords"))) {
+            $player->sendMessage($this->getMessage("password-blocked"));
+            return false;
+        }
         if($password !== $confirmpassword) {
             $player->sendMessage($this->getMessage("password-not-match"));
             return false;
