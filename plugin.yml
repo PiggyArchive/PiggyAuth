@@ -38,5 +38,5 @@ permissions:
           default: true
           description: "Allow using /sendpin"
         piggyauth.command.logout:
-          default: op
+          default: true
           description: "Allow using /logout"

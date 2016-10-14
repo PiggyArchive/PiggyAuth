@@ -43,6 +43,8 @@ see-messages: false
 single-session: true
 #If enabled, players with logged in with xbox are automatically registered/logged in. (ClearSky only!)
 xbox-bypass: false
+#Disable authentication for the username Steve (default username in MCPE)
+steve-bypass: true
 #Database (sqlite3, mysql)
 database: sqlite3
 #MySQL login
