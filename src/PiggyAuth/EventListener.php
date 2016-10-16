@@ -175,7 +175,7 @@ class EventListener implements Listener {
 
     public function onJoin(PlayerJoinEvent $event) {
         $player = $event->getPlayer();
-        if(strtolower($player->getName()) == "steve" && $this->plugin->getConfig()->get("steve-bypass")){
+        if(strtolower($player->getName()) == "steve" && $this->plugin->getConfig()->get("steve-bypass")) {
             $this->plugin->authenticated[strtolower($player->getName())] = true;
             return true;
         }
@@ -185,6 +185,18 @@ class EventListener implements Listener {
             $player->sendMessage($this->plugin->getMessage("login"));
         } else {
             $player->sendMessage($this->plugin->getMessage("register"));
+            if($this->plugin->getConfig()->get("cape-for-registration")) {
+                $capes = array(
+                    "Minecon_MineconSteveCape2016",
+                    "Minecon_MineconSteveCape2015",
+                    "Minecon_MineconSteveCape2013",
+                    "Minecon_MineconSteveCape2012",
+                    "Minecon_MineconSteveCape2011");
+                if(in_array($player->getSkinId(), $capes)) {
+                    $player->setSkin($player->getSkinData(), "Standard_Custom");
+                }
+            }
+
         }
         if($this->plugin->getConfig("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
