@@ -178,7 +178,7 @@ class Main extends PluginBase {
             $cape = $capes[$cape];
             $player->setSkin($player->getSkinData(), $cape);
         }
-        if($this->plugin->getConfig()->get("hide-items")) {
+        if($this->getConfig()->get("hide-items")) {
             $player->getInventory()->sendContents($player);
         }
         $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $player->getUniqueId()->toString(), 0);
