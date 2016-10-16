@@ -73,6 +73,7 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 * Confirm Password Feature 
 * Prevents Saying Password
 * Xbox Bypass Feature (ClearSky Only)
+* Steve Bypass
 * Chat Login
 * Email Support
 * Password Filters

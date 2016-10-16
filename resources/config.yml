@@ -23,8 +23,10 @@ chat-login: true
 auto-authentication: false
 #Minimum password length
 minimum-password-length: 6
+#Kick players after certain time
+timeout: true
 #Seconds before kicked if not authenticated
-timeout: 60
+timeout-time: 60
 #Tries before kicked
 tries: 5
 #If enabled, a popup will be shown when not authenticated
@@ -49,6 +51,8 @@ xbox-bypass: false
 steve-bypass: true
 #Capes will be given for registered players
 cape-for-registration: true
+#Hide items til logged in
+hide-items: true
 #Database (sqlite3, mysql)
 database: sqlite3
 #MySQL login
@@ -60,6 +64,12 @@ mysql:
   port: 3306
 #Version
 version: v2.0.1
+#Auto update config
+config-update: true
+
+#Emails
+send-email-on-resetpassword: true
+send-email-on-changepassword: true
 
 #Messages
 

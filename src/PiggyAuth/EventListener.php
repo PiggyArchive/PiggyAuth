@@ -198,11 +198,11 @@ class EventListener implements Listener {
             }
 
         }
-        if($this->plugin->getConfig("invisible")) {
+        if($this->plugin->getConfig()->get("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
             $player->setDataProperty(Entity::DATA_SHOW_NAMETAG, Entity::DATA_TYPE_BYTE, 0);
         }
-        if($this->plugin->getConfig("blindness")) {
+        if($this->plugin->getConfig()->get("blindness")) {
             $effect = Effect::getEffect(15);
             $effect->setAmplifier(99);
             $effect->setDuration(999999);
@@ -238,7 +238,9 @@ class EventListener implements Listener {
             }
             return true;
         }
-        $this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this->plugin, $player), $this->plugin->getConfig()->get("timeout") * 20);
+        if($this->plugin->getConfig()->get("timeout")) {
+            $this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this->plugin, $player), $this->plugin->getConfig()->get("timeout-time") * 20);
+        }
     }
 
     public function onMove(PlayerMoveEvent $event) {
@@ -273,7 +275,7 @@ class EventListener implements Listener {
         $player = $event->getPlayer();
         $packet = $event->getPacket();
         if($packet instanceof ContainerSetSlotPacket) {
-            if(!$this->plugin->isAuthenticated($player)) {
+            if(!$this->plugin->isAuthenticated($player) && $this->plugin->getConfig()->get("hide-items")) {
                 if($player->isSurvival()) {
                     if($packet->item !== Item::get(Item::AIR)) {
                         $pk = new ContainerSetSlotPacket();

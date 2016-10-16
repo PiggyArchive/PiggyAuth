@@ -45,21 +45,23 @@ class Main extends PluginBase {
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new PopupTipTick($this), 20);
         }
         $outdated = false;
-        if(!$this->getConfig()->exists("version")) {
-            rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config_old.yml");
-            $this->saveDefaultConfig();
-            $outdated = true;
-        } elseif($this->getConfig()->get("version") !== $this->getDescription()->getVersion()) {
-            switch($this->getConfig()->get("version")) {
-                case "1.0.9":
-                case "1.0.8":
-                    rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config_old.yml");
-                    $this->saveDefaultConfig();
-                    $outdated = true; //DB Updater
-                    break;
+        if($this->getConfig()->get("config->update")) {
+            if(!$this->getConfig()->exists("version")) {
+                rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config_old.yml");
+                $this->saveDefaultConfig();
+                $outdated = true;
+            } elseif($this->getConfig()->get("version") !== $this->getDescription()->getVersion()) {
+                switch($this->getConfig()->get("version")) {
+                    case "1.0.9":
+                    case "1.0.8":
+                        rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config_old.yml");
+                        $this->saveDefaultConfig();
+                        $outdated = true; //DB Updater
+                        break;
+                }
+                $this->getConfig()->set("version", $this->getDescription()->getVersion());
+                $this->getConfig()->save();
             }
-            $this->getConfig()->set("version", $this->getDescription()->getVersion());
-            $this->getConfig()->save();
         }
         switch($this->getConfig()->get("database")) {
             case "mysql":
@@ -176,7 +178,9 @@ class Main extends PluginBase {
             $cape = $capes[$cape];
             $player->setSkin($player->getSkinData(), $cape);
         }
-        $player->getInventory()->sendContents($player);
+        if($this->plugin->getConfig()->get("hide-items")) {
+            $player->getInventory()->sendContents($player);
+        }
         $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $player->getUniqueId()->toString(), 0);
         return true;
     }
@@ -219,7 +223,7 @@ class Main extends PluginBase {
         $pin = $this->generatePin($player);
         $this->database->updatePlayer($player->getName(), password_hash($newpassword, PASSWORD_BCRYPT), $this->database->getEmail($player->getName()), $pin, $player->getUniqueId()->toString(), 0);
         $player->sendMessage(str_replace("{pin}", $pin, $this->getMessage("change-password-success")));
-        if($this->database->getEmail($player->getName()) !== "none") {
+        if($this->getConfig()->get("send-email-on-changepassword") && $this->database->getEmail($player) !== "none") {
             $this->emailUser($this->database->getEmail($player->getName()), $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
         }
         return true;
@@ -241,13 +245,17 @@ class Main extends PluginBase {
         $newpin = $this->generatePin($player);
         $this->database->updatePlayer($player->getName(), password_hash($newpassword, PASSWORD_BCRYPT), $this->database->getEmail($player->getName()), $newpin, $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()));
         $player->sendMessage(str_replace("{pin}", $newpin, $this->getMessage("forgot-password-success")));
-        $this->emailUser($this->database->getEmail($player->getName()), $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
+        if($this->getConfig()->get("send-email-on-changepassword") && $this->database->getEmail($player) !== "none") {
+            $this->emailUser($this->database->getEmail($player->getName()), $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
+        }
     }
 
     public function resetpassword($player, $sender) {
         $player = strtolower($player);
         if($this->isRegistered($player)) {
-            $this->emailUser($this->database->getEmail($player), $this->getMessage("email-subject-passwordreset"), $this->getMessage("email-passwordreset"));
+            if($this->getConfig()->get("send-email-on-resetpassword") && $this->database->getEmail($player) !== "none") {
+                $this->emailUser($this->database->getEmail($player), $this->getMessage("email-subject-passwordreset"), $this->getMessage("email-passwordreset"));
+            }
             $this->database->clearPassword($player);
             if(isset($this->authenticated[$player])) {
                 unset($this->authenticated[$player]);
@@ -256,7 +264,9 @@ class Main extends PluginBase {
             if($playerobject instanceof Player) {
                 $playerobject->sendMessage($this->getMessage("join-message"));
                 $this->messagetick[$player] = 5;
-                $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $playerobject), $this->getConfig()->get("timeout") * 20);
+                if($this->getConfig()->get("timeout")) {
+                    $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $playerobject), $this->getConfig()->get("timeout-time") * 20);
+                }
             }
             $sender->sendMessage($this->getMessage("password-reset-success"));
             return true;
@@ -271,7 +281,9 @@ class Main extends PluginBase {
             if(!$quit) {
                 $player->sendMessage($this->getMessage("join-message"));
                 $this->messagetick[strtolower($player->getName())] = 5;
-                $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $player), $this->getConfig()->get("timeout") * 20);
+                if($this->getConfig()->get("timeout")) {
+                    $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $player), $this->getConfig()->get("timeout-time") * 20);
+                }
             }
         } else {
             if(isset($this->confirmPassword[strtolower($player->getName())])) {
