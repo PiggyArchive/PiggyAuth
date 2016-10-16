@@ -6,6 +6,11 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 ###v2.0.1
 * Checks if player trying to connect has same uuid as current player with same name
 * Hides items til authenticated
+* Password Filter
+* Steve-Bypass
+* Capes for registered players
+* More conifgurable
+* Fix blindness & invisibility being given even if disabled
 
 ###v2.0.0
 * Improved xbox bypass (Still not working though :expressionless:)
