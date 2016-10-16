@@ -181,21 +181,33 @@ class EventListener implements Listener {
         }
         $player->sendMessage($this->plugin->getMessage("join-message"));
         $this->plugin->messagetick[strtolower($player->getName())] = 0;
+        if($this->plugin->getConfig()->get("cape-for-registration")) {
+            $stevecapes = array(
+                "Minecon_MineconSteveCape2016",
+                "Minecon_MineconSteveCape2015",
+                "Minecon_MineconSteveCape2013",
+                "Minecon_MineconSteveCape2012",
+                "Minecon_MineconSteveCape2011");
+            if(in_array($player->getSkinId(), $stevecapes)) {
+                $this->plugin->keepCape[strtolower($player->getName())] = $player->getSkinId();
+                $player->setSkin($player->getSkinData(), "Standard_Custom");
+            } else {
+                $alexcapes = array(
+                    "Minecon_MineconAlexCape2016",
+                    "Minecon_MineconAlexCape2015",
+                    "Minecon_MineconAlexCape2013",
+                    "Minecon_MineconAlexCape2012",
+                    "Minecon_MineconAlexCape2011");
+                if(in_array($player->getSkinId(), $alexcapes)) {
+                    $this->plugin->keepCape[strtolower($player->getName())] = $player->getSkinId();
+                    $player->setSkin($player->getSkinData(), "Standard_CustomSlim");
+                }
+            }
+        }
         if($this->plugin->isRegistered($player->getName())) {
             $player->sendMessage($this->plugin->getMessage("login"));
         } else {
             $player->sendMessage($this->plugin->getMessage("register"));
-            if($this->plugin->getConfig()->get("cape-for-registration")) {
-                $capes = array(
-                    "Minecon_MineconSteveCape2016",
-                    "Minecon_MineconSteveCape2015",
-                    "Minecon_MineconSteveCape2013",
-                    "Minecon_MineconSteveCape2012",
-                    "Minecon_MineconSteveCape2011");
-                if(in_array($player->getSkinId(), $capes)) {
-                    $player->setSkin($player->getSkinData(), "Standard_Custom");
-                }
-            }
 
         }
         if($this->plugin->getConfig()->get("invisible")) {

@@ -25,6 +25,7 @@ class Main extends PluginBase {
     public $authenticated;
     public $confirmPassword;
     public $giveEmail;
+    public $keepCape;
     public $messagetick;
     public $tries;
     public $database;
@@ -168,14 +169,20 @@ class Main extends PluginBase {
             $player->sendMessage(str_replace("{pin}", $this->database->getPin($player->getName()), $this->getMessage("register-success")));
         }
         if($this->getConfig()->get("cape-for-registration")) {
-            $capes = array(
-                "Minecon_MineconSteveCape2016",
-                "Minecon_MineconSteveCape2015",
-                "Minecon_MineconSteveCape2013",
-                "Minecon_MineconSteveCape2012",
-                "Minecon_MineconSteveCape2011");
-            $cape = array_rand($capes);
-            $cape = $capes[$cape];
+            $cape = "Minecon_MineconSteveCape2016";
+            if(isset($this->keepCape[strtolower($player->getName())])) {
+                $cape = $this->keepCape[strtolower($player->getName())];
+                unset($this->keepCape[strtolower($player->getName())]);
+            } else {
+                $capes = array(
+                    "Minecon_MineconSteveCape2016",
+                    "Minecon_MineconSteveCape2015",
+                    "Minecon_MineconSteveCape2013",
+                    "Minecon_MineconSteveCape2012",
+                    "Minecon_MineconSteveCape2011");
+                $cape = array_rand($capes);
+                $cape = $capes[$cape];
+            }
             $player->setSkin($player->getSkinData(), $cape);
         }
         if($this->getConfig()->get("hide-items")) {
