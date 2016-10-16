@@ -75,7 +75,9 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 * Xbox Bypass Feature (ClearSky Only)
 * Chat Login
 * Email Support
+* Password Filters
 * Config Updater
 * Items dont't show til logged in
+* Capes for registered players
 * No YAML
 * Pig-Made!!! :pig:

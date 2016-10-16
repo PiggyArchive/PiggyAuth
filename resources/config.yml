@@ -34,7 +34,7 @@ tip: true
 #Seconds til next message
 seconds-til-next-message: 5
 #Passwords you want blocked
-blocked-passwords: ["password", "123456", "abcdef"]
+blocked-passwords: ["password", "123456", "abcdef", "qwerty"]
 #If enabled, players will be invisible til authentication
 invisible: true
 #If enabled, players will be blind til authentication
