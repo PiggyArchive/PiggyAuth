@@ -53,6 +53,14 @@ steve-bypass: true
 cape-for-registration: true
 #Hide items til logged in
 hide-items: true
+#Send progress reports every certain number of players registered
+progress-reports: true
+#Email to send progress report to
+progress-report-email: youremail@gmail.com
+#Number of players before send progress report
+progress-report-number: 100
+#What progress report says
+progress-report: "Your server ({ip}:{port}) has reached {players} players! Your {players}th player is {player}."
 #Database (sqlite3, mysql)
 database: sqlite3
 #MySQL login

@@ -12,7 +12,7 @@ class SQLite3 implements Database {
         $this->plugin = $plugin;
         if(!file_exists($this->plugin->getDataFolder() . "players.db")) {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
-            $this->db->exec("CREATE TABLE players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT);");
+            $this->db->exec("CREATE TABLE players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT, xbox VARCHAR(5));");
         } else {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
             //Updater
@@ -23,6 +23,10 @@ class SQLite3 implements Database {
             $this->db->exec("ALTER TABLE players ADD COLUMN attempts INT");
             $this->db->exec("ALTER TABLE players ADD COLUMN xbox VARCHAR(5)");
         }
+    }
+
+    public function getRegisteredCount() {
+        return $this->db->querySingle("SELECT COUNT(*) as count FROM players");
     }
 
     public function getPlayer($player) {

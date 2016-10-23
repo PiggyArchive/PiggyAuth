@@ -215,6 +215,11 @@ class Main extends PluginBase {
         }
         $this->database->insertData($player, $password, $email, $xbox);
         $this->force($player, false);
+        if($this->getConfig()->get("progress-reports")) {
+            if($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) {
+                $this->emailUser($this->getConfig()->get("progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->getMessage("progress-report"))))));
+            }
+        }
         return true;
     }
 
