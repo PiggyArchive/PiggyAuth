@@ -11,6 +11,8 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 * Capes for registered players
 * More configurable
 * Fix blindness & invisibility being given even if disabled
+* Progress Reports
+* Choose what events to block
 
 ###v2.0.0
 * Improved xbox bypass (Still not working though :expressionless:)

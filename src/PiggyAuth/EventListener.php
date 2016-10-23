@@ -35,26 +35,34 @@ class EventListener implements Listener {
     public function onBreak(BlockBreakEvent $event) {
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
-            $event->setCancelled();
+            if(!$this->plugin->getConfig()->get("disable-block-break")) {
+                $event->setCancelled();
+            }
         }
     }
 
     public function onPlace(BlockPlaceEvent $event) {
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
-            $event->setCancelled();
+            if(!$this->plugin->getConfig()->get("disable-block-place")) {
+                $event->setCancelled();
+            }
         }
     }
 
     public function onDamage(EntityDamageEvent $event) {
         $entity = $event->getEntity();
         if($entity instanceof Player && !$this->plugin->isAuthenticated($entity)) {
-            $event->setCancelled();
+            if(!$this->plugin->getConfig()->get("disable-damage")) {
+                $event->setCancelled();
+            }
         }
         if($event instanceof EntityDamageByEntityEvent) {
             $damager = $event->getDamager();
             if($damager instanceof Player && !$this->plugin->isAuthenticated($damager)) {
-                $event->setCancelled();
+                if(!$this->plugin->getConfig()->get("disable-damage-others")) {
+                    $event->setCancelled();
+                }
             }
         }
     }
@@ -62,14 +70,18 @@ class EventListener implements Listener {
     public function onPickupArrow(InventoryPickupArrowEvent $event) {
         $player = $event->getInventory()->getHolder();
         if($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
-            $event->setCancelled();
+            if(!$this->plugin->getConfig()->get("disable-arrow-pickup")) {
+                $event->setCancelled();
+            }
         }
     }
 
     public function onPickupItem(InventoryPickupItemEvent $event) {
         $player = $event->getInventory()->getHolder();
         if($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
-            $event->setCancelled();
+            if(!$this->plugin->getConfig()->get("disable-item-pickup")) {
+                $event->setCancelled();
+            }
         }
     }
 
@@ -139,7 +151,9 @@ class EventListener implements Listener {
         if(!$this->plugin->isAuthenticated($player)) {
             if($message[0] == "/") {
                 if(!in_array($args[0], $forgotpasswordaliases) && $args[0] !== "/login" && $args[0] !== "/register" && $args[0] !== "/sendpin") {
-                    $event->setCancelled();
+                    if(!$this->plugin->getConfig()->get("allow-commands")) {
+                        $event->setCancelled();
+                    }
                 }
             }
         }
@@ -148,84 +162,42 @@ class EventListener implements Listener {
     public function onDrop(PlayerDropItemEvent $event) {
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
-            $event->setCancelled();
+            if(!$this->plugin->getConfig()->get("allow-item-drop")) {
+                $event->setCancelled();
+            }
         }
     }
 
     public function onExhaust(PlayerExhaustEvent $event) {
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
-            $event->setCancelled();
+            if(!$this->plugin->getConfig()->get("disable-hunger")) {
+                $event->setCancelled();
+            }
         }
     }
 
     public function onInteract(PlayerInteractEvent $event) {
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
-            $event->setCancelled();
+            if(!$this->plugin->getConfig()->get("allow-block-interact")) {
+                $event->setCancelled();
+            }
         }
     }
 
     public function onConsume(PlayerItemConsumeEvent $event) {
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
-            $event->setCancelled();
+            if(!$this->plugin->getConfig()->get("allow-eating")) {
+                $event->setCancelled();
+            }
         }
     }
 
     public function onJoin(PlayerJoinEvent $event) {
         $player = $event->getPlayer();
-        if(strtolower($player->getName()) == "steve" && $this->plugin->getConfig()->get("steve-bypass")) {
-            $this->plugin->authenticated[strtolower($player->getName())] = true;
-            return true;
-        }
-        $player->sendMessage($this->plugin->getMessage("join-message"));
-        $this->plugin->messagetick[strtolower($player->getName())] = 0;
-        if($this->plugin->getConfig()->get("cape-for-registration")) {
-            $stevecapes = array(
-                "Minecon_MineconSteveCape2016",
-                "Minecon_MineconSteveCape2015",
-                "Minecon_MineconSteveCape2013",
-                "Minecon_MineconSteveCape2012",
-                "Minecon_MineconSteveCape2011");
-            if(in_array($player->getSkinId(), $stevecapes)) {
-                $this->plugin->keepCape[strtolower($player->getName())] = $player->getSkinId();
-                $player->setSkin($player->getSkinData(), "Standard_Custom");
-            } else {
-                $alexcapes = array(
-                    "Minecon_MineconAlexCape2016",
-                    "Minecon_MineconAlexCape2015",
-                    "Minecon_MineconAlexCape2013",
-                    "Minecon_MineconAlexCape2012",
-                    "Minecon_MineconAlexCape2011");
-                if(in_array($player->getSkinId(), $alexcapes)) {
-                    $this->plugin->keepCape[strtolower($player->getName())] = $player->getSkinId();
-                    $player->setSkin($player->getSkinData(), "Standard_CustomSlim");
-                }
-            }
-        }
-        if($this->plugin->isRegistered($player->getName())) {
-            $player->sendMessage($this->plugin->getMessage("login"));
-        } else {
-            $player->sendMessage($this->plugin->getMessage("register"));
-
-        }
-        if($this->plugin->getConfig()->get("invisible")) {
-            $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
-            $player->setDataProperty(Entity::DATA_SHOW_NAMETAG, Entity::DATA_TYPE_BYTE, 0);
-        }
-        if($this->plugin->getConfig()->get("blindness")) {
-            $effect = Effect::getEffect(15);
-            $effect->setAmplifier(99);
-            $effect->setDuration(999999);
-            $effect->setVisible(false);
-            $player->addEffect($effect);
-            $effect = Effect::getEffect(16);
-            $effect->setAmplifier(99);
-            $effect->setDuration(999999);
-            $effect->setVisible(false);
-            $player->addEffect($effect);
-        }
+        $this->plugin->startSession($player);
         $data = $this->plugin->database->getPlayer($player->getName());
         if($this->plugin->getConfig()->get("auto-authentication") && !is_null($data) && $player->getUniqueId()->toString() == $data["uuid"]) {
             $this->plugin->force($player);
@@ -249,9 +221,6 @@ class EventListener implements Listener {
                 }
             }
             return true;
-        }
-        if($this->plugin->getConfig()->get("timeout")) {
-            $this->plugin->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this->plugin, $player), $this->plugin->getConfig()->get("timeout-time") * 20);
         }
     }
 

@@ -22,14 +22,14 @@ class MySQL implements Database {
             $this->db->query("ALTER TABLE players ADD xbox VARCHAR(5) after attempts");
         }
     }
-    
-    public function getRegisteredCount(){
+
+    public function getRegisteredCount() {
         $result = $this->db->query("SELECT count(1) FROM players");
         $data = $result->fetch_assoc();
         $result->free();
         return $data["count(1)"];
     }
-    
+
     public function getPlayer($player) {
         $player = strtolower($player);
         $result = $this->db->query("SELECT * FROM players WHERE name = '" . $this->db->escape_string($player) . "'");

@@ -15,8 +15,30 @@
 #  `---`     ---`-'   \   \  /   \   \  /     \  ' ;                                                   
 #                      `--`-'     `--`-'       `--`                                                    
 
-#If enabled, movement will be alowed will be allowed when not authenticated
+#If enabled, interaction with blocks will be allowed when not authenticated
+allow-block-interact: false
+#If enabled, dropping items will be allowed when not authenticated
+allow-item-drop: false
+#If enabled, picking up items will be allowed when not authenticated
+allow-item-pickup: false
+#If enabled, picking up arrows will be allowed when not authenticated
+allow-arrow-pickup: false
+#If enabled, hitting others will be allowed when not authenticated
+allow-damage-others: false
+#If enabled, placing blocks will be allowed when not authenticated
+allow-block-place: false
+#If enabled, breaking blocks will be allowed when not authenticated
+allow-block-break: false
+#If enabled, movement will be will be allowed when not authenticated
 allow-movement: false
+#If enabled, eating will be allowed when not authenticated
+allow-eating: false
+#If enabled, commands (other than /login, /register, /forgetpassword, /sendpin) will be allowed when not authenticated
+allow-commands: false
+#If enabled, hunger will not be stopped when not authenticated
+allow-hunger: false
+#If enabled, damage will not be stopped when not authenticated
+allow-damage: false
 #If enabled, you can login without /login
 chat-login: true
 #If enabled, you will be authenticated automatically if your uuid matches the last uuid used.

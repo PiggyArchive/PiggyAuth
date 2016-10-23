@@ -17,6 +17,7 @@ use PiggyAuth\Tasks\PingTask;
 use PiggyAuth\Tasks\PopupTipTick;
 use PiggyAuth\Tasks\TimeoutTask;
 
+use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Player;
@@ -274,11 +275,7 @@ class Main extends PluginBase {
             }
             $playerobject = $this->getServer()->getPlayerExact($player);
             if($playerobject instanceof Player) {
-                $playerobject->sendMessage($this->getMessage("join-message"));
-                $this->messagetick[$player] = 5;
-                if($this->getConfig()->get("timeout")) {
-                    $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $playerobject), $this->getConfig()->get("timeout-time") * 20);
-                }
+                $this->startSession($playerobject);
             }
             $sender->sendMessage($this->getMessage("password-reset-success"));
             return true;
@@ -291,11 +288,7 @@ class Main extends PluginBase {
         if($this->isAuthenticated($player)) {
             unset($this->authenticated[strtolower($player->getName())]);
             if(!$quit) {
-                $player->sendMessage($this->getMessage("join-message"));
-                $this->messagetick[strtolower($player->getName())] = 5;
-                if($this->getConfig()->get("timeout")) {
-                    $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $player), $this->getConfig()->get("timeout-time") * 20);
-                }
+                $this->startSession($player);
             }
         } else {
             if(isset($this->confirmPassword[strtolower($player->getName())])) {
@@ -329,6 +322,63 @@ class Main extends PluginBase {
         $result = curl_exec($ch);
         curl_close($ch);
         return $result;
+    }
+
+    public function startSession(Player $player) {
+        if(strtolower($player->getName()) == "steve" && $this->getConfig()->get("steve-bypass")) {
+            $this->authenticated[strtolower($player->getName())] = true;
+            return true;
+        }
+        $player->sendMessage($this->getMessage("join-message"));
+        $this->messagetick[strtolower($player->getName())] = 0;
+        if($this->getConfig()->get("cape-for-registration")) {
+            $stevecapes = array(
+                "Minecon_MineconSteveCape2016",
+                "Minecon_MineconSteveCape2015",
+                "Minecon_MineconSteveCape2013",
+                "Minecon_MineconSteveCape2012",
+                "Minecon_MineconSteveCape2011");
+            if(in_array($player->getSkinId(), $stevecapes)) {
+                $this->keepCape[strtolower($player->getName())] = $player->getSkinId();
+                $player->setSkin($player->getSkinData(), "Standard_Custom");
+            } else {
+                $alexcapes = array(
+                    "Minecon_MineconAlexCape2016",
+                    "Minecon_MineconAlexCape2015",
+                    "Minecon_MineconAlexCape2013",
+                    "Minecon_MineconAlexCape2012",
+                    "Minecon_MineconAlexCape2011");
+                if(in_array($player->getSkinId(), $alexcapes)) {
+                    $this->keepCape[strtolower($player->getName())] = $player->getSkinId();
+                    $player->setSkin($player->getSkinData(), "Standard_CustomSlim");
+                }
+            }
+        }
+        if($this->isRegistered($player->getName())) {
+            $player->sendMessage($this->getMessage("login"));
+        } else {
+            $player->sendMessage($this->getMessage("register"));
+
+        }
+        if($this->getConfig()->get("invisible")) {
+            $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
+            $player->setDataProperty(Entity::DATA_SHOW_NAMETAG, Entity::DATA_TYPE_BYTE, 0);
+        }
+        if($this->getConfig()->get("blindness")) {
+            $effect = Effect::getEffect(15);
+            $effect->setAmplifier(99);
+            $effect->setDuration(999999);
+            $effect->setVisible(false);
+            $player->addEffect($effect);
+            $effect = Effect::getEffect(16);
+            $effect->setAmplifier(99);
+            $effect->setDuration(999999);
+            $effect->setVisible(false);
+            $player->addEffect($effect);
+        }
+        if($this->getConfig()->get("timeout")) {
+            $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $player), $this->getConfig()->get("timeout-time") * 20);
+        }
     }
 
 }
