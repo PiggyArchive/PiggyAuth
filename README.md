@@ -13,9 +13,10 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 * Fix blindness & invisibility being given even if disabled
 * Progress Reports
 * Choose what events to block
+* Xbox bypass finally works!
 
 ###v2.0.0
-* Improved xbox bypass (Still not working though :expressionless:)
+* Improved xbox bypass
 * Config updater!
 * Emails now send! 
 * Emails get sent for /changepassword, /forgotpassword, /resetpassword, or an attempt to get into your account.
@@ -33,7 +34,7 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 ###v1.0.7
 * Preparation for MySQL support!
 * Fixed messages
-* Xbox bypass, removed Xbox only (ClearSky only :unamused:, broken :expressionless:)
+* Xbox bypass, removed Xbox only (ClearSky only :unamused:)
 
 ###v1.0.6
 * You can now use & for color codes
