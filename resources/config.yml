@@ -122,7 +122,7 @@ register: "&6Please register by typing in /register <password> <confirm password
 register-popup: "&6Please register."
 register-tip: "&6Please register."
 register-success: "&aYou have been registered. Your pin is {pin}."
-auto-register: "&aYou were automatically registered. Your password is {password}. Change it with /changepassword."
+auto-registered: "&aYou were automatically registered. Your password is {password}. Change it with /changepassword."
 already-registered: "&cYou are already registered."
 password-too-short: "&cPassword is too short."
 password-blocked: "&cPassword is blocked."

@@ -203,16 +203,16 @@ class EventListener implements Listener {
             $this->plugin->force($player);
             return true;
         }
-        if($this->plugin->getConfig()->get("xbox-bypass") && $this->plugin->getServer()->getName() == "ClearSky") {
-            if(!$player->isRegistered()) {
+        if($this->plugin->getConfig()->get("xbox-bypass") && $this->plugin->getServer()->getName() == "ClearSky" && $player->isAuthenticated()) {
+            if(!$this->plugin->isRegistered($player->getName())) {
                 $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
                 $randompassword = [];
-                $characteramount = strlen($alphabet) - 1;
-                for($i = 0; $i < $this->getConfig()->get("minimum-password-length") - 1; $i++) {
-                    $character = mt_rand(0, $alphaLength);
+                $characteramount = strlen($characters) - 1;
+                for($i = 0; $i < $this->plugin->getConfig()->get("minimum-password-length"); $i++) {
+                    $character = mt_rand(0, $characteramount);
                     array_push($randompassword, $characters[$character]);
                 }
-                $randompassword = implode($randompassword);
+                $randompassword = implode("", $randompassword);
                 $this->plugin->register($player, $randompassword, $randompassword, "none", "true");
                 $player->sendMessage(str_replace("{password}", $randompassword, $this->plugin->getMessage("auto-registered")));
             } else {
