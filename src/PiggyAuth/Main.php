@@ -3,15 +3,17 @@ namespace PiggyAuth;
 
 use PiggyAuth\Commands\ChangePasswordCommand;
 use PiggyAuth\Commands\ChangeEmailCommand;
-use PiggyAuth\Commands\PinCommand;
 use PiggyAuth\Commands\ForgotPasswordCommand;
 use PiggyAuth\Commands\LoginCommand;
 use PiggyAuth\Commands\LogoutCommand;
+use PiggyAuth\Commands\KeyCommand;
+use PiggyAuth\Commands\PinCommand;
 use PiggyAuth\Commands\RegisterCommand;
 use PiggyAuth\Commands\ResetPasswordCommand;
 use PiggyAuth\Commands\SendPinCommand;
 use PiggyAuth\Databases\MySQL;
 use PiggyAuth\Databases\SQLite3;
+use PiggyAuth\Tasks\KeyTick;
 use PiggyAuth\Tasks\MessageTick;
 use PiggyAuth\Tasks\PingTask;
 use PiggyAuth\Tasks\PopupTipTick;
@@ -30,12 +32,16 @@ class Main extends PluginBase {
     public $messagetick;
     public $tries;
     public $database;
+    private $key = "PiggyAuthKey";
+    public $keytime = 299; //300 = Reset
+    public $expiredkeys = [];
 
     public function onEnable() {
         $this->saveDefaultConfig();
         $this->getServer()->getCommandMap()->register('changepassword', new ChangePasswordCommand('changepassword', $this));
         $this->getServer()->getCommandMap()->register('changeemail', new ChangeEmailCommand('changeemail', $this));
         $this->getServer()->getCommandMap()->register('forgotpassword', new ForgotPasswordCommand('forgotpassword', $this));
+        $this->getServer()->getCommandMap()->register('key', new KeyCommand('key', $this));
         $this->getServer()->getCommandMap()->register('login', new LoginCommand('login', $this));
         $this->getServer()->getCommandMap()->register('logout', new LogoutCommand('logout', $this));
         $this->getServer()->getCommandMap()->register('register', new RegisterCommand('register', $this));
@@ -43,6 +49,9 @@ class Main extends PluginBase {
         $this->getServer()->getCommandMap()->register('resetpassword', new ResetPasswordCommand('resetpassword', $this));
         $this->getServer()->getCommandMap()->register('sendpin', new SendPinCommand('sendpin', $this));
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new MessageTick($this), 20);
+        if($this->getConfig()->get("key")) {
+            $this->getServer()->getScheduler()->scheduleRepeatingTask(new KeyTick($this), 20);
+        }
         if($this->getConfig()->get("popup") || $this->getConfig()->get("tip")) {
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new PopupTipTick($this), 20);
         }
@@ -68,7 +77,7 @@ class Main extends PluginBase {
         switch($this->getConfig()->get("database")) {
             case "mysql":
                 $this->database = new MySQL($this, $outdated);
-                $this->getServer()->getScheduler()->scheduleRepeatingTask(new PingTask($this), 300);
+                $this->getServer()->getScheduler()->scheduleRepeatingTask(new PingTask($this, $this->database), 300);
                 break;
             case "sqlite3":
                 $this->database = new SQLite3($this, $outdated);
@@ -127,6 +136,18 @@ class Main extends PluginBase {
             return false;
         }
         if(!$this->isCorrectPassword($player, $password)) {
+            if($this->getConfig()->get("key")) {
+                if($password == $this->key) {
+                    $this->changeKey();
+                    $this->keytime = 0;
+                    $this->force($player);
+                    return true;
+                }
+                if(in_array($password, $this->expiredkeys)) {
+                    $player->sendMessage($this->getMessage("key-expired"));
+                    return true;
+                }
+            }
             if(isset($this->tries[strtolower($player->getName())])) {
                 $this->tries[strtolower($player->getName())]++;
                 if($this->tries[strtolower($player->getName())] >= $this->getConfig()->get("tries")) {
@@ -158,7 +179,7 @@ class Main extends PluginBase {
         $this->authenticated[strtolower($player->getName())] = true;
         if($this->getConfig()->get("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
-            $player->setDataProperty(Entity::DATA_SHOW_NAMETAG, Entity::DATA_TYPE_BYTE, 1);
+            $player->setDataProperty(14, Entity::DATA_TYPE_BYTE, 1);
         }
         if($this->getConfig()->get("blindness")) {
             $player->removeEffect(15);
@@ -362,7 +383,7 @@ class Main extends PluginBase {
         }
         if($this->getConfig()->get("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
-            $player->setDataProperty(Entity::DATA_SHOW_NAMETAG, Entity::DATA_TYPE_BYTE, 0);
+            $player->setDataProperty(14, Entity::DATA_TYPE_BYTE, 0);
         }
         if($this->getConfig()->get("blindness")) {
             $effect = Effect::getEffect(15);
@@ -379,6 +400,31 @@ class Main extends PluginBase {
         if($this->getConfig()->get("timeout")) {
             $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $player), $this->getConfig()->get("timeout-time") * 20);
         }
+    }
+
+    public function getKey($password) {
+        if(password_verify($password, $this->database->getPassword($this->getConfig()->get("owner")))) {
+            return $this->key;
+        }
+        return false;
+    }
+
+    public function changeKey() {
+        array_push($this->expiredkeys, $this->key);
+        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        $key = [];
+        $characteramount = strlen($characters) - 1;
+        for($i = 0; $i < $this->getConfig()->get("minimum-password-length"); $i++) {
+            $character = mt_rand(0, $characteramount);
+            array_push($key, $characters[$character]);
+        }
+        $key = implode("", $key);
+        if($this->key == $key) {
+            $this->changeKey();
+            return false;
+        }
+        $this->key = $key;
+        return true;
     }
 
 }

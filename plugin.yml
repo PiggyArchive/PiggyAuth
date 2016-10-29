@@ -13,12 +13,6 @@ permissions:
       default: op
       description: "Allow using all PiggyAuth commands"
       children:
-        piggyauth.command.login:
-          default: true
-          description: "Allow using /login"
-        piggyauth.command.register:
-          default: true
-          description: "Allow using /register"
         piggyauth.command.changeemail:
           default: true
           description: "Allow using /changeemail"
@@ -28,15 +22,24 @@ permissions:
         piggyauth.command.forgotpassword:
           default: true
           description: "Allow using /forgotpassword"
+        piggyauth.command.login:
+          default: true
+          description: "Allow using /login"
+        piggyauth.command.logout:
+          default: true
+          description: "Allow using /logout"
+        piggyauth.command.key:
+          default: op
+          description: "Allow using /key"
         piggyauth.command.pin:
           default: true
           description: "Allow using /pin"
+        piggyauth.command.register:
+          default: true
+          description: "Allow using /register"
         piggyauth.command.resetpassword:
           default: op
           description: "Allow using /resetpassword"
         piggyauth.command.sendpin:
           default: true
           description: "Allow using /sendpin"
-        piggyauth.command.logout:
-          default: true
-          description: "Allow using /logout"

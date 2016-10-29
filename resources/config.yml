@@ -83,6 +83,10 @@ progress-report-email: youremail@gmail.com
 progress-report-number: 100
 #What progress report says
 progress-report: "Your server ({ip}:{port}) has reached {players} players! Your {players}th player is {player}."
+#If enabled, there will be a special key that resets every 5 mins and after every use to allow access to any account.
+key: true
+#Username of owner, for key
+owner: TheOwnerLovesPig
 #Database (sqlite3, mysql)
 database: sqlite3
 #MySQL login
@@ -160,6 +164,9 @@ email-passwordreset: "Your password was reset by a staff member. Please go on an
 
 #Pin
 pin: "&aYour pin: {pin}"
+
+#Key
+key-expired: "&cYour key is expired."
 
 #General
 dont-say-password: "&cDo not say your password."
