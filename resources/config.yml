@@ -97,6 +97,8 @@ new-player: "&eWelcome {player} to the server!"
 hide-players: true
 #Return to spawn when logged in
 return-to-spawn: false
+#If on, players will be set to adventure mode til logged in
+adventure-mode: true
 #Database (sqlite3, mysql)
 database: sqlite3
 #MySQL login

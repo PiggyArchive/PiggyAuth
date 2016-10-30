@@ -199,7 +199,7 @@ class EventListener implements Listener {
         $player = $event->getPlayer();
         $this->plugin->startSession($player);
         $data = $this->plugin->database->getPlayer($player->getName());
-        if(!$this->plugin->isRegistered($player->getName()) && $this->plugin->getConfig()->get("join-message-for-new-players")){
+        if(!$this->plugin->isRegistered($player->getName()) && $this->plugin->getConfig()->get("join-message-for-new-players")) {
             $event->setJoinMessage(str_replace("{player}", $player->getName(), $this->plugin->getMessage("new-player")));
         }
         if($this->plugin->getConfig()->get("hold-join-message")) {

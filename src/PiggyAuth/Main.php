@@ -30,6 +30,7 @@ class Main extends PluginBase {
     public $giveEmail;
     public $keepCape;
     public $joinMessage;
+    public $gamemode;
     public $messagetick;
     public $tries;
     public $database;
@@ -191,7 +192,7 @@ class Main extends PluginBase {
             $player->removeEffect(16);
         }
         if($this->getConfig()->get("hide-players")) {
-            foreach($this->getServer()->getOnlinePlayers() as $p){
+            foreach($this->getServer()->getOnlinePlayers() as $p) {
                 $player->showPlayer($p);
             }
         }
@@ -222,6 +223,10 @@ class Main extends PluginBase {
         }
         if($this->getConfig()->get("hide-items")) {
             $player->getInventory()->sendContents($player);
+        }
+        if($this->getConfig()->get("adventure-mode")) {
+            $player->setGamemode($this->gamemode[strtolower($player->getName())]);
+            unset($this->gamemode[strtolower($player->getName())]);
         }
         $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $player->getUniqueId()->toString(), 0);
         return true;
@@ -334,6 +339,10 @@ class Main extends PluginBase {
             if(isset($this->tries[strtolower($player->getName())])) {
                 unset($this->tries[strtolower($player->getName())]);
             }
+            if($this->getConfig()->get("adventure-mode")) {
+                $player->setGamemode($this->gamemode[strtolower($player->getName())]);
+                unset($this->gamemode[strtolower($player->getName())]);
+            }
         }
     }
 
@@ -411,12 +420,16 @@ class Main extends PluginBase {
             $player->addEffect($effect);
         }
         if($this->getConfig()->get("hide-players")) {
-            foreach($this->getServer()->getOnlinePlayers() as $p){
+            foreach($this->getServer()->getOnlinePlayers() as $p) {
                 $player->hidePlayer($p);
-                if(!$this->isAuthenticated($p)){
+                if(!$this->isAuthenticated($p)) {
                     $p->hidePlayer($player);
                 }
             }
+        }
+        if($this->getConfig()->get("adventure-mode")) {
+            $this->gamemode[strtolower($player->getName())] = $player->getGamemode();
+            $player->setGamemode(2);
         }
         if($this->getConfig()->get("timeout")) {
             $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $player), $this->getConfig()->get("timeout-time") * 20);
