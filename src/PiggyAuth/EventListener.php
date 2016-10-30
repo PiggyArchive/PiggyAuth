@@ -199,6 +199,13 @@ class EventListener implements Listener {
         $player = $event->getPlayer();
         $this->plugin->startSession($player);
         $data = $this->plugin->database->getPlayer($player->getName());
+        if(!$this->plugin->isRegistered($player->getName()) && $this->plugin->getConfig()->get("join-message-for-new-players")){
+            $event->setJoinMessage(str_replace("{player}", $player->getName(), $this->plugin->getMessage("new-player")));
+        }
+        if($this->plugin->getConfig()->get("hold-join-message")) {
+            $this->plugin->joinMessage[strtolower($player->getName())] = $event->getJoinMessage();
+            $event->setJoinMessage(null);
+        }
         if($this->plugin->getConfig()->get("auto-authentication") && !is_null($data) && $player->getUniqueId()->toString() == $data["uuid"]) {
             $this->plugin->force($player);
             return true;
@@ -249,6 +256,9 @@ class EventListener implements Listener {
 
     public function onQuit(PlayerQuitEvent $event) {
         $player = $event->getPlayer();
+        if(!$this->plugin->isAuthenticated($player) && $this->plugin->getConfig()->get("hold-join-message")) {
+            $event->setQuitMessage(null);
+        }
         $this->plugin->logout($player);
     }
 

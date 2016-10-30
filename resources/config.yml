@@ -87,6 +87,12 @@ progress-report: "Your server ({ip}:{port}) has reached {players} players! Your 
 key: true
 #Username of owner, for key
 owner: TheOwnerLovesPig
+#If on, will prevent join message til logged in
+hold-join-message: true
+#If on, there will be a seperate join message for new players
+join-message-for-new-players: true
+#Join message for new players
+new-player: "&eWelcome {player} to the server!"
 #Database (sqlite3, mysql)
 database: sqlite3
 #MySQL login

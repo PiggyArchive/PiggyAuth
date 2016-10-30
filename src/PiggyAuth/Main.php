@@ -29,6 +29,7 @@ class Main extends PluginBase {
     public $confirmPassword;
     public $giveEmail;
     public $keepCape;
+    public $joinMessage;
     public $messagetick;
     public $tries;
     public $database;
@@ -175,6 +176,10 @@ class Main extends PluginBase {
         }
         if(isset($this->tries[strtolower($player->getName())])) {
             unset($this->tries[strtolower($player->getName())]);
+        }
+        if(isset($this->joinMessage[strtolower($player->getName())]) && $this->getConfig()->get("hold-join-message")) {
+            $this->getServer()->broadcastMessage($this->joinMessage[strtolower($player->getName())]);
+            unset($this->joinMessage[strtolower($player->getName())]);
         }
         $this->authenticated[strtolower($player->getName())] = true;
         if($this->getConfig()->get("invisible")) {
