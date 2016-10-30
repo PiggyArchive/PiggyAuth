@@ -96,5 +96,7 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 * Keys! :key:
 * Hold join messages & prevent quit messages for unathenticated users
 * Join messages for new players
+* Return to spawn when logged in
+* Hide players til logged in
 * No YAML
 * Pig-Made!!! :pig:
