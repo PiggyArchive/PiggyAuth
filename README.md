@@ -17,6 +17,9 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 * Keys! :key:
 * Hold join messages & prevent quit messages for unathenticated users
 * Join messages for new players
+* Return to spawn when logged in
+* Hide players til logged in
+* Adventure mode til logged in
 
 ###v2.0.0
 * Improved xbox bypass
@@ -98,5 +101,6 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 * Join messages for new players
 * Return to spawn when logged in
 * Hide players til logged in
+* Adventure mode til logged in
 * No YAML
 * Pig-Made!!! :pig:
