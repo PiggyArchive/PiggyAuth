@@ -14,6 +14,7 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 * Progress Reports
 * Choose what events to block
 * Xbox bypass finally works!
+* Keys! :key:
 
 ###v2.0.0
 * Improved xbox bypass
