@@ -16,7 +16,7 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 * Xbox bypass finally works!
 * Keys! :key:
 * Hold join messages & prevent quit messages for unathenticated users
-* Join messages fof new players
+* Join messages for new players
 
 ###v2.0.0
 * Improved xbox bypass
@@ -91,5 +91,10 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 * Config Updater
 * Items dont't show til logged in
 * Capes for registered players
+* More configurable
+* Progress Reports
+* Keys! :key:
+* Hold join messages & prevent quit messages for unathenticated users
+* Join messages for new players
 * No YAML
 * Pig-Made!!! :pig:
