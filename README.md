@@ -15,6 +15,8 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 * Choose what events to block
 * Xbox bypass finally works!
 * Keys! :key:
+* Hold join messages & prevent quit messages for unathenticated users
+* Join messages fof new players
 
 ###v2.0.0
 * Improved xbox bypass
