@@ -190,6 +190,14 @@ class Main extends PluginBase {
             $player->removeEffect(15);
             $player->removeEffect(16);
         }
+        if($this->getConfig()->get("hide-players")) {
+            foreach($this->getServer()->getOnlinePlayers() as $p){
+                $player->showPlayer($p);
+            }
+        }
+        if($this->getConfig()->get("return-to-spawn")) {
+            $player->teleport($this->getServer()->getDefaultLevel()->getSafeSpawn());
+        }
         if($login) {
             $player->sendMessage(str_replace("{attempts}", $this->database->getAttempts($player->getName()), $this->getMessage("authentication-success")));
         } else {
@@ -401,6 +409,14 @@ class Main extends PluginBase {
             $effect->setDuration(999999);
             $effect->setVisible(false);
             $player->addEffect($effect);
+        }
+        if($this->getConfig()->get("hide-players")) {
+            foreach($this->getServer()->getOnlinePlayers() as $p){
+                $player->hidePlayer($p);
+                if(!$this->isAuthenticated($p)){
+                    $p->hidePlayer($player);
+                }
+            }
         }
         if($this->getConfig()->get("timeout")) {
             $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $player), $this->getConfig()->get("timeout-time") * 20);

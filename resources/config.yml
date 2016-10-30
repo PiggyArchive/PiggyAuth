@@ -93,6 +93,10 @@ hold-join-message: true
 join-message-for-new-players: true
 #Join message for new players
 new-player: "&eWelcome {player} to the server!"
+#Hides all players til logged in
+hide-players: true
+#Return to spawn when logged in
+return-to-spawn: false
 #Database (sqlite3, mysql)
 database: sqlite3
 #MySQL login
