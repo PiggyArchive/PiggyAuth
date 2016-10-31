@@ -5,10 +5,10 @@ use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
-class RegisterCommand extends VanillaCommand {
+class PreregisterCommand extends VanillaCommand {
     public function __construct($name, $plugin) {
-        parent::__construct($name, "Register an account", "/register <password> <confirm password> [email]");
-        $this->setPermission("piggyauth.command.register");
+        parent::__construct($name, "Register an account", "/preregister <player> <password> <confirm password> [email]");
+        $this->setPermission("piggyauth.command.preregister");
         $this->plugin = $plugin;
     }
 
@@ -16,23 +16,19 @@ class RegisterCommand extends VanillaCommand {
         if(!$this->testPermission($sender)) {
             return true;
         }
-        if(!$sender instanceof Player) {
-            $sender->sendMessage("§cYou must use the command in-game.");
+        if(!isset($args[0]) || !isset($args[1]) || !isset($args[2])) {
+            $sender->sendMessage("/preregister <player> <password> <confirm password> [email]");
             return false;
         }
-        if(!isset($args[0]) || !isset($args[1])) {
-            $sender->sendMessage("/register <password> <confirm password> [email]");
-            return false;
-        }
-        if(!isset($args[2])) {
-            $args[2] = "none";
+        if(!isset($args[3])) {
+            $args[3] = "none";
         } else {
             if(!filter_var($args[2], FILTER_VALIDATE_EMAIL)) {
                 $sender->sendMessage($this->plugin->getMessage("invalid-email"));
                 return false;
             }
         }
-        $this->plugin->register($sender, $args[0], $args[1], $args[2]);
+        $this->plugin->preregister($sender, $args[0], $args[1], $args[2], $args[3]);
         return true;
     }
 

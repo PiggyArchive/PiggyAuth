@@ -52,6 +52,10 @@ class MySQL implements Database {
         $this->db->query("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string(password_hash($password, PASSWORD_BCRYPT)) . "', '" . $this->db->escape_string($email) . "', '" . $this->plugin->generatePin($player) . "', '" . $player->getUniqueId()->toString() . "', '0', '" . $xbox . "')");
     }
 
+    public function insertDataWithoutPlayerObject($player, $password, $email) {
+        $this->db->query("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player)) . "', '" . $this->db->escape_string(password_hash($password, PASSWORD_BCRYPT)) . "', '" . $this->db->escape_string($email) . "', '" . mt_rand(1000, 9999) . "', 'uuid', '0', 'false')");
+    }
+
     public function getPin($player) {
         $data = $this->getPlayer($player);
         if(!is_null($data)) {

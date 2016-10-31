@@ -34,6 +34,9 @@ permissions:
         piggyauth.command.pin:
           default: true
           description: "Allow using /pin"
+        piggyauth.command.preregister:
+          default: op
+          description: "Allow using /preregister"
         piggyauth.command.register:
           default: true
           description: "Allow using /register"

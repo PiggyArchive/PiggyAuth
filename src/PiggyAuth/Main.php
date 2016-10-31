@@ -8,6 +8,7 @@ use PiggyAuth\Commands\LoginCommand;
 use PiggyAuth\Commands\LogoutCommand;
 use PiggyAuth\Commands\KeyCommand;
 use PiggyAuth\Commands\PinCommand;
+use PiggyAuth\Commands\PreregisterCommand;
 use PiggyAuth\Commands\RegisterCommand;
 use PiggyAuth\Commands\ResetPasswordCommand;
 use PiggyAuth\Commands\SendPinCommand;
@@ -46,8 +47,9 @@ class Main extends PluginBase {
         $this->getServer()->getCommandMap()->register('key', new KeyCommand('key', $this));
         $this->getServer()->getCommandMap()->register('login', new LoginCommand('login', $this));
         $this->getServer()->getCommandMap()->register('logout', new LogoutCommand('logout', $this));
-        $this->getServer()->getCommandMap()->register('register', new RegisterCommand('register', $this));
         $this->getServer()->getCommandMap()->register('pin', new PinCommand('pin', $this));
+        $this->getServer()->getCommandMap()->register('preregister', new PreregisterCommand('preregister', $this));
+        $this->getServer()->getCommandMap()->register('register', new RegisterCommand('register', $this));
         $this->getServer()->getCommandMap()->register('resetpassword', new ResetPasswordCommand('resetpassword', $this));
         $this->getServer()->getCommandMap()->register('sendpin', new SendPinCommand('sendpin', $this));
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new MessageTick($this), 20);
@@ -185,7 +187,7 @@ class Main extends PluginBase {
         $this->authenticated[strtolower($player->getName())] = true;
         if($this->getConfig()->get("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
-            $player->setDataProperty(14, Entity::DATA_TYPE_BYTE, 1);
+            $player->setNameTagVisible(true);
         }
         if($this->getConfig()->get("blindness")) {
             $player->removeEffect(15);
@@ -260,6 +262,37 @@ class Main extends PluginBase {
                 $this->emailUser($this->getConfig()->get("progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->getMessage("progress-report"))))));
             }
         }
+        return true;
+    }
+
+    public function preregister($sender, $player, $password, $confirmpassword, $email = "none") {
+        if($this->isRegistered($player)) {
+            $sender->sendMessage($this->getMessage("already-registered-two"));
+            return false;
+        }
+        if(strlen($password) < $this->getConfig()->get("minimum-password-length")) {
+            $sender->sendMessage($this->getMessage("password-too-short"));
+            return false;
+        }
+        if(in_array(strtolower($password), $this->getConfig()->get("blocked-passwords")) || in_array(strtolower($confirmpassword), $this->getConfig()->get("blocked-passwords"))) {
+            $sender->sendMessage($this->getMessage("password-blocked"));
+            return false;
+        }
+        if($password !== $confirmpassword) {
+            $sender->sendMessage($this->getMessage("password-not-match"));
+            return false;
+        }
+        $this->database->insertDataWithoutPlayerObject($player, $password, $email);
+        $p = $this->getServer()->getPlayerExact($player);
+        if($p instanceof Player) {
+            $this->force($p, false);
+        }
+        if($this->getConfig()->get("progress-reports")) {
+            if($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) {
+                $this->emailUser($this->getConfig()->get("progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player, $this->getMessage("progress-report"))))));
+            }
+        }
+        $sender->sendMessage($this->getMessage("preregister-success"));
         return true;
     }
 
@@ -405,7 +438,7 @@ class Main extends PluginBase {
         }
         if($this->getConfig()->get("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
-            $player->setDataProperty(14, Entity::DATA_TYPE_BYTE, 0);
+            $player->setNameTagVisible(false);
         }
         if($this->getConfig()->get("blindness")) {
             $effect = Effect::getEffect(15);

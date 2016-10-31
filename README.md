@@ -20,6 +20,7 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 * Return to spawn when logged in
 * Hide players til logged in
 * Adventure mode til logged in
+* Preregister
 
 ###v2.0.0
 * Improved xbox bypass
@@ -74,6 +75,7 @@ Safe & feature-rich auth plugin. Credits to @xBeastMode for the email server. Su
 
 # Why use PiggyAuth?
 * No permission bugs
+* Preregister Command
 * Changepassword Command
 * Changeemail Command
 * Resetpassword Command

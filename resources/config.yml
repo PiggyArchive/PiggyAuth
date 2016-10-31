@@ -145,6 +145,10 @@ password-blocked: "&cPassword is blocked."
 password-not-match: "&cYour password is not the same."
 confirm-password: "&aPlease confirm your password."
 
+#Preregister
+preregister-success: "&aAccount has been registered."
+registered-two: "&cPlayer already registered."
+
 #Change password
 change-password-success: "&aYour password has been changed. Your new pin is {pin}."
 
