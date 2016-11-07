@@ -26,6 +26,8 @@ Safe & feature-rich auth plugin. Sugguest features [here.](https://github.com/MC
 * Hide players til logged in
 * Adventure mode til logged in
 * Preregister
+* Hide health, hunger, xp, effects
+* Stop effects from ticking
 
 ###v2.0.0
 * Improved xbox bypass
