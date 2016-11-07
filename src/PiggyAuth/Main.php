@@ -14,14 +14,18 @@ use PiggyAuth\Commands\ResetPasswordCommand;
 use PiggyAuth\Commands\SendPinCommand;
 use PiggyAuth\Databases\MySQL;
 use PiggyAuth\Databases\SQLite3;
+use PiggyAuth\Tasks\AttributeTick;
 use PiggyAuth\Tasks\KeyTick;
 use PiggyAuth\Tasks\MessageTick;
 use PiggyAuth\Tasks\PingTask;
 use PiggyAuth\Tasks\PopupTipTick;
 use PiggyAuth\Tasks\TimeoutTask;
 
+use pocketmine\entity\Attribute;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
+use pocketmine\network\protocol\MobEffectPacket;
+use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Player;
 
@@ -52,6 +56,7 @@ class Main extends PluginBase {
         $this->getServer()->getCommandMap()->register('register', new RegisterCommand('register', $this));
         $this->getServer()->getCommandMap()->register('resetpassword', new ResetPasswordCommand('resetpassword', $this));
         $this->getServer()->getCommandMap()->register('sendpin', new SendPinCommand('sendpin', $this));
+        $this->getServer()->getScheduler()->scheduleRepeatingTask(new AttributeTick($this), 20);
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new MessageTick($this), 20);
         if($this->getConfig()->get("key")) {
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new KeyTick($this), 20);
@@ -197,6 +202,21 @@ class Main extends PluginBase {
             foreach($this->getServer()->getOnlinePlayers() as $p) {
                 $player->showPlayer($p);
             }
+        }
+        if($this->getConfig()->get("hide-health")) {
+            $pk = new UpdateAttributesPacket();
+            $pk->entityId = 0;
+            $pk->entries = [$player->getAttributeMap()->getAttribute(Attribute::HEALTH)];
+            $player->dataPacket($pk);
+        }
+        if($this->getConfig()->get("hide-xp")) {
+            $pk = new UpdateAttributesPacket();
+            $pk->entityId = 0;
+            $pk->entries = [$player->getAttributeMap()->getAttribute(Attribute::EXPERIENCE)];
+            $player->dataPacket($pk);
+        }
+        if($this->getConfig()->get("hide-effects")) {
+            $player->sendPotionEffects($player);
         }
         if($this->getConfig()->get("return-to-spawn")) {
             $player->teleport($this->getServer()->getDefaultLevel()->getSafeSpawn());
@@ -458,6 +478,18 @@ class Main extends PluginBase {
                 if(!$this->isAuthenticated($p)) {
                     $p->hidePlayer($player);
                 }
+            }
+        }
+        if($this->getConfig()->get("hide-effects")) {
+            foreach($player->getEffects() as $effect) {
+                if($this->getConfig()->get("blindness") && ($effect->getId() == 15 || $effect->getId() == 16)) {
+                    continue;
+                }
+                $pk = new MobEffectPacket();
+                $pk->eid = 0;
+                $pk->eventId = MobEffectPacket::EVENT_REMOVE;
+                $pk->effectId = $effect->getId();
+                $player->dataPacket($pk);
             }
         }
         if($this->getConfig()->get("adventure-mode")) {

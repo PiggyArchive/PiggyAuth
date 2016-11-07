@@ -9,12 +9,14 @@ use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\inventory\InventoryPickupArrowEvent;
 use pocketmine\event\inventory\InventoryPickupItemEvent;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
+use pocketmine\event\player\PlayerExperienceChangeEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -22,9 +24,11 @@ use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\event\Listener;
 use pocketmine\item\Item;
 use pocketmine\network\protocol\ContainerSetSlotPacket;
+use pocketmine\network\protocol\MobEffectPacket;
 use pocketmine\Player;
 
 class EventListener implements Listener {
@@ -35,7 +39,7 @@ class EventListener implements Listener {
     public function onBreak(BlockBreakEvent $event) {
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
-            if(!$this->plugin->getConfig()->get("disable-block-break")) {
+            if(!$this->plugin->getConfig()->get("allow-block-break")) {
                 $event->setCancelled();
             }
         }
@@ -44,7 +48,7 @@ class EventListener implements Listener {
     public function onPlace(BlockPlaceEvent $event) {
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
-            if(!$this->plugin->getConfig()->get("disable-block-place")) {
+            if(!$this->plugin->getConfig()->get("allow-block-place")) {
                 $event->setCancelled();
             }
         }
@@ -53,16 +57,25 @@ class EventListener implements Listener {
     public function onDamage(EntityDamageEvent $event) {
         $entity = $event->getEntity();
         if($entity instanceof Player && !$this->plugin->isAuthenticated($entity)) {
-            if(!$this->plugin->getConfig()->get("disable-damage")) {
+            if(!$this->plugin->getConfig()->get("allow-damage")) {
                 $event->setCancelled();
             }
         }
         if($event instanceof EntityDamageByEntityEvent) {
             $damager = $event->getDamager();
             if($damager instanceof Player && !$this->plugin->isAuthenticated($damager)) {
-                if(!$this->plugin->getConfig()->get("disable-damage-others")) {
+                if(!$this->plugin->getConfig()->get("allow-damage-others")) {
                     $event->setCancelled();
                 }
+            }
+        }
+    }
+
+    public function onHeal(EntityRegainHealthEvent $event) {
+        $entity = $event->getEntity();
+        if($entity instanceof Player && !$this->plugin->isAuthenticated($entity)) {
+            if(!$this->plugin->getConfig()->get("allow-heal")) {
+                $event->setCancelled();
             }
         }
     }
@@ -70,7 +83,7 @@ class EventListener implements Listener {
     public function onPickupArrow(InventoryPickupArrowEvent $event) {
         $player = $event->getInventory()->getHolder();
         if($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
-            if(!$this->plugin->getConfig()->get("disable-arrow-pickup")) {
+            if(!$this->plugin->getConfig()->get("allow-arrow-pickup")) {
                 $event->setCancelled();
             }
         }
@@ -79,7 +92,7 @@ class EventListener implements Listener {
     public function onPickupItem(InventoryPickupItemEvent $event) {
         $player = $event->getInventory()->getHolder();
         if($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
-            if(!$this->plugin->getConfig()->get("disable-item-pickup")) {
+            if(!$this->plugin->getConfig()->get("allow-item-pickup")) {
                 $event->setCancelled();
             }
         }
@@ -171,7 +184,16 @@ class EventListener implements Listener {
     public function onExhaust(PlayerExhaustEvent $event) {
         $player = $event->getPlayer();
         if(!$this->plugin->isAuthenticated($player)) {
-            if(!$this->plugin->getConfig()->get("disable-hunger")) {
+            if(!$this->plugin->getConfig()->get("allow-hunger")) {
+                $event->setCancelled();
+            }
+        }
+    }
+
+    public function onXPChange(PlayerExperienceChangeEvent $event) {
+        $player = $event->getPlayer();
+        if(!$this->plugin->isAuthenticated($player)) {
+            if(!$this->plugin->getConfig()->get("allow-xp-change")) {
                 $event->setCancelled();
             }
         }
@@ -278,6 +300,22 @@ class EventListener implements Listener {
                         $event->setCancelled();
                     }
                 }
+            }
+        }
+    }
+
+    public function onSend(DataPacketSendEvent $event) {
+        $player = $event->getPlayer();
+        $packet = $event->getPacket();
+        if($packet instanceof MobEffectPacket) {
+            if(!$this->plugin->isAuthenticated($player) && $this->plugin->getConfig()->get("hide-effects")) {
+                if($this->plugin->getConfig()->get("blindness") && ($packet->effectId == 15 || $packet->effectId == 16)) {
+                    return false;
+                }
+                if($packet->eventId !== MobEffectPacket::EVENT_ADD) {
+                    return false;
+                }
+                $event->setCancelled();
             }
         }
     }

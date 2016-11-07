@@ -29,6 +29,10 @@ allow-damage-others: false
 allow-block-place: false
 #If enabled, breaking blocks will be allowed when not authenticated
 allow-block-break: false
+#If enabled, xp changes will be allowed when not authenticated
+allow-xp-change: false
+#If enabled, effect time will still go when not authenticated
+allow-effect-tick: false
 #If enabled, movement will be will be allowed when not authenticated
 allow-movement: false
 #If enabled, eating will be allowed when not authenticated
@@ -39,6 +43,8 @@ allow-commands: false
 allow-hunger: false
 #If enabled, damage will not be stopped when not authenticated
 allow-damage: false
+#If enabled, healing will not be stopped when not authenticated
+allow-heal: false
 #If enabled, you can login without /login
 chat-login: true
 #If enabled, you will be authenticated automatically if your uuid matches the last uuid used.
@@ -95,6 +101,14 @@ join-message-for-new-players: true
 new-player: "&eWelcome {player} to the server!"
 #Hides all players til logged in
 hide-players: true
+#Hides true health til logged in
+hide-health: true
+#Hides true hunger til logged in
+hide-hunger: true
+#Hides true xp til logged in
+hide-xp: true
+#Hides effects til logged in
+hide-effects: true
 #Return to spawn when logged in
 return-to-spawn: false
 #If on, players will be set to adventure mode til logged in
