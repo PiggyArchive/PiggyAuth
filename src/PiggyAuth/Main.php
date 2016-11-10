@@ -14,16 +14,22 @@ use PiggyAuth\Commands\ResetPasswordCommand;
 use PiggyAuth\Commands\SendPinCommand;
 use PiggyAuth\Databases\MySQL;
 use PiggyAuth\Databases\SQLite3;
+use PiggyAuth\Entities\Wither;
 use PiggyAuth\Tasks\AttributeTick;
 use PiggyAuth\Tasks\KeyTick;
 use PiggyAuth\Tasks\MessageTick;
 use PiggyAuth\Tasks\PingTask;
-use PiggyAuth\Tasks\PopupTipTick;
+use PiggyAuth\Tasks\PopupTipBarTick;
 use PiggyAuth\Tasks\TimeoutTask;
 
 use pocketmine\entity\Attribute;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\DoubleTag;
+use pocketmine\nbt\tag\FloatTag;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\network\protocol\BossEventPacket;
 use pocketmine\network\protocol\MobEffectPacket;
 use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\plugin\PluginBase;
@@ -39,6 +45,7 @@ class Main extends PluginBase {
     public $messagetick;
     public $tries;
     public $database;
+    public $wither;
     private $key = "PiggyAuthKey";
     public $keytime = 299; //300 = Reset
     public $expiredkeys = [];
@@ -61,8 +68,11 @@ class Main extends PluginBase {
         if($this->getConfig()->get("key")) {
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new KeyTick($this), 20);
         }
-        if($this->getConfig()->get("popup") || $this->getConfig()->get("tip")) {
-            $this->getServer()->getScheduler()->scheduleRepeatingTask(new PopupTipTick($this), 20);
+        if($this->getConfig()->get("popup") || $this->getConfig()->get("tip") || $this->getConfig()->get("boss-bar")) {
+            $this->getServer()->getScheduler()->scheduleRepeatingTask(new PopupTipBarTick($this), 20);
+        }
+        if($this->getConfig()->get("boss-bar")) {
+            Entity::registerEntity(Wither::class);
         }
         $outdated = false;
         if($this->getConfig()->get("config->update")) {
@@ -250,6 +260,12 @@ class Main extends PluginBase {
             $player->setGamemode($this->gamemode[strtolower($player->getName())]);
             unset($this->gamemode[strtolower($player->getName())]);
         }
+        if($this->getConfig()->get("boss-bar")) {
+            if(isset($this->wither[strtolower($player->getName())])) {
+                $this->wither[strtolower($player->getName())]->kill();
+                unset($this->wither[strtolower($player->getName())]);
+            }
+        }
         $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $player->getUniqueId()->toString(), 0);
         return true;
     }
@@ -392,6 +408,12 @@ class Main extends PluginBase {
             if(isset($this->tries[strtolower($player->getName())])) {
                 unset($this->tries[strtolower($player->getName())]);
             }
+            if($this->getConfig()->get("boss-bar")) {
+                if(isset($this->wither[strtolower($player->getName())])) {
+                    $this->wither[strtolower($player->getName())]->kill();
+                    unset($this->wither[strtolower($player->getName())]);
+                }
+            }
             if($this->getConfig()->get("adventure-mode")) {
                 $player->setGamemode($this->gamemode[strtolower($player->getName())]);
                 unset($this->gamemode[strtolower($player->getName())]);
@@ -498,6 +520,18 @@ class Main extends PluginBase {
         }
         if($this->getConfig()->get("timeout")) {
             $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $player), $this->getConfig()->get("timeout-time") * 20);
+        }
+        if($this->getConfig()->get("boss-bar")) {
+            $wither = Entity::createEntity("Wither", $player->getLevel()->getChunk($player->x >> 4, $player->z >> 4), new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $player->x + 0.5), new DoubleTag("", $player->y - 5), new DoubleTag("", $player->z + 0.5)]), "Motion" => new ListTag("Motion", [new DoubleTag("", 0), new DoubleTag("", 0), new DoubleTag("", 0)]), "Rotation" => new ListTag("Rotation", [new FloatTag("", 0), new FloatTag("", 0)])]));
+            $wither->spawnTo($player);
+            $wither->setNameTag($this->isRegistered($player->getName()) == false ? $this->getMessage("register-boss-bar") : $this->getMessage("login-boss-bar"));
+            $this->wither[strtolower($player->getName())] = $wither;
+            $wither->setMaxHealth($this->getConfig()->get("timeout-time"));
+            $wither->setHealth($this->getConfig()->get("timeout-time"));
+            $pk = new BossEventPacket();
+            $pk->eid = $wither->getId();
+            $pk->state = 0;
+            $player->dataPacket($pk);
         }
     }
 

@@ -38,8 +38,8 @@ class AttributeTick extends PluginTask {
                     $pk->entries[] = new FakeAttribute(0.00, 1.00, 0.00, "minecraft:player.experience");
                     $player->dataPacket($pk);
                 }
-                if(!$this->plugin->getConfig()->get("allow-effect-tick")){
-                    foreach($player->getEffects() as $effect){
+                if(!$this->plugin->getConfig()->get("allow-effect-tick")) {
+                    foreach($player->getEffects() as $effect) {
                         $effect->setDuration($effect->getDuration() + 20);
                         $player->sendPotionEffects($player);
                     }

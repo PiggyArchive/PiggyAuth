@@ -1,9 +1,12 @@
 <?php
 namespace PiggyAuth\Tasks;
 
+use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\scheduler\PluginTask;
 
-class PopupTipTick extends PluginTask {
+use PiggyAuth\FakeAttribute;
+
+class PopupTipBarTick extends PluginTask {
     public function __construct($plugin) {
         parent::__construct($plugin);
         $this->plugin = $plugin;
@@ -24,6 +27,15 @@ class PopupTipTick extends PluginTask {
                         $player->sendTip($this->plugin->getMessage("login-tip"));
                     } else {
                         $player->sendTip($this->plugin->getMessage("register-tip"));
+                    }
+                }
+                if($this->plugin->getConfig()->get("boss-bar")) {
+                    if(isset($this->plugin->wither[strtolower($player->getName())])) {
+                        $pk = new UpdateAttributesPacket();
+                        $pk->entries[] = new FakeAttribute(0.00, $this->plugin->getConfig()->get("timeout-time"), $this->plugin->wither[strtolower($player->getName())]->getHealth() - 1, "minecraft:health");
+                        $pk->entityId = $this->plugin->wither[strtolower($player->getName())]->getId();
+                        $player->dataPacket($pk);
+                        $this->plugin->wither[strtolower($player->getName())]->setHealth($this->plugin->wither[strtolower($player->getName())]->getHealth() - 1);
                     }
                 }
             }
