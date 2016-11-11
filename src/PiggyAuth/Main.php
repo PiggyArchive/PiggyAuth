@@ -15,6 +15,7 @@ use PiggyAuth\Commands\SendPinCommand;
 use PiggyAuth\Databases\MySQL;
 use PiggyAuth\Databases\SQLite3;
 use PiggyAuth\Entities\Wither;
+use PiggyAuth\Packet\BossEventPacket;
 use PiggyAuth\Tasks\AttributeTick;
 use PiggyAuth\Tasks\KeyTick;
 use PiggyAuth\Tasks\MessageTick;
@@ -29,7 +30,6 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
-use pocketmine\network\protocol\BossEventPacket;
 use pocketmine\network\protocol\MobEffectPacket;
 use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\plugin\PluginBase;
@@ -77,6 +77,7 @@ class Main extends PluginBase {
         }
         if($this->getConfig()->get("boss-bar")) {
             Entity::registerEntity(Wither::class);
+            $this->getServer()->getNetwork()->registerPacket(BossEventPacket::NETWORK_ID, BossEventPacket::class);
         }
         $outdated = false;
         if($this->getConfig()->get("config->update")) {
@@ -86,6 +87,7 @@ class Main extends PluginBase {
                 $outdated = true;
             } elseif($this->getConfig()->get("version") !== $this->getDescription()->getVersion()) {
                 switch($this->getConfig()->get("version")) {
+                    case "2.0.0":
                     case "1.0.9":
                     case "1.0.8":
                         rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config_old.yml");
@@ -111,6 +113,9 @@ class Main extends PluginBase {
                 break;
         }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
+        foreach($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
+            $this->startSession($player);
+        }
         $this->getLogger()->info("§aEnabled.");
     }
 
