@@ -29,6 +29,7 @@ Safe & feature-rich auth plugin. Sugguest features [here.](https://github.com/MC
 * Hide health, hunger, xp, effects
 * Stop effects from ticking
 * Boss Bar
+* Fix timeout when logout, it kicks you once the last timeout task ends
 
 ###v2.0.0
 * Improved xbox bypass

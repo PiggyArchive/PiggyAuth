@@ -43,6 +43,7 @@ class Main extends PluginBase {
     public $joinMessage;
     public $gamemode;
     public $messagetick;
+    public $timeouttick;
     public $tries;
     public $database;
     public $wither;
@@ -70,6 +71,9 @@ class Main extends PluginBase {
         }
         if($this->getConfig()->get("popup") || $this->getConfig()->get("tip") || $this->getConfig()->get("boss-bar")) {
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new PopupTipBarTick($this), 20);
+        }
+        if($this->getConfig()->get("timeout")) {
+            $this->getServer()->getScheduler()->scheduleRepeatingTask(new TimeoutTask($this), 20);
         }
         if($this->getConfig()->get("boss-bar")) {
             Entity::registerEntity(Wither::class);
@@ -191,6 +195,9 @@ class Main extends PluginBase {
     public function force(Player $player, $login = true) {
         if(isset($this->messagetick[strtolower($player->getName())])) {
             unset($this->messagetick[strtolower($player->getName())]);
+        }
+        if(isset($this->timeouttick[strtolower($player->getName())])) {
+            unset($this->timeouttick[strtolower($player->getName())]);
         }
         if(isset($this->tries[strtolower($player->getName())])) {
             unset($this->tries[strtolower($player->getName())]);
@@ -405,6 +412,9 @@ class Main extends PluginBase {
             if(isset($this->messagetick[strtolower($player->getName())])) {
                 unset($this->messagetick[strtolower($player->getName())]);
             }
+            if(isset($this->timeouttick[strtolower($player->getName())])) {
+                unset($this->timeouttick[strtolower($player->getName())]);
+            }
             if(isset($this->tries[strtolower($player->getName())])) {
                 unset($this->tries[strtolower($player->getName())]);
             }
@@ -519,7 +529,7 @@ class Main extends PluginBase {
             $player->setGamemode(2);
         }
         if($this->getConfig()->get("timeout")) {
-            $this->getServer()->getScheduler()->scheduleDelayedTask(new TimeoutTask($this, $player), $this->getConfig()->get("timeout-time") * 20);
+            $this->timeouttick[strtolower($player->getName())] = 0;
         }
         if($this->getConfig()->get("boss-bar")) {
             $wither = Entity::createEntity("Wither", $player->getLevel()->getChunk($player->x >> 4, $player->z >> 4), new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $player->x + 0.5), new DoubleTag("", $player->y - 5), new DoubleTag("", $player->z + 0.5)]), "Motion" => new ListTag("Motion", [new DoubleTag("", 0), new DoubleTag("", 0), new DoubleTag("", 0)]), "Rotation" => new ListTag("Rotation", [new FloatTag("", 0), new FloatTag("", 0)])]));

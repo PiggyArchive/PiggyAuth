@@ -32,10 +32,10 @@ class PopupTipBarTick extends PluginTask {
                 if($this->plugin->getConfig()->get("boss-bar")) {
                     if(isset($this->plugin->wither[strtolower($player->getName())])) {
                         $pk = new UpdateAttributesPacket();
-                        $pk->entries[] = new FakeAttribute(0.00, $this->plugin->getConfig()->get("timeout-time"), $this->plugin->wither[strtolower($player->getName())]->getHealth() - 1, "minecraft:health");
+                        $pk->entries[] = new FakeAttribute(0.00, $this->plugin->getConfig()->get("timeout-time"), ($this->plugin->getConfig()->get("timeout-time") - $this->plugin->timeouttick[strtolower($player->getName())]) - 1, "minecraft:health");
                         $pk->entityId = $this->plugin->wither[strtolower($player->getName())]->getId();
                         $player->dataPacket($pk);
-                        $this->plugin->wither[strtolower($player->getName())]->setHealth($this->plugin->wither[strtolower($player->getName())]->getHealth() - 1);
+                        //$this->plugin->wither[strtolower($player->getName())]->setHealth($this->plugin->getConfig()->get("timeout-time") - $this->plugin->timeouttick[strtolower($player->getName())]);
                     }
                 }
             }
