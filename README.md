@@ -28,6 +28,7 @@ Safe & feature-rich auth plugin. Sugguest features [here.](https://github.com/MC
 * Preregister
 * Hide health, hunger, xp, effects
 * Stop effects from ticking
+* Boss Bar
 
 ###v2.0.0
 * Improved xbox bypass
@@ -111,5 +112,9 @@ Safe & feature-rich auth plugin. Sugguest features [here.](https://github.com/MC
 * Return to spawn when logged in
 * Hide players til logged in
 * Adventure mode til logged in
+* Hides health, hunger, xp, effects
+* Stop effects from ticking
+* Boss Bar
 * No YAML
+* Constant updates!
 * Pig-Made!!! :pig:
