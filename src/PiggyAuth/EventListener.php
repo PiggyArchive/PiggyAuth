@@ -192,7 +192,7 @@ class EventListener implements Listener {
 
     public function onXPChange(PlayerExperienceChangeEvent $event) {
         $player = $event->getPlayer();
-        if(!$this->plugin->isAuthenticated($player)) {
+        if($player instanceof Player && !$this->plugin->isAuthenticated($player)){
             if(!$this->plugin->getConfig()->get("allow-xp-change")) {
                 $event->setCancelled();
             }
