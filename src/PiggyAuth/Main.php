@@ -125,7 +125,7 @@ class Main extends PluginBase {
 
     public function generatePin(Player $player) {
         $newpin = mt_rand(1000, 9999);
-        if($this->isCorrectPin($player, $newpin)) { //Player cant have same pin
+        if($this->isCorrectPin($player, $newpin) || $newpin == 1234) { //Player cant have same pin or have 1234 as pin
             return $this->generatePin($player);
         }
         return $newpin;
