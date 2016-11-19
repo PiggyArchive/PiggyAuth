@@ -155,7 +155,7 @@ class Main extends PluginBase {
         return $this->database->getPlayer($player) !== null;
     }
 
-    public function login(Player $player, $password) {
+    public function login(Player $player, $password, $mode = 0) {
         if($this->isAuthenticated($player)) {
             $player->sendMessage($this->getMessage("already-authenticated"));
             return false;
@@ -194,11 +194,11 @@ class Main extends PluginBase {
             $player->sendMessage(str_replace("{tries}", $tries, $this->getMessage("incorrect-password")));
             return false;
         }
-        $this->force($player);
+        $this->force($player, true, $mode);
         return true;
     }
 
-    public function force(Player $player, $login = true) {
+    public function force(Player $player, $login = true, $mode = 0) {
         if(isset($this->messagetick[strtolower($player->getName())])) {
             unset($this->messagetick[strtolower($player->getName())]);
         }
@@ -245,12 +245,26 @@ class Main extends PluginBase {
             $player->teleport($this->getServer()->getDefaultLevel()->getSafeSpawn());
         }
         if($login) {
-            $player->sendMessage($this->getMessage("authentication-success"));
+            switch($mode) {
+                case 1:
+                    $player->sendMessage($this->getMessage("authentication-success-uuid"));
+                    break;
+                case 2:
+                    $player->sendMessage($this->getMessage("authentication-success-xbox"));
+                    break;
+                case 0:
+                default:
+                    $player->sendMessage($this->getMessage("authentication-success"));
+                    break;
+            }
             if(!$this->database->getAttempts($player->getName()) == 0) {
                 $player->sendMessage(str_replace("{attempts}", $this->database->getAttempts($player->getName()), $this->getMessage("attempted-logins")));
+
             }
         } else {
-            $player->sendMessage(str_replace("{pin}", $this->database->getPin($player->getName()), $this->getMessage("register-success")));
+            if(!$mode == 3) {
+                $player->sendMessage(str_replace("{pin}", $this->database->getPin($player->getName()), $this->getMessage("register-success")));
+            }
         }
         if($this->getConfig()->get("cape-for-registration")) {
             $cape = "Minecon_MineconSteveCape2016";
@@ -304,7 +318,7 @@ class Main extends PluginBase {
             return false;
         }
         $this->database->insertData($player, $password, $email, $xbox);
-        $this->force($player, false);
+        $this->force($player, false, $xbox == false ? 0 : 3);
         if($this->getConfig()->get("progress-reports")) {
             if($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) {
                 $this->emailUser($this->getConfig()->get("progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->getMessage("progress-report"))))));

@@ -105,7 +105,7 @@ class EventListener implements Listener {
         if(!$this->plugin->isAuthenticated($player)) {
             if($this->plugin->getConfig("chat-login")) {
                 if($this->plugin->isRegistered($player->getName())) {
-                    $this->plugin->login($player, $message);
+                    $this->plugin->login($player, $message, 0);
                 } else {
                     if(!isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
                         $this->plugin->confirmPassword[strtolower($player->getName())] = $message;
@@ -233,7 +233,7 @@ class EventListener implements Listener {
             $event->setJoinMessage(null);
         }
         if($this->plugin->getConfig()->get("auto-authentication") && !is_null($data) && $player->getUniqueId()->toString() == $data["uuid"]) {
-            $this->plugin->force($player);
+            $this->plugin->force($player, true, 1);
             return true;
         }
         if($this->plugin->getConfig()->get("xbox-bypass") && $this->plugin->getServer()->getName() == "ClearSky" && $player->isAuthenticated()) {
@@ -247,10 +247,10 @@ class EventListener implements Listener {
                 }
                 $randompassword = implode("", $randompassword);
                 $this->plugin->register($player, $randompassword, $randompassword, "none", "true");
-                $player->sendMessage(str_replace("{password}", $randompassword, $this->plugin->getMessage("auto-registered")));
+                $player->sendMessage(str_replace("{pin}", $this->plugin->database->getPin($player->getName()), str_replace("{password}", $randompassword, $this->plugin->getMessage("register-success-xbox"))));
             } else {
                 if(!is_null($data) && $data["xbox"] == "true") {
-                    $this->plugin->force($player);
+                    $this->plugin->force($player, true, 2);
                 }
             }
             return true;

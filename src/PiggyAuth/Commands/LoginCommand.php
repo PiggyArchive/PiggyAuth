@@ -24,7 +24,7 @@ class LoginCommand extends VanillaCommand {
             $sender->sendMessage("/login <password>");
             return false;
         }
-        $this->plugin->login($sender, $args[0]);
+        $this->plugin->login($sender, $args[0], 0);
         return true;
     }
 
