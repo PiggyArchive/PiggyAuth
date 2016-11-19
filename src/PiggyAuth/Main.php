@@ -38,6 +38,7 @@ use pocketmine\Player;
 class Main extends PluginBase {
     public $authenticated;
     public $confirmPassword;
+    public $confirmedPassword;
     public $giveEmail;
     public $keepCape;
     public $joinMessage;
@@ -298,10 +299,6 @@ class Main extends PluginBase {
         if($password !== $confirmpassword) {
             $player->sendMessage($this->getMessage("password-not-match"));
             return false;
-        }
-        if($email == "enter") {
-            $this->giveEmail[strtolower($player->getName())] = true;
-            $player->sendMessage($this->getMessage("email"));
         }
         $this->database->insertData($player, $password, $email, $xbox);
         $this->force($player, false);

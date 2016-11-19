@@ -113,10 +113,24 @@ class EventListener implements Listener {
                     } else {
                         if($this->plugin->confirmPassword[strtolower($player->getName())] == $message) {
                             unset($this->plugin->confirmPassword[strtolower($player->getName())]);
-                            $this->plugin->register($player, $message, $message, "enter");
+                            $this->plugin->confirmedPassword[strtolower($player->getName())] = $message;
+                            $this->plugin->giveEmail[strtolower($player->getName())] = true;
+                            $player->sendMessage($this->plugin->getMessage("email"));
+                            $event->setCancelled();
+                            return true; //Stop the Invalid email message
                         } else {
                             $player->sendMessage($this->plugin->getMessage("password-not-match"));
                             unset($this->plugin->confirmPassword[strtolower($player->getName())]);
+                        }
+                    }
+                    if(isset($this->plugin->giveEmail[strtolower($player->getName())])) {
+                        if(strtolower($message) !== "none" && !filter_var($message, FILTER_VALIDATE_EMAIL)) {
+                            $player->sendMessage($this->plugin->getMessage("invalid-email"));
+                        } else {
+                            $this->plugin->register($player, $this->plugin->confirmedPassword[strtolower($player->getName())], $this->plugin->confirmedPassword[strtolower($player->getName())], $message);
+                            $this->plugin->database->updatePlayer($player->getName(), $this->plugin->database->getPassword($player->getName()), $message, $this->plugin->database->getPin($player->getName()), $player->getUniqueId()->toString(), $this->plugin->database->getUUID($player->getName()));
+                            unset($this->plugin->giveEmail[strtolower($player->getName())]);
+                            unset($this->plugin->confirmedPassword[strtolower($player->getName())]);
                         }
                     }
                 }
@@ -125,16 +139,6 @@ class EventListener implements Listener {
         } else {
             if($this->plugin->isCorrectPassword($player, $message)) {
                 $player->sendMessage($this->plugin->getMessage("dont-say-password"));
-                $event->setCancelled();
-            }
-            if(isset($this->plugin->giveEmail[strtolower($player->getName())])) {
-                if(strtolower($message) !== "none" && !filter_var($message, FILTER_VALIDATE_EMAIL)) {
-                    $player->sendMessage($this->plugin->getMessage("invalid-email"));
-                } else {
-                    unset($this->plugin->giveEmail[strtolower($player->getName())]);
-                    $this->plugin->database->updatePlayer($player->getName(), $this->plugin->database->getPassword($player->getName()), $message, $this->plugin->database->getPin($player->getName()), $player->getUniqueId()->toString(), $this->plugin->database->getUUID($player->getName()));
-                    $player->sendMessage($this->plugin->getMessage("email-set"));
-                }
                 $event->setCancelled();
             }
         }
