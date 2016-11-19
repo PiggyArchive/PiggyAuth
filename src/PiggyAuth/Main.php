@@ -409,8 +409,10 @@ class Main extends PluginBase {
             }
         } else {
             if($this->getConfig()->get("adventure-mode")) {
-                $player->setGamemode($this->gamemode[strtolower($player->getName())]);
-                unset($this->gamemode[strtolower($player->getName())]);
+                if(isset($this->gamemode[strtolower($player->getName())])) {
+                    $player->setGamemode($this->gamemode[strtolower($player->getName())]);
+                    unset($this->gamemode[strtolower($player->getName())]);
+                }
             }
             if(isset($this->confirmPassword[strtolower($player->getName())])) {
                 unset($this->confirmPassword[strtolower($player->getName())]);
