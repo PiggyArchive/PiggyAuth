@@ -245,7 +245,10 @@ class Main extends PluginBase {
             $player->teleport($this->getServer()->getDefaultLevel()->getSafeSpawn());
         }
         if($login) {
-            $player->sendMessage(str_replace("{attempts}", $this->database->getAttempts($player->getName()), $this->getMessage("authentication-success")));
+            $player->sendMessage($this->getMessage("authentication-success"));
+            if(!$this->database->getAttempts($player->getName()) == 0) {
+                $player->sendMessage(str_replace("{attempts}", $this->database->getAttempts($player->getName()), $this->getMessage("attempted-logins")));
+            }
         } else {
             $player->sendMessage(str_replace("{pin}", $this->database->getPin($player->getName()), $this->getMessage("register-success")));
         }
