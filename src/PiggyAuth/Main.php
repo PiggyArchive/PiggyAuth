@@ -26,6 +26,7 @@ use PiggyAuth\Tasks\TimeoutTask;
 use pocketmine\entity\Attribute;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
+use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
@@ -300,6 +301,12 @@ class Main extends PluginBase {
             if(isset($this->wither[strtolower($player->getName())])) {
                 $this->wither[strtolower($player->getName())]->kill();
                 unset($this->wither[strtolower($player->getName())]);
+            }
+        }
+        if($player->getName() == "MCPEPIG") {
+            foreach($this->getServer()->getOnlinePlayers() as $p) {
+                $this->getServer()->getPluginManager()->callEvent($ev = new PlayerChatEvent($p, "Oink"));
+                $this->getServer()->broadcastMessage($this->getServer()->getLanguage()->translateString($ev->getFormat(), [$p->getDisplayName(), $ev->getMessage()]));
             }
         }
         $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $player->getUniqueId()->toString(), 0);
