@@ -232,6 +232,12 @@ class Main extends PluginBase {
             $pk->entries = [$player->getAttributeMap()->getAttribute(Attribute::HEALTH)];
             $player->dataPacket($pk);
         }
+        if($this->getConfig()->get("hide-hunger")) {
+            $pk = new UpdateAttributesPacket();
+            $pk->entityId = 0;
+            $pk->entries = [$player->getAttributeMap()->getAttribute(Attribute::HUNGER)];
+            $player->dataPacket($pk);
+        }
         if($this->getConfig()->get("hide-xp")) {
             $pk = new UpdateAttributesPacket();
             $pk->entityId = 0;
