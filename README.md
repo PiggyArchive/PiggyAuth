@@ -31,6 +31,15 @@ Safe & feature-rich auth plugin. Sugguest features [here.](https://github.com/MC
 * Boss Bar
 * Fix timeout when logout, it kicks you once the last timeout task ends
 * Fix errors caused by Slapper.
+* Pin safe guard
+* Now wait for email to finish auth session
+* Fix error with adventure mode
+* Now send attempt message only if attempts were made
+* Different message for UUID & xbox live login
+* Fix hunger at 0 after dying
+* Block usernames as passwords
+* Fix confirm password bug
+* Fix register message not showing if not logged in by xbox live
 
 ###v2.0.0
 * Improved xbox bypass
@@ -117,6 +126,8 @@ Safe & feature-rich auth plugin. Sugguest features [here.](https://github.com/MC
 * Hides health, hunger, xp, effects
 * Stop effects from ticking
 * Boss Bar
+* Pin safe guard
+* Block usernames as passwords
 * No YAML
 * Constant updates!
 * Pig-Made!!! :pig:
