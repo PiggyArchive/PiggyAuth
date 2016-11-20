@@ -307,6 +307,9 @@ class Main extends PluginBase {
     }
 
     public function register(Player $player, $password, $confirmpassword, $email = "none", $xbox = "false") {
+        if(isset($this->confirmPassword[strtolower($player->getName())])) {
+            unset($this->confirmPassword[strtolower($player->getName())]);
+        }
         if($this->isRegistered($player->getName())) {
             $player->sendMessage($this->getMessage("already-registered"));
             return false;
@@ -319,12 +322,16 @@ class Main extends PluginBase {
             $player->sendMessage($this->getMessage("password-blocked"));
             return false;
         }
+        if(strtolower($password) == strtolower($player->getName()) || strtolower($password) == preg_replace("/\d/", "", strtolower($player->getName())) || preg_replace("/\d/", "", strtolower($password)) == strtolower($player->getName()) || preg_replace("/\d/", "", strtolower($password)) == preg_replace("/\d/", "", strtolower($player->getName()))) {
+            $player->sendMessage($this->getMessage("password-username"));
+            return false;
+        }
         if($password !== $confirmpassword) {
             $player->sendMessage($this->getMessage("password-not-match"));
             return false;
         }
         $this->database->insertData($player, $password, $email, $xbox);
-        $this->force($player, false, $xbox == false ? 0 : 3);
+        $this->force($player, false, $xbox == "false" ? 0 : 3);
         if($this->getConfig()->get("progress-reports")) {
             if($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) {
                 $this->emailUser($this->getConfig()->get("progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->getMessage("progress-report"))))));
@@ -334,6 +341,9 @@ class Main extends PluginBase {
     }
 
     public function preregister($sender, $player, $password, $confirmpassword, $email = "none") {
+        if(isset($this->confirmPassword[strtolower($player)])) {
+            unset($this->confirmPassword[strtolower($player)]);
+        }
         if($this->isRegistered($player)) {
             $sender->sendMessage($this->getMessage("already-registered-two"));
             return false;
@@ -344,6 +354,10 @@ class Main extends PluginBase {
         }
         if(in_array(strtolower($password), $this->getConfig()->get("blocked-passwords")) || in_array(strtolower($confirmpassword), $this->getConfig()->get("blocked-passwords"))) {
             $sender->sendMessage($this->getMessage("password-blocked"));
+            return false;
+        }
+        if(strtolower($password) == strtolower($player) || strtolower($password) == preg_replace("/\d/", "", strtolower($player)) || preg_replace("/\d/", "", strtolower($password)) == strtolower($player)) {
+            $sender->sendMessage($this->getMessage("password-username"));
             return false;
         }
         if($password !== $confirmpassword) {
@@ -513,7 +527,6 @@ class Main extends PluginBase {
             $player->sendMessage($this->getMessage("login"));
         } else {
             $player->sendMessage($this->getMessage("register"));
-
         }
         if($this->getConfig()->get("invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);

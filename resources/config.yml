@@ -163,6 +163,7 @@ register-success-xbox: "&aYou have been registered by Xbox Live. Your pin is {pi
 already-registered: "&cYou are already registered."
 password-too-short: "&cPassword is too short."
 password-blocked: "&cPassword is blocked."
+password-username: "&cUsername can't be password."
 password-not-match: "&cYour password is not the same."
 confirm-password: "&aPlease confirm your password."
 

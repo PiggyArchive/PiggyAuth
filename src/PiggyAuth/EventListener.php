@@ -108,8 +108,10 @@ class EventListener implements Listener {
                     $this->plugin->login($player, $message, 0);
                 } else {
                     if(!isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
-                        $this->plugin->confirmPassword[strtolower($player->getName())] = $message;
-                        $player->sendMessage($this->plugin->getMessage("confirm-password"));
+                        if(!isset($this->plugin->confirmedPassword[strtolower($player->getName())])) {
+                            $this->plugin->confirmPassword[strtolower($player->getName())] = $message;
+                            $player->sendMessage($this->plugin->getMessage("confirm-password"));
+                        }
                     } else {
                         if($this->plugin->confirmPassword[strtolower($player->getName())] == $message) {
                             unset($this->plugin->confirmPassword[strtolower($player->getName())]);
