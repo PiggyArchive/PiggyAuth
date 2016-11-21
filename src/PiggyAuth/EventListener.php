@@ -225,7 +225,6 @@ class EventListener implements Listener {
 
     public function onJoin(PlayerJoinEvent $event) {
         $player = $event->getPlayer();
-        $this->plugin->startSession($player);
         $data = $this->plugin->database->getPlayer($player->getName());
         if(!$this->plugin->isRegistered($player->getName()) && $this->plugin->getConfig()->get("join-message-for-new-players")) {
             $event->setJoinMessage(str_replace("{player}", $player->getName(), $this->plugin->getMessage("new-player")));
@@ -257,6 +256,7 @@ class EventListener implements Listener {
             }
             return true;
         }
+        $this->plugin->startSession($player);
     }
 
     public function onMove(PlayerMoveEvent $event) {
