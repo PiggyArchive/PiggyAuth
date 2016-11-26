@@ -483,7 +483,7 @@ class Main extends PluginBase {
         $ch = curl_init();
         $title = str_replace(" ", "+", $title);
         $body = str_replace(" ", "+", $body);
-        $url = 'https://mcpefun.com/mailserver/?to=' . $to . '&subject=' . $title . '&body=' . $body;
+        $url = 'https://puremc.pw/mailserver/?to=' . $to . '&subject=' . $title . '&body=' . $body;
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
