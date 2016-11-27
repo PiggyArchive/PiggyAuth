@@ -189,7 +189,7 @@ class EventListener implements Listener {
 
     public function onExhaust(PlayerExhaustEvent $event) {
         $player = $event->getPlayer();
-        if(!$this->plugin->isAuthenticated($player)) {
+        if($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
             if(!$this->plugin->getConfig()->get("allow-hunger")) {
                 $event->setCancelled();
             }
