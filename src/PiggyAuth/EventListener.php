@@ -168,7 +168,7 @@ class EventListener implements Listener {
             "/fpw",
             "/fpwd");
         if(!$this->plugin->isAuthenticated($player)) {
-            if($message[0] == "/" || $message[0] == "./") {
+            if($message[0] == "/" || ($message[0] == "." && $message[1] == "/")) {
                 if(!in_array($args[0], $forgotpasswordaliases) && $args[0] !== "/login" && $args[0] !== "/register" && $args[0] !== "/sendpin") {
                     if(!$this->plugin->getConfig()->get("allow-commands")) {
                         $event->setCancelled();
