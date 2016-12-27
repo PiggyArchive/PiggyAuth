@@ -188,6 +188,10 @@ class Main extends PluginBase {
                     return false;
                 }
             } else {
+                if($this->getConfig()->get("tries") <= 0) {
+                    $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()) + 1);
+                    $player->kick($this->getMessage("too-many-tries"));
+                }
                 $this->tries[strtolower($player->getName())] = 1;
             }
             $tries = $this->getConfig()->get("tries") - $this->tries[strtolower($player->getName())];

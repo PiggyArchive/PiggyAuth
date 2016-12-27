@@ -55,7 +55,7 @@ minimum-password-length: 6
 timeout: true
 #Seconds before kicked if not authenticated
 timeout-time: 60
-#Tries before kicked
+#Tries before kicked, set <= 0 to prevent from client hack
 tries: 5
 #If enabled, a popup will be shown when not authenticated
 popup: true
