@@ -1,5 +1,6 @@
 # PiggyAuth
 Safe & feature-rich auth plugin. Sugguest features [here.](https://github.com/MCPEPIG/PiggyAuth/issues/10)
+NOTE: Email server is down & boss bar messages will be fixed soon.
 
 # Credits
 * @xBeastMode for the email server
