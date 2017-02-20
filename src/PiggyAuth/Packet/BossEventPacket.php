@@ -5,7 +5,7 @@ namespace PiggyAuth\Packet;
 use pocketmine\network\protocol\DataPacket;
 
 class BossEventPacket extends DataPacket {
-    const NETWORK_ID = 0x4a;
+    const NETWORK_ID = 0x4b;
 
     public $eid;
     public $state;
