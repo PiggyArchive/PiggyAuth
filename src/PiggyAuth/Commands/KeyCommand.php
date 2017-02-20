@@ -1,4 +1,5 @@
 <?php
+
 namespace PiggyAuth\Commands;
 
 use pocketmine\command\defaults\VanillaCommand;
@@ -13,14 +14,14 @@ class KeyCommand extends VanillaCommand {
     }
 
     public function execute(CommandSender $sender, $currentAlias, array $args) {
-        if(!$this->testPermission($sender)) {
+        if (!$this->testPermission($sender)) {
             return true;
         }
-        if($sender instanceof Player) {
+        if ($sender instanceof Player) {
             $sender->sendMessage("§cThis is for the console only.");
             return false;
         }
-        if(!isset($args[0])) {
+        if (!isset($args[0])) {
             $sender->sendMessage("/key <password>");
             return false;
         }

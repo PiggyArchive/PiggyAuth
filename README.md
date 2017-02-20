@@ -41,6 +41,7 @@ Safe & feature-rich auth plugin. Sugguest features [here.](https://github.com/MC
 * Fix confirm password bug
 * Fix register message not showing if not logged in by xbox live
 * Fix adventure mode staying when logged in by xbox live or uuid
+* Block accounts
 
 ###v2.0.0
 * Improved xbox bypass

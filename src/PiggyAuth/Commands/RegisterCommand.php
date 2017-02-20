@@ -1,4 +1,5 @@
 <?php
+
 namespace PiggyAuth\Commands;
 
 use pocketmine\command\defaults\VanillaCommand;
@@ -13,21 +14,21 @@ class RegisterCommand extends VanillaCommand {
     }
 
     public function execute(CommandSender $sender, $currentAlias, array $args) {
-        if(!$this->testPermission($sender)) {
+        if (!$this->testPermission($sender)) {
             return true;
         }
-        if(!$sender instanceof Player) {
+        if (!$sender instanceof Player) {
             $sender->sendMessage("§cYou must use the command in-game.");
             return false;
         }
-        if(!isset($args[0]) || !isset($args[1])) {
+        if (!isset($args[0]) || !isset($args[1])) {
             $sender->sendMessage("/register <password> <confirm password> [email]");
             return false;
         }
-        if(!isset($args[2])) {
+        if (!isset($args[2])) {
             $args[2] = "none";
         } else {
-            if(!filter_var($args[2], FILTER_VALIDATE_EMAIL)) {
+            if (!filter_var($args[2], FILTER_VALIDATE_EMAIL)) {
                 $sender->sendMessage($this->plugin->getMessage("invalid-email"));
                 return false;
             }

@@ -1,4 +1,5 @@
 <?php
+
 namespace PiggyAuth\Commands;
 
 use pocketmine\command\defaults\VanillaCommand;
@@ -13,18 +14,18 @@ class ChangeEmailCommand extends VanillaCommand {
     }
 
     public function execute(CommandSender $sender, $currentAlias, array $args) {
-        if(!$this->testPermission($sender)) {
+        if (!$this->testPermission($sender)) {
             return true;
         }
-        if(!$sender instanceof Player) {
+        if (!$sender instanceof Player) {
             $sender->sendMessage("§cYou must use the command in-game.");
             return false;
         }
-        if(!isset($args[0])) {
+        if (!isset($args[0])) {
             $sender->sendMessage("/changeemail <email>");
             return false;
         } else {
-            if(!filter_var($args[0], FILTER_VALIDATE_EMAIL)) {
+            if (!filter_var($args[0], FILTER_VALIDATE_EMAIL)) {
                 $sender->sendMessage($this->plugin->getMessage("invalid-email"));
                 return false;
             }

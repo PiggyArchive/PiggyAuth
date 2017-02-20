@@ -66,7 +66,9 @@ boss-bar: true
 #Seconds til next message
 seconds-til-next-message: 5
 #Passwords you want blocked
-blocked-passwords: ["password", "123456", "abcdef", "qwerty"]
+blocked-passwords: ["password", "123456", "abc123", "abcdef", "qwerty"]
+#Accounts you want blocked
+blocked-accounts: ["notch"]
 #If enabled, players will be invisible til authentication
 invisible: true
 #If enabled, players will be blind til authentication
@@ -208,3 +210,4 @@ key-expired: "&cYour key is expired."
 
 #General
 dont-say-password: "&cDo not say your password."
+account-blocked: "&cAccount is blocked."

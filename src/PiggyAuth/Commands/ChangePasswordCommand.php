@@ -1,4 +1,5 @@
 <?php
+
 namespace PiggyAuth\Commands;
 
 use pocketmine\command\defaults\VanillaCommand;
@@ -13,14 +14,14 @@ class ChangePasswordCommand extends VanillaCommand {
     }
 
     public function execute(CommandSender $sender, $currentAlias, array $args) {
-        if(!$this->testPermission($sender)) {
+        if (!$this->testPermission($sender)) {
             return true;
         }
-        if(!$sender instanceof Player) {
+        if (!$sender instanceof Player) {
             $sender->sendMessage("§cYou must use the command in-game.");
             return false;
         }
-        if(!isset($args[1])) {
+        if (!isset($args[1])) {
             $sender->sendMessage("/changepassword <old password> <new password>");
             return false;
         }

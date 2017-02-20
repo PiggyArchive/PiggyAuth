@@ -1,4 +1,5 @@
 <?php
+
 namespace PiggyAuth\Databases;
 
 interface Database {

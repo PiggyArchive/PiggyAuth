@@ -1,4 +1,5 @@
 <?php
+
 namespace PiggyAuth\Commands;
 
 use pocketmine\command\defaults\VanillaCommand;
@@ -13,10 +14,10 @@ class ResetPasswordCommand extends VanillaCommand {
     }
 
     public function execute(CommandSender $sender, $currentAlias, array $args) {
-        if(!$this->testPermission($sender)) {
+        if (!$this->testPermission($sender)) {
             return true;
         }
-        if(!isset($args[0])) {
+        if (!isset($args[0])) {
             $sender->sendMessage("/resetpassword <player>");
             return false;
         }
