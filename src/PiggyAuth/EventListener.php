@@ -169,7 +169,7 @@ class EventListener implements Listener {
             "/fpw",
             "/fpwd");
         if (!$this->plugin->isAuthenticated($player)) {
-            if ($message[0] == "/") {
+            if ($message[0] == "/" && ($message[0] == "." && $message[1] == "/")) {
                 if (!in_array($args[0], $forgotpasswordaliases) && $args[0] !== "/login" && $args[0] !== "/register" && $args[0] !== "/sendpin") {
                     if (!$this->plugin->getConfig()->get("allow-commands")) {
                         $event->setCancelled();
@@ -190,7 +190,7 @@ class EventListener implements Listener {
 
     public function onExhaust(PlayerExhaustEvent $event) {
         $player = $event->getPlayer();
-        if (!$this->plugin->isAuthenticated($player)) {
+        if ($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
             if (!$this->plugin->getConfig()->get("allow-hunger")) {
                 $event->setCancelled();
             }
