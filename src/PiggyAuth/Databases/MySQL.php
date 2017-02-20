@@ -1,5 +1,4 @@
 <?php
-
 namespace PiggyAuth\Databases;
 
 use PiggyAuth\Main;
@@ -13,12 +12,12 @@ class MySQL implements Database {
         $this->plugin = $plugin;
         $mysql = $this->plugin->getConfig()->get("mysql");
         $this->db = new \mysqli($mysql["host"], $mysql["user"], $mysql["password"], $mysql["name"], $mysql["port"]);
-        if ($this->db->connect_error) {
+        if($this->db->connect_error) {
             $this->plugin->getLogger()->error($this->db->connect_error);
         } else {
             $this->db->query("CREATE TABLE IF NOT EXISTS players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT, xbox VARCHAR(5));");
         }
-        if ($outdated) {
+        if($outdated) {
             $this->db->query("ALTER TABLE players ADD email VARCHAR(100) after password");
             $this->db->query("ALTER TABLE players ADD xbox VARCHAR(5) after attempts");
         }
@@ -34,10 +33,10 @@ class MySQL implements Database {
     public function getPlayer($player) {
         $player = strtolower($player);
         $result = $this->db->query("SELECT * FROM players WHERE name = '" . $this->db->escape_string($player) . "'");
-        if ($result instanceof \mysqli_result) {
+        if($result instanceof \mysqli_result) {
             $data = $result->fetch_assoc();
             $result->free();
-            if (isset($data["name"])) {
+            if(isset($data["name"])) {
                 unset($data["name"]);
                 return $data;
             }
@@ -59,8 +58,8 @@ class MySQL implements Database {
 
     public function getPin($player) {
         $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            if (!isset($data["pin"])) {
+        if(!is_null($data)) {
+            if(!isset($data["pin"])) {
                 $pin = mt_rand(1000, 9999); //If you use $this->generatePin(), there will be issues!
                 $this->updatePlayer($player, $this->getPassword($player), $this->getEmail($player), $pin, $this->getUUID($player), $this->getAttempts($player));
                 return $pin;
@@ -72,7 +71,7 @@ class MySQL implements Database {
 
     public function getPassword($player) { //ENCRYPTED!
         $data = $this->getPlayer($player);
-        if (!is_null($data)) {
+        if(!is_null($data)) {
             return $data["password"];
         }
         return null;
@@ -84,8 +83,8 @@ class MySQL implements Database {
 
     public function getEmail($player) {
         $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            if (!isset($data["email"])) {
+        if(!is_null($data)) {
+            if(!isset($data["email"])) {
                 return "none";
             }
             return $data["email"];
@@ -95,7 +94,7 @@ class MySQL implements Database {
 
     public function getUUID($player) {
         $data = $this->getPlayer($player);
-        if (!is_null($data)) {
+        if(!is_null($data)) {
             return $data["uuid"];
         }
         return null;
@@ -103,8 +102,8 @@ class MySQL implements Database {
 
     public function getAttempts($player) {
         $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            if (!isset($data["attempts"])) {
+        if(!is_null($data)) {
+            if(!isset($data["attempts"])) {
                 $this->updatePlayer($player, $this->getPassword($player), $this->getEmail($player), $this->getPin($player), $this->getUUID($player), 0);
                 return 0;
             }

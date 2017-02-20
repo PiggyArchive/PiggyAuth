@@ -1,5 +1,4 @@
 <?php
-
 namespace PiggyAuth\Tasks;
 
 use pocketmine\scheduler\PluginTask;

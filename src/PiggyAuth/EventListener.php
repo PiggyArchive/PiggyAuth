@@ -1,5 +1,4 @@
 <?php
-
 namespace PiggyAuth;
 
 use PiggyAuth\Tasks\TimeoutTask;
@@ -39,8 +38,8 @@ class EventListener implements Listener {
 
     public function onBreak(BlockBreakEvent $event) {
         $player = $event->getPlayer();
-        if (!$this->plugin->isAuthenticated($player)) {
-            if (!$this->plugin->getConfig()->get("allow-block-break")) {
+        if(!$this->plugin->isAuthenticated($player)) {
+            if(!$this->plugin->getConfig()->get("allow-block-break")) {
                 $event->setCancelled();
             }
         }
@@ -48,8 +47,8 @@ class EventListener implements Listener {
 
     public function onPlace(BlockPlaceEvent $event) {
         $player = $event->getPlayer();
-        if (!$this->plugin->isAuthenticated($player)) {
-            if (!$this->plugin->getConfig()->get("allow-block-place")) {
+        if(!$this->plugin->isAuthenticated($player)) {
+            if(!$this->plugin->getConfig()->get("allow-block-place")) {
                 $event->setCancelled();
             }
         }
@@ -57,15 +56,15 @@ class EventListener implements Listener {
 
     public function onDamage(EntityDamageEvent $event) {
         $entity = $event->getEntity();
-        if ($entity instanceof Player && !$this->plugin->isAuthenticated($entity)) {
-            if (!$this->plugin->getConfig()->get("allow-damage")) {
+        if($entity instanceof Player && !$this->plugin->isAuthenticated($entity)) {
+            if(!$this->plugin->getConfig()->get("allow-damage")) {
                 $event->setCancelled();
             }
         }
-        if ($event instanceof EntityDamageByEntityEvent) {
+        if($event instanceof EntityDamageByEntityEvent) {
             $damager = $event->getDamager();
-            if ($damager instanceof Player && !$this->plugin->isAuthenticated($damager)) {
-                if (!$this->plugin->getConfig()->get("allow-damage-others")) {
+            if($damager instanceof Player && !$this->plugin->isAuthenticated($damager)) {
+                if(!$this->plugin->getConfig()->get("allow-damage-others")) {
                     $event->setCancelled();
                 }
             }
@@ -74,8 +73,8 @@ class EventListener implements Listener {
 
     public function onHeal(EntityRegainHealthEvent $event) {
         $entity = $event->getEntity();
-        if ($entity instanceof Player && !$this->plugin->isAuthenticated($entity)) {
-            if (!$this->plugin->getConfig()->get("allow-heal")) {
+        if($entity instanceof Player && !$this->plugin->isAuthenticated($entity)) {
+            if(!$this->plugin->getConfig()->get("allow-heal")) {
                 $event->setCancelled();
             }
         }
@@ -83,8 +82,8 @@ class EventListener implements Listener {
 
     public function onPickupArrow(InventoryPickupArrowEvent $event) {
         $player = $event->getInventory()->getHolder();
-        if ($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
-            if (!$this->plugin->getConfig()->get("allow-arrow-pickup")) {
+        if($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
+            if(!$this->plugin->getConfig()->get("allow-arrow-pickup")) {
                 $event->setCancelled();
             }
         }
@@ -92,8 +91,8 @@ class EventListener implements Listener {
 
     public function onPickupItem(InventoryPickupItemEvent $event) {
         $player = $event->getInventory()->getHolder();
-        if ($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
-            if (!$this->plugin->getConfig()->get("allow-item-pickup")) {
+        if($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
+            if(!$this->plugin->getConfig()->get("allow-item-pickup")) {
                 $event->setCancelled();
             }
         }
@@ -103,18 +102,18 @@ class EventListener implements Listener {
         $player = $event->getPlayer();
         $message = $event->getMessage();
         $recipients = array();
-        if (!$this->plugin->isAuthenticated($player)) {
-            if ($this->plugin->getConfig("chat-login")) {
-                if ($this->plugin->isRegistered($player->getName())) {
+        if(!$this->plugin->isAuthenticated($player)) {
+            if($this->plugin->getConfig("chat-login")) {
+                if($this->plugin->isRegistered($player->getName())) {
                     $this->plugin->login($player, $message, 0);
                 } else {
-                    if (!isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
-                        if (!isset($this->plugin->confirmedPassword[strtolower($player->getName())])) {
+                    if(!isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
+                        if(!isset($this->plugin->confirmedPassword[strtolower($player->getName())])) {
                             $this->plugin->confirmPassword[strtolower($player->getName())] = $message;
                             $player->sendMessage($this->plugin->getMessage("confirm-password"));
                         }
                     } else {
-                        if ($this->plugin->confirmPassword[strtolower($player->getName())] == $message) {
+                        if($this->plugin->confirmPassword[strtolower($player->getName())] == $message) {
                             unset($this->plugin->confirmPassword[strtolower($player->getName())]);
                             $this->plugin->confirmedPassword[strtolower($player->getName())] = $message;
                             $this->plugin->giveEmail[strtolower($player->getName())] = true;
@@ -126,8 +125,8 @@ class EventListener implements Listener {
                             unset($this->plugin->confirmPassword[strtolower($player->getName())]);
                         }
                     }
-                    if (isset($this->plugin->giveEmail[strtolower($player->getName())])) {
-                        if (strtolower($message) !== "none" && !filter_var($message, FILTER_VALIDATE_EMAIL)) {
+                    if(isset($this->plugin->giveEmail[strtolower($player->getName())])) {
+                        if(strtolower($message) !== "none" && !filter_var($message, FILTER_VALIDATE_EMAIL)) {
                             $player->sendMessage($this->plugin->getMessage("invalid-email"));
                         } else {
                             $this->plugin->register($player, $this->plugin->confirmedPassword[strtolower($player->getName())], $this->plugin->confirmedPassword[strtolower($player->getName())], $message);
@@ -140,14 +139,14 @@ class EventListener implements Listener {
             }
             $event->setCancelled();
         } else {
-            if ($this->plugin->isCorrectPassword($player, $message)) {
+            if($this->plugin->isCorrectPassword($player, $message)) {
                 $player->sendMessage($this->plugin->getMessage("dont-say-password"));
                 $event->setCancelled();
             }
         }
-        if (!$this->plugin->getConfig()->get("see-messages")) {
-            foreach ($event->getRecipients() as $recipient) {
-                if (!$recipient instanceof Player || $this->plugin->isAuthenticated($recipient)) {
+        if(!$this->plugin->getConfig()->get("see-messages")) {
+            foreach($event->getRecipients() as $recipient) {
+                if(!$recipient instanceof Player || $this->plugin->isAuthenticated($recipient)) {
                     array_push($recipients, $recipient);
                 }
             }
@@ -168,10 +167,10 @@ class EventListener implements Listener {
             "/forgetpwd",
             "/fpw",
             "/fpwd");
-        if (!$this->plugin->isAuthenticated($player)) {
-            if ($message[0] == "/" || $message[0] == "./") {
-                if (!in_array($args[0], $forgotpasswordaliases) && $args[0] !== "/login" && $args[0] !== "/register" && $args[0] !== "/sendpin") {
-                    if (!$this->plugin->getConfig()->get("allow-commands")) {
+        if(!$this->plugin->isAuthenticated($player)) {
+            if($message[0] == "/") {
+                if(!in_array($args[0], $forgotpasswordaliases) && $args[0] !== "/login" && $args[0] !== "/register" && $args[0] !== "/sendpin") {
+                    if(!$this->plugin->getConfig()->get("allow-commands")) {
                         $event->setCancelled();
                     }
                 }
@@ -181,8 +180,8 @@ class EventListener implements Listener {
 
     public function onDrop(PlayerDropItemEvent $event) {
         $player = $event->getPlayer();
-        if (!$this->plugin->isAuthenticated($player)) {
-            if (!$this->plugin->getConfig()->get("allow-item-drop")) {
+        if(!$this->plugin->isAuthenticated($player)) {
+            if(!$this->plugin->getConfig()->get("allow-item-drop")) {
                 $event->setCancelled();
             }
         }
@@ -190,8 +189,8 @@ class EventListener implements Listener {
 
     public function onExhaust(PlayerExhaustEvent $event) {
         $player = $event->getPlayer();
-        if ($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
-            if (!$this->plugin->getConfig()->get("allow-hunger")) {
+        if(!$this->plugin->isAuthenticated($player)) {
+            if(!$this->plugin->getConfig()->get("allow-hunger")) {
                 $event->setCancelled();
             }
         }
@@ -199,8 +198,8 @@ class EventListener implements Listener {
 
     public function onXPChange(PlayerExperienceChangeEvent $event) {
         $player = $event->getPlayer();
-        if ($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
-            if (!$this->plugin->getConfig()->get("allow-xp-change")) {
+        if($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
+            if(!$this->plugin->getConfig()->get("allow-xp-change")) {
                 $event->setCancelled();
             }
         }
@@ -208,8 +207,8 @@ class EventListener implements Listener {
 
     public function onInteract(PlayerInteractEvent $event) {
         $player = $event->getPlayer();
-        if (!$this->plugin->isAuthenticated($player)) {
-            if (!$this->plugin->getConfig()->get("allow-block-interact")) {
+        if(!$this->plugin->isAuthenticated($player)) {
+            if(!$this->plugin->getConfig()->get("allow-block-interact")) {
                 $event->setCancelled();
             }
         }
@@ -217,8 +216,8 @@ class EventListener implements Listener {
 
     public function onConsume(PlayerItemConsumeEvent $event) {
         $player = $event->getPlayer();
-        if (!$this->plugin->isAuthenticated($player)) {
-            if (!$this->plugin->getConfig()->get("allow-eating")) {
+        if(!$this->plugin->isAuthenticated($player)) {
+            if(!$this->plugin->getConfig()->get("allow-eating")) {
                 $event->setCancelled();
             }
         }
@@ -227,23 +226,23 @@ class EventListener implements Listener {
     public function onJoin(PlayerJoinEvent $event) {
         $player = $event->getPlayer();
         $data = $this->plugin->database->getPlayer($player->getName());
-        if (!$this->plugin->isRegistered($player->getName()) && $this->plugin->getConfig()->get("join-message-for-new-players")) {
+        if(!$this->plugin->isRegistered($player->getName()) && $this->plugin->getConfig()->get("join-message-for-new-players")) {
             $event->setJoinMessage(str_replace("{player}", $player->getName(), $this->plugin->getMessage("new-player")));
         }
-        if ($this->plugin->getConfig()->get("hold-join-message")) {
+        if($this->plugin->getConfig()->get("hold-join-message")) {
             $this->plugin->joinMessage[strtolower($player->getName())] = $event->getJoinMessage();
             $event->setJoinMessage(null);
         }
-        if ($this->plugin->getConfig()->get("auto-authentication") && !is_null($data) && $player->getUniqueId()->toString() == $data["uuid"]) {
+        if($this->plugin->getConfig()->get("auto-authentication") && !is_null($data) && $player->getUniqueId()->toString() == $data["uuid"]) {
             $this->plugin->force($player, true, 1);
             return true;
         }
-        if ($this->plugin->getConfig()->get("xbox-bypass") && $this->plugin->getServer()->getName() == "ClearSky" && $player->isAuthenticated()) {
-            if (!$this->plugin->isRegistered($player->getName())) {
+        if($this->plugin->getConfig()->get("xbox-bypass") && $this->plugin->getServer()->getName() == "ClearSky" && $player->isAuthenticated()) {
+            if(!$this->plugin->isRegistered($player->getName())) {
                 $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
                 $randompassword = [];
                 $characteramount = strlen($characters) - 1;
-                for ($i = 0; $i < $this->plugin->getConfig()->get("minimum-password-length"); $i++) {
+                for($i = 0; $i < $this->plugin->getConfig()->get("minimum-password-length"); $i++) {
                     $character = mt_rand(0, $characteramount);
                     array_push($randompassword, $characters[$character]);
                 }
@@ -251,7 +250,7 @@ class EventListener implements Listener {
                 $this->plugin->register($player, $randompassword, $randompassword, "none", "true");
                 $player->sendMessage(str_replace("{pin}", $this->plugin->database->getPin($player->getName()), str_replace("{password}", $randompassword, $this->plugin->getMessage("register-success-xbox"))));
             } else {
-                if (!is_null($data) && $data["xbox"] == "true") {
+                if(!is_null($data) && $data["xbox"] == "true") {
                     $this->plugin->force($player, true, 2);
                 }
             }
@@ -262,8 +261,8 @@ class EventListener implements Listener {
 
     public function onMove(PlayerMoveEvent $event) {
         $player = $event->getPlayer();
-        if (!$this->plugin->isAuthenticated($player)) {
-            if (!$this->plugin->getConfig()->get("allow-movement")) {
+        if(!$this->plugin->isAuthenticated($player)) {
+            if(!$this->plugin->getConfig()->get("allow-movement")) {
                 $event->setCancelled();
             }
         }
@@ -271,9 +270,9 @@ class EventListener implements Listener {
 
     public function onPrelogin(PlayerPreLoginEvent $event) {
         $player = $event->getPlayer();
-        if ($this->plugin->getConfig()->get("single-session")) {
-            if (!is_null($p = $this->plugin->getServer()->getPlayerExact($player->getName()))) {
-                if ($this->plugin->isAuthenticated($p) && $player->getUniqueId()->toString() !== $p->getUniqueId()->toString()) {
+        if($this->plugin->getConfig()->get("single-session")) {
+            if(!is_null($p = $this->plugin->getServer()->getPlayerExact($player->getName()))) {
+                if($this->plugin->isAuthenticated($p) && $player->getUniqueId()->toString() !== $p->getUniqueId()->toString()) {
                     $player->close("", "Already logged in!");
                     $event->setCancelled();
                 } else {
@@ -285,7 +284,7 @@ class EventListener implements Listener {
 
     public function onQuit(PlayerQuitEvent $event) {
         $player = $event->getPlayer();
-        if (!$this->plugin->isAuthenticated($player) && $this->plugin->getConfig()->get("hold-join-message")) {
+        if(!$this->plugin->isAuthenticated($player) && $this->plugin->getConfig()->get("hold-join-message")) {
             $event->setQuitMessage(null);
         }
         $this->plugin->logout($player);
@@ -294,10 +293,10 @@ class EventListener implements Listener {
     public function onReceive(DataPacketReceiveEvent $event) {
         $player = $event->getPlayer();
         $packet = $event->getPacket();
-        if ($packet instanceof ContainerSetSlotPacket) {
-            if (!$this->plugin->isAuthenticated($player) && $this->plugin->getConfig()->get("hide-items")) {
-                if ($player->isSurvival()) {
-                    if ($packet->item !== Item::get(Item::AIR)) {
+        if($packet instanceof ContainerSetSlotPacket) {
+            if(!$this->plugin->isAuthenticated($player) && $this->plugin->getConfig()->get("hide-items")) {
+                if($player->isSurvival()) {
+                    if($packet->item !== Item::get(Item::AIR)) {
                         $pk = new ContainerSetSlotPacket();
                         $pk->windowid = $packet->windowid;
                         $pk->slot = $packet->slot;
@@ -314,12 +313,12 @@ class EventListener implements Listener {
     public function onSend(DataPacketSendEvent $event) {
         $player = $event->getPlayer();
         $packet = $event->getPacket();
-        if ($packet instanceof MobEffectPacket) {
-            if (!$this->plugin->isAuthenticated($player) && $this->plugin->getConfig()->get("hide-effects")) {
-                if ($this->plugin->getConfig()->get("blindness") && ($packet->effectId == 15 || $packet->effectId == 16)) {
+        if($packet instanceof MobEffectPacket) {
+            if(!$this->plugin->isAuthenticated($player) && $this->plugin->getConfig()->get("hide-effects")) {
+                if($this->plugin->getConfig()->get("blindness") && ($packet->effectId == 15 || $packet->effectId == 16)) {
                     return false;
                 }
-                if ($packet->eventId !== MobEffectPacket::EVENT_ADD) {
+                if($packet->eventId !== MobEffectPacket::EVENT_ADD) {
                     return false;
                 }
                 $event->setCancelled();

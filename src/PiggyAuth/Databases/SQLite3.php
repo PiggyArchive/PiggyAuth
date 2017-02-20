@@ -1,5 +1,4 @@
 <?php
-
 namespace PiggyAuth\Databases;
 
 use PiggyAuth\Main;
@@ -11,14 +10,14 @@ class SQLite3 implements Database {
 
     public function __construct(Main $plugin, $outdated) {
         $this->plugin = $plugin;
-        if (!file_exists($this->plugin->getDataFolder() . "players.db")) {
+        if(!file_exists($this->plugin->getDataFolder() . "players.db")) {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
             $this->db->exec("CREATE TABLE players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT, xbox VARCHAR(5));");
         } else {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
             //Updater
         }
-        if ($outdated) {
+        if($outdated) {
             $this->db->exec("ALTER TABLE players ADD COLUMN email VARCHAR(100)");
             $this->db->exec("ALTER TABLE players ADD COLUMN pins INT");
             $this->db->exec("ALTER TABLE players ADD COLUMN attempts INT");
@@ -35,10 +34,10 @@ class SQLite3 implements Database {
         $statement = $this->db->prepare("SELECT * FROM players WHERE name = :name");
         $statement->bindValue(":name", $player, SQLITE3_TEXT);
         $result = $statement->execute();
-        if ($result instanceof \SQLite3Result) {
+        if($result instanceof \SQLite3Result) {
             $data = $result->fetchArray(SQLITE3_ASSOC);
             $result->finalize();
-            if (isset($data["name"])) {
+            if(isset($data["name"])) {
                 unset($data["name"]);
                 $statement->close();
                 return $data;
@@ -85,8 +84,8 @@ class SQLite3 implements Database {
 
     public function getPin($player) {
         $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            if (!isset($data["pin"])) {
+        if(!is_null($data)) {
+            if(!isset($data["pin"])) {
                 $pin = mt_rand(1000, 9999); //If you use $this->generatePin(), there will be issues!
                 $this->updatePlayer($player, $this->getPassword($player), $pin, $this->getUUID($player), $this->getAttempts($player));
                 return $pin;
@@ -98,7 +97,7 @@ class SQLite3 implements Database {
 
     public function getPassword($player) { //ENCRYPTED!
         $data = $this->getPlayer($player);
-        if (!is_null($data)) {
+        if(!is_null($data)) {
             return $data["password"];
         }
         return null;
@@ -112,8 +111,8 @@ class SQLite3 implements Database {
 
     public function getEmail($player) {
         $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            if (!isset($data["email"])) {
+        if(!is_null($data)) {
+            if(!isset($data["email"])) {
                 return "none";
             }
             return $data["email"];
@@ -123,7 +122,7 @@ class SQLite3 implements Database {
 
     public function getUUID($player) {
         $data = $this->getPlayer($player);
-        if (!is_null($data)) {
+        if(!is_null($data)) {
             return $data["uuid"];
         }
         return null;
@@ -131,8 +130,8 @@ class SQLite3 implements Database {
 
     public function getAttempts($player) {
         $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            if (!isset($data["attempts"])) {
+        if(!is_null($data)) {
+            if(!isset($data["attempts"])) {
                 $this->updatePlayer($player, $this->getPassword($player), $this->getPin($player), $this->getUUID($player), 0);
                 return 0;
             }

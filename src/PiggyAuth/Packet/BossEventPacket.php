@@ -1,5 +1,4 @@
 <?php
-
 namespace PiggyAuth\Packet;
 
 use pocketmine\network\protocol\DataPacket;

@@ -1,5 +1,4 @@
 <?php
-
 //Credits to @thebigsmileXD
 namespace PiggyAuth;
 class FakeAttribute {
