@@ -17,7 +17,7 @@ use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
-use pocketmine\event\player\PlayerExperienceChangeEvent;
+//use pocketmine\event\player\PlayerExperienceChangeEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -197,14 +197,14 @@ class EventListener implements Listener {
         }
     }
 
-    public function onXPChange(PlayerExperienceChangeEvent $event) {
+    /*public function onXPChange(PlayerExperienceChangeEvent $event) {
         $player = $event->getPlayer();
         if ($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
             if (!$this->plugin->getConfig()->get("allow-xp-change")) {
                 $event->setCancelled();
             }
         }
-    }
+    }*/
 
     public function onInteract(PlayerInteractEvent $event) {
         $player = $event->getPlayer();
