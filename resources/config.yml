@@ -85,13 +85,13 @@ steve-bypass: true
 cape-for-registration: true
 #Hide items til logged in
 hide-items: true
-#Send progress reports every certain number of players registered
+#BROKEN Send progress reports every certain number of players registered 
 progress-reports: true
-#Email to send progress report to
+#BROKEN Email to send progress report to
 progress-report-email: youremail@gmail.com
-#Number of players before send progress report
+#BROKEN Number of players before send progress report
 progress-report-number: 100
-#What progress report says
+#BROKEN What progress report says
 progress-report: "Your server ({ip}:{port}) has reached {players} players! Your {players}th player is {player}."
 #If enabled, there will be a special key that resets every 5 mins and after every use to allow access to any account.
 key: true
@@ -131,7 +131,7 @@ version: v2.0.1
 #Auto update config
 config-update: true
 
-#Emails
+#BROKEN Emails
 send-email-on-resetpassword: true
 send-email-on-changepassword: true
 

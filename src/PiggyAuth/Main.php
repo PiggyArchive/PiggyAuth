@@ -238,9 +238,11 @@ class Main extends PluginBase {
                 if ($this->tries[strtolower($player->getName())] >= $this->getConfig()->get("tries")) {
                     $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()) + 1);
                     $player->kick($this->getMessage("too-many-tries"));
+                    /*
                     if ($this->database->getEmail($player->getName()) !== "none") {
                         $this->emailUser($this->database->getEmail($player->getName()), $this->getMessage("email-subject-attemptedlogin"), $this->getMessage("email-attemptedlogin"));
                     }
+                    */
                     return false;
                 }
             } else {
@@ -408,11 +410,13 @@ class Main extends PluginBase {
         if (!$event->isCancelled()) {
             $this->database->insertData($player, $password, $email, $pin, $xbox);
             $this->force($player, false, $xbox == false ? 0 : 3);
+            /*
             if ($this->getConfig()->get("progress-reports")) {
                 if ($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) {
                     $this->emailUser($this->getConfig()->get("progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->getMessage("progress-report"))))));
                 }
             }
+            */
         }
         return true;
     }
@@ -456,11 +460,13 @@ class Main extends PluginBase {
         if ($p instanceof Player) {
             $this->force($p, false);
         }
+        /*
         if ($this->getConfig()->get("progress-reports")) {
             if ($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) {
                 $this->emailUser($this->getConfig()->get("progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player, $this->getMessage("progress-report"))))));
             }
         }
+        */
         $sender->sendMessage($this->getMessage("preregister-success"));
         return true;
     }
@@ -494,9 +500,11 @@ class Main extends PluginBase {
         if (!$event->isCancelled()) {
             $this->database->updatePlayer($player->getName(), $newpassword, $this->database->getEmail($player->getName()), $pin, $player->getUniqueId()->toString(), 0);
             $player->sendMessage(str_replace("{pin}", $pin, $this->getMessage("change-password-success")));
+            /*
             if ($this->getConfig()->get("send-email-on-changepassword") && $this->database->getEmail($player) !== "none") {
                 $this->emailUser($this->database->getEmail($player->getName()), $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
             }
+            */
         }
         return true;
     }
@@ -533,9 +541,11 @@ class Main extends PluginBase {
         if (!$event->isCancelled()) {
             $this->database->updatePlayer($player->getName(), $newpassword, $this->database->getEmail($player->getName()), $newpin, $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()));
             $player->sendMessage(str_replace("{pin}", $newpin, $this->getMessage("forgot-password-success")));
+            /*
             if ($this->getConfig()->get("send-email-on-changepassword") && $this->database->getEmail($player) !== "none") {
                 $this->emailUser($this->database->getEmail($player->getName()), $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
             }
+            */
         }
     }
 
@@ -544,9 +554,11 @@ class Main extends PluginBase {
         if ($this->isRegistered($player)) {
             $this->getServer()->getPluginManager()->callEvent($event = new PlayerResetPasswordEvent($this, $sender, $player));
             if (!$event->isCancelled()) {
+                /*
                 if ($this->getConfig()->get("send-email-on-resetpassword") && $this->database->getEmail($player) !== "none") {
                     $this->emailUser($this->database->getEmail($player), $this->getMessage("email-subject-passwordreset"), $this->getMessage("email-passwordreset"));
                 }
+                */
                 $this->database->clearPassword($player);
                 if (isset($this->authenticated[$player])) {
                     unset($this->authenticated[$player]);
@@ -604,7 +616,8 @@ class Main extends PluginBase {
     public function getMessage($message) {
         return str_replace("&", "§", $this->getConfig()->get($message));
     }
-
+    
+    /*
     //Code by @xBeastMode
     public function emailUser($to, $title, $body) {
         $ch = curl_init();
@@ -621,6 +634,7 @@ class Main extends PluginBase {
         curl_close($ch);
         return $result;
     }
+    */
 
     public function startSession(Player $player) {
         if (strtolower($player->getName()) == "steve" && $this->getConfig()->get("steve-bypass")) {
