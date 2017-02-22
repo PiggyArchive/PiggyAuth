@@ -43,6 +43,7 @@ NOTE: Email server is down & will be fixed soon.
 * Fix register message not showing if not logged in by xbox live
 * Fix adventure mode staying when logged in by xbox live or uuid
 * Block accounts
+* Events for developers
 
 ###v2.0.0
 * Improved xbox bypass
