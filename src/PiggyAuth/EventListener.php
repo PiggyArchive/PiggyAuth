@@ -126,13 +126,13 @@ class EventListener implements Listener {
                         } else {
                             $player->sendMessage($this->plugin->getMessage("password-not-match"));
                             unset($this->plugin->confirmPassword[strtolower($player->getName())]);
-                            $this->plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, Main::LOGIN, Main::PASSWORDS_NOT_MATCHED));
+                            $this->plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this->plugin, $player, Main::LOGIN, Main::PASSWORDS_NOT_MATCHED));
                         }
                     }
                     if (isset($this->plugin->giveEmail[strtolower($player->getName())])) {
                         if (strtolower($message) !== "none" && !filter_var($message, FILTER_VALIDATE_EMAIL)) {
                             $player->sendMessage($this->plugin->getMessage("invalid-email"));
-                            $this->plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, Main::LOGIN, Main::INVALID_EMAIL));
+                            $this->plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this->plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
                         } else {
                             $this->plugin->register($player, $this->plugin->confirmedPassword[strtolower($player->getName())], $this->plugin->confirmedPassword[strtolower($player->getName())], $message);
                             $this->plugin->database->updatePlayer($player->getName(), $this->plugin->database->getPassword($player->getName()), $message, $this->plugin->database->getPin($player->getName()), $player->getUniqueId()->toString(), $this->plugin->database->getUUID($player->getName()));
@@ -239,7 +239,7 @@ class EventListener implements Listener {
             $event->setJoinMessage(null);
         }
         if ($this->plugin->getConfig()->get("auto-authentication") && !is_null($data) && $player->getUniqueId()->toString() == $data["uuid"]) {
-            $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($player, Main::UUID));
+            $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this->plugin, $player, Main::UUID));
             if (!$event->isCancelled()) {
                 $this->plugin->force($player, true, 1);
             }
@@ -259,7 +259,7 @@ class EventListener implements Listener {
                 $player->sendMessage(str_replace("{pin}", $this->plugin->database->getPin($player->getName()), str_replace("{password}", $randompassword, $this->plugin->getMessage("register-success-xbox"))));
             } else {
                 if (!is_null($data) && $data["xbox"] == true) {
-                    $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($player, Main::XBOX));
+                    $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this->plugin, $player, Main::XBOX));
                     if (!$event->isCancelled()) {
                         $this->plugin->force($player, true, 2);
                     }

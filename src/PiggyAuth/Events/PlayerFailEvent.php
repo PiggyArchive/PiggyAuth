@@ -2,19 +2,23 @@
 
 namespace PiggyAuth\Events;
 
-use pocketmine\event\Cancellable;
-use pocketmine\event\player\PlayerEvent;
 use pocketmine\Player;
 
 class PlayerFailEvent extends PlayerEvent {
     public static $handlerList = null;
-    public $action;
-    public $error;
+    protected $player;
+    protected $action;
+    protected $error;
 
-    public function __construct(Player $player, $action, $error) {
+    public function __construct($plugin, Player $player, $action, $error) {
         $this->player = $player;
         $this->action = $action;
         $this->error = $error;
+        parent::__construct($plugin);
+    }
+
+    public function getPlayer() {
+        return $this->player;
     }
 
     public function getAction() {

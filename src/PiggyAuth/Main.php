@@ -206,17 +206,17 @@ class Main extends PluginBase {
     public function login(Player $player, $password, $mode = 0) {
         if ($this->isBlocked($player->getName())) {
             $player->sendMessage($this->getMessage("account-blocked"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::LOGIN, self::ACCOUNT_BLOCKED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::ACCOUNT_BLOCKED));
             return false;
         }
         if ($this->isAuthenticated($player)) {
             $player->sendMessage($this->getMessage("already-authenticated"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::LOGIN, self::ALREADY_AUTHENTICATED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::ALREADY_AUTHENTICATED));
             return false;
         }
         if (!$this->isRegistered($player->getName())) {
             $player->sendMessage($this->getMessage("not-registered"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::LOGIN, self::NOT_REGISTERED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::NOT_REGISTERED));
             return false;
         }
         if (!$this->isCorrectPassword($player, $password)) {
@@ -229,7 +229,7 @@ class Main extends PluginBase {
                 }
                 if (in_array($password, $this->expiredkeys)) {
                     $player->sendMessage($this->getMessage("key-expired"));
-                    $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::LOGIN, self::KEY_EXPIRED));
+                    $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::KEY_EXPIRED));
                     return true;
                 }
             }
@@ -248,10 +248,10 @@ class Main extends PluginBase {
             }
             $tries = $this->getConfig()->get("tries") - $this->tries[strtolower($player->getName())];
             $player->sendMessage(str_replace("{tries}", $tries, $this->getMessage("incorrect-password")));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::LOGIN, self::WRONG_PASSWORD));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::WRONG_PASSWORD));
             return false;
         }
-        $this->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($player, self::NORMAL));
+        $this->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this, $player, self::NORMAL));
         if (!$event->isCancelled()) {
             $this->force($player, true, $mode);
         }
@@ -374,37 +374,37 @@ class Main extends PluginBase {
         }
         if ($this->isBlocked($player->getName())) {
             $player->sendMessage($this->getMessage("account-blocked"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::REGISTER, self::ACCOUNT_BLOCKED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::ACCOUNT_BLOCKED));
             return false;
         }
         if ($this->isRegistered($player->getName())) {
             $player->sendMessage($this->getMessage("already-registered"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::REGISTER, self::ALREADY_REGISTERED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::ALREADY_REGISTERED));
             return false;
         }
         if ($password !== $confirmpassword) {
             $player->sendMessage($this->getMessage("password-not-match"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::REGISTER, self::PASSWORDS_NOT_MATCHED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORDS_NOT_MATCHED));
             return false;
         }
         if ($this->isPasswordBlocked($password)) {
             $player->sendMessage($this->getMessage("password-blocked"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::REGISTER, self::PASSWORD_BLOCKED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_BLOCKED));
             return false;
         }
         if (strtolower($password) == strtolower($player->getName()) || strpos($password, strtolower($player->getName())) !== false) {
             $player->sendMessage($this->getMessage("password-username"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::REGISTER, self::PASSWORD_USERNAME));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_USERNAME));
             return false;
         }
         if (strlen($password) < $this->getConfig()->get("minimum-password-length")) {
             $player->sendMessage($this->getMessage("password-too-short"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::REGISTER, self::PASSWORD_TOO_SHORT));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_TOO_SHORT));
             return false;
         }
         $password = password_hash($password, PASSWORD_BCRYPT);
         $pin = $this->generatePin($player);
-        $this->getServer()->getPluginManager()->callEvent($event = new PlayerRegisterEvent($player, $password, $email, $pin, $xbox == "false" ? self::NORMAL : self::XBOX));
+        $this->getServer()->getPluginManager()->callEvent($event = new PlayerRegisterEvent($this, $player, $password, $email, $pin, $xbox == "false" ? self::NORMAL : self::XBOX));
         if (!$event->isCancelled()) {
             $this->database->insertData($player, $password, $email, $pin, $xbox);
             $this->force($player, false, $xbox == false ? 0 : 3);
@@ -423,32 +423,32 @@ class Main extends PluginBase {
         }
         if ($this->isBlocked($player)) {
             $sender->sendMessage($this->getMessage("account-blocked"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::PREREGISTER, self::ACCOUNT_BLOCKED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::ACCOUNT_BLOCKED));
             return false;
         }
         if ($this->isRegistered($player)) {
             $sender->sendMessage($this->getMessage("already-registered-two"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::PREREGISTER, self::ALREADY_REGISTERED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::ALREADY_REGISTERED));
             return false;
         }
         if ($password !== $confirmpassword) {
             $sender->sendMessage($this->getMessage("password-not-match"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::PREREGISTER, self::PASSWORDS_NOT_MATCHED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORDS_NOT_MATCHED));
             return false;
         }
         if ($this->isPasswordBlocked($password)) {
             $sender->sendMessage($this->getMessage("password-blocked"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::PREREGISTER, self::PASSWORD_BLOCKED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORD_BLOCKED));
             return false;
         }
         if (strtolower($password) == strtolower($player) || strpos($password, strtolower($player)) !== false) {
             $sender->sendMessage($this->getMessage("password-username"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::PREREGISTER, self::PASSWORD_USERNAME));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORD_USERNAME));
             return false;
         }
         if (strlen($password) < $this->getConfig()->get("minimum-password-length")) {
             $sender->sendMessage($this->getMessage("password-too-short"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::PREREGISTER, self::PASSWORD_TOO_SHORT));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORD_TOO_SHORT));
             return false;
         }
         $this->database->insertDataWithoutPlayerObject($player, $password, $email);
@@ -468,22 +468,22 @@ class Main extends PluginBase {
     public function changepassword(Player $player, $oldpassword, $newpassword) {
         if (!$this->isRegistered($player->getName())) {
             $player->sendMessage($this->getMessage("not-registered"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::CHANGE_PASSWORD, self::NOT_REGISTERED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::CHANGE_PASSWORD, self::NOT_REGISTERED));
             return false;
         }
         if (!$this->isCorrectPassword($player, $oldpassword)) {
             $player->sendMessage($this->getMessage("incorrect-password"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::PREREGISTER, self::WRONG_PASSWORD));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::WRONG_PASSWORD));
             return false;
         }
         if ($this->isPasswordBlocked($newpassword)) {
             $player->sendMessage($this->getMessage("password-blocked"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::PREREGISTER, self::PASSWORD_BLOCKED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORD_BLOCKED));
             return false;
         }
         if (strtolower($newpassword) == strtolower($player->getName()) || strpos($newpassword, strtolower($player->getName())) !== false) {
             $player->sendMessage($this->getMessage("password-username"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::PREREGISTER, self::PASSWORD_USERNAME));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORD_USERNAME));
             return false;
         }
         $newpassword = password_hash($newpassword, PASSWORD_BCRYPT);
@@ -504,32 +504,32 @@ class Main extends PluginBase {
     public function forgotpassword(Player $player, $pin, $newpassword) {
         if (!$this->isRegistered($player->getName())) {
             $player->sendMessage($this->getMessage("not-registered"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::FORGET_PASSWORD, self::NOT_REGISTERED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::NOT_REGISTERED));
             return false;
         }
         if ($this->isAuthenticated($player)) {
             $player->sendMessage($this->getMessage("already-authenticated"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::FORGET_PASSWORD, self::ALREADY_AUTHENTICATED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::ALREADY_AUTHENTICATED));
             return false;
         }
         if (!$this->isCorrectPin($player, $pin)) {
             $player->sendMessage($this->getMessage("incorrect-pin"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::FORGET_PASSWORD, self::WRONG_PIN));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::WRONG_PIN));
             return false;
         }
         if ($this->isPasswordBlocked($password)) {
             $player->sendMessage($this->getMessage("password-blocked"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::FORGET_PASSWORD, self::PASSWORD_BLOCKED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::PASSWORD_BLOCKED));
             return false;
         }
         if (strtolower($password) == strtolower($player->getName()) || strpos($password, strtolower($player->getName())) !== false) {
             $player->sendMessage($this->getMessage("password-username"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::FORGET_PASSWORD, self::PASSWORD_USERNAME));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::PASSWORD_USERNAME));
             return false;
         }
         $newpassword = password_hash($newpassword, PASSWORD_BCRYPT);
         $newpin = $this->generatePin($player);
-        $this->getServer()->getPluginManager()->callEvent($event = new PlayerForgetPasswordEvent($player, $newpassword, $pin, $newpin));
+        $this->getServer()->getPluginManager()->callEvent($event = new PlayerForgetPasswordEvent($this, $player, $newpassword, $pin, $newpin));
         if (!$event->isCancelled()) {
             $this->database->updatePlayer($player->getName(), $newpassword, $this->database->getEmail($player->getName()), $newpin, $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()));
             $player->sendMessage(str_replace("{pin}", $newpin, $this->getMessage("forgot-password-success")));
@@ -542,7 +542,7 @@ class Main extends PluginBase {
     public function resetpassword($player, $sender) {
         $player = strtolower($player);
         if ($this->isRegistered($player)) {
-            $this->getServer()->getPluginManager()->callEvent($event = new PlayerResetPasswordEvent($sender, $player));
+            $this->getServer()->getPluginManager()->callEvent($event = new PlayerResetPasswordEvent($this, $sender, $player));
             if (!$event->isCancelled()) {
                 if ($this->getConfig()->get("send-email-on-resetpassword") && $this->database->getEmail($player) !== "none") {
                     $this->emailUser($this->database->getEmail($player), $this->getMessage("email-subject-passwordreset"), $this->getMessage("email-passwordreset"));
@@ -560,12 +560,12 @@ class Main extends PluginBase {
             }
         }
         $sender->sendMessage($this->getMessage("not-registered-two"));
-        $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::RESET_PASSWORD, self::NOT_REGISTERED));
+        $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::RESET_PASSWORD, self::NOT_REGISTERED));
         return false;
     }
 
     public function logout(Player $player, $quit = true) {
-        $this->getServer()->getPluginManager()->callEvent($event = new PlayerLogoutEvent($player));
+        $this->getServer()->getPluginManager()->callEvent($event = new PlayerLogoutEvent($this, $player));
         if (!$event->isCancelled()) {
             if ($this->isAuthenticated($player)) {
                 unset($this->authenticated[strtolower($player->getName())]);

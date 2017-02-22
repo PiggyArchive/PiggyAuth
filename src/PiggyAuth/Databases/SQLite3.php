@@ -62,7 +62,7 @@ class SQLite3 implements Database {
     public function insertData(Player $player, $password, $email, $pin, $xbox) {
         $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox)");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
-        $statement->bindValue(":password", password_hash($password, PASSWORD_BCRYPT), SQLITE3_TEXT);
+        $statement->bindValue(":password", $password, SQLITE3_TEXT);
         $statement->bindValue(":email", $email, SQLITE3_TEXT);
         $statement->bindValue(":pin", $pin, SQLITE3_INTEGER);
         $statement->bindValue(":uuid", $player->getUniqueId()->toString(), SQLITE3_TEXT);
@@ -74,7 +74,7 @@ class SQLite3 implements Database {
     public function insertDataWithoutPlayerObject($player, $password, $email) {
         $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox)");
         $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
-        $statement->bindValue(":password", password_hash($password, PASSWORD_BCRYPT), SQLITE3_TEXT);
+        $statement->bindValue(":password", $password, SQLITE3_TEXT);
         $statement->bindValue(":email", $email, SQLITE3_TEXT);
         $statement->bindValue(":pin", mt_rand(1000, 9999), SQLITE3_INTEGER);
         $statement->bindValue(":uuid", "uuid", SQLITE3_TEXT);
