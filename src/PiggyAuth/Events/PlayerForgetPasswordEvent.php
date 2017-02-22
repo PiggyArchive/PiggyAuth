@@ -8,7 +8,7 @@ use pocketmine\Player;
 
 class PlayerForgetPasswordEvent extends PlayerEvent implements Cancellable {
     public static $handlerList = null;
-    
+
     public function __construct(Player $player, $password, $oldpin, $pin) {
         $this->player = $player;
         $this->password = $password;

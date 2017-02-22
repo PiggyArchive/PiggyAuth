@@ -24,8 +24,8 @@ class PlayerRegisterEvent extends PlayerEvent implements Cancellable {
     private function getPassword() {
         return $this->password;
     }
-    
-    private function getEmail(){
+
+    private function getEmail() {
         return $this->email;
     }
 

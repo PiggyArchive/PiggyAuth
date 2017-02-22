@@ -2,7 +2,7 @@
 
 namespace PiggyAuth\Databases;
 
-use pocketmine\Player; 
+use pocketmine\Player;
 
 interface Database {
     public function getPlayer($player);
@@ -10,7 +10,7 @@ interface Database {
     public function updatePlayer($player, $password, $email, $pin, $uuid, $attempts);
 
     public function insertData(Player $player, $password, $email, $pin, $xbox);
-        
+
     public function getPin($player);
 
     public function getPassword($player);
