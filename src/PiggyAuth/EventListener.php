@@ -255,10 +255,10 @@ class EventListener implements Listener {
                     array_push($randompassword, $characters[$character]);
                 }
                 $randompassword = implode("", $randompassword);
-                $this->plugin->register($player, $randompassword, $randompassword, "none", "true");
+                $this->plugin->register($player, $randompassword, $randompassword, "none", true);
                 $player->sendMessage(str_replace("{pin}", $this->plugin->database->getPin($player->getName()), str_replace("{password}", $randompassword, $this->plugin->getMessage("register-success-xbox"))));
             } else {
-                if (!is_null($data) && $data["xbox"] == "true") {
+                if (!is_null($data) && $data["xbox"] == true) {
                     $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($player, Main::XBOX));
                     if (!$event->isCancelled()) {
                         $this->plugin->force($player, true, 2);

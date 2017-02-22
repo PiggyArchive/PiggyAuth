@@ -16,7 +16,7 @@ class MySQL implements Database {
         if ($this->db->connect_error) {
             $this->plugin->getLogger()->error($this->db->connect_error);
         } else {
-            $this->db->query("CREATE TABLE IF NOT EXISTS players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT, xbox VARCHAR(5));");
+            $this->db->query("CREATE TABLE IF NOT EXISTS players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT, xbox BIT(1));");
         }
         if ($outdated) {
             $this->db->query("ALTER TABLE players ADD email VARCHAR(100) after password");

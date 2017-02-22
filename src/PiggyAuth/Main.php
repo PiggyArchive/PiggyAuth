@@ -368,7 +368,7 @@ class Main extends PluginBase {
         return true;
     }
 
-    public function register(Player $player, $password, $confirmpassword, $email = "none", $xbox = "false") {
+    public function register(Player $player, $password, $confirmpassword, $email = "none", $xbox = false) {
         if (isset($this->confirmPassword[strtolower($player->getName())])) {
             unset($this->confirmPassword[strtolower($player->getName())]);
         }
@@ -407,7 +407,7 @@ class Main extends PluginBase {
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerRegisterEvent($player, $password, $email, $pin, $xbox == "false" ? self::NORMAL : self::XBOX));
         if (!$event->isCancelled()) {
             $this->database->insertData($player, $password, $email, $pin, $xbox);
-            $this->force($player, false, $xbox == "false" ? 0 : 3);
+            $this->force($player, false, $xbox == false ? 0 : 3);
             if ($this->getConfig()->get("progress-reports")) {
                 if ($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->get("progress-report-number")) {
                     $this->emailUser($this->getConfig()->get("progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->getMessage("progress-report"))))));
@@ -421,7 +421,7 @@ class Main extends PluginBase {
         if (isset($this->confirmPassword[strtolower($player)])) {
             unset($this->confirmPassword[strtolower($player)]);
         }
-        if ($this->isBlocked($sender)) {
+        if ($this->isBlocked($player)) {
             $sender->sendMessage($this->getMessage("account-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, self::PREREGISTER, self::ACCOUNT_BLOCKED));
             return false;

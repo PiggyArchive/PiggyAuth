@@ -13,7 +13,7 @@ class SQLite3 implements Database {
         $this->plugin = $plugin;
         if (!file_exists($this->plugin->getDataFolder() . "players.db")) {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
-            $this->db->exec("CREATE TABLE players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT, xbox VARCHAR(5));");
+            $this->db->exec("CREATE TABLE players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT, xbox BIT(1));");
         } else {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
             //Updater
@@ -79,7 +79,7 @@ class SQLite3 implements Database {
         $statement->bindValue(":pin", mt_rand(1000, 9999), SQLITE3_INTEGER);
         $statement->bindValue(":uuid", "uuid", SQLITE3_TEXT);
         $statement->bindValue(":attempts", 0, SQLITE3_INTEGER);
-        $statement->bindValue(":xbox", "false", SQLITE3_TEXT);
+        $statement->bindValue(":xbox", false, SQLITE3_TEXT);
         $statement->execute();
     }
 
