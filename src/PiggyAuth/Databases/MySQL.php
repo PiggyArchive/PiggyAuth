@@ -49,8 +49,8 @@ class MySQL implements Database {
         $this->db->query("UPDATE players SET password = '" . $this->db->escape_string($password) . "', email = '" . $this->db->escape_string($email) . "', pin = '" . intval($pin) . "', uuid = '" . $this->db->escape_string($uuid) . "', attempts = '" . intval($attempts) . "' WHERE name = '" . $this->db->escape_string($player) . "'");
     }
 
-    public function insertData(Player $player, $password, $email, $xbox) {
-        $this->db->query("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string(password_hash($password, PASSWORD_BCRYPT)) . "', '" . $this->db->escape_string($email) . "', '" . $this->plugin->generatePin($player) . "', '" . $player->getUniqueId()->toString() . "', '0', '" . $xbox . "')");
+    public function insertData(Player $player, $password, $email, $pin, $xbox) {
+        $this->db->query("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string(password_hash($password, PASSWORD_BCRYPT)) . "', '" . $this->db->escape_string($email) . "', '" . $pin . "', '" . $player->getUniqueId()->toString() . "', '0', '" . $xbox . "')");
     }
 
     public function insertDataWithoutPlayerObject($player, $password, $email) {

@@ -59,12 +59,12 @@ class SQLite3 implements Database {
         $statement->execute();
     }
 
-    public function insertData(Player $player, $password, $email, $xbox) {
+    public function insertData(Player $player, $password, $email, $pin, $xbox) {
         $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox)");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
         $statement->bindValue(":password", password_hash($password, PASSWORD_BCRYPT), SQLITE3_TEXT);
         $statement->bindValue(":email", $email, SQLITE3_TEXT);
-        $statement->bindValue(":pin", $this->plugin->generatePin($player), SQLITE3_INTEGER);
+        $statement->bindValue(":pin", $pin, SQLITE3_INTEGER);
         $statement->bindValue(":uuid", $player->getUniqueId()->toString(), SQLITE3_TEXT);
         $statement->bindValue(":attempts", 0, SQLITE3_INTEGER);
         $statement->bindValue(":xbox", $xbox, SQLITE3_TEXT);

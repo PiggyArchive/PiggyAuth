@@ -2,6 +2,8 @@
 
 namespace PiggyAuth;
 
+use PiggyAuth\Events\PlayerFailEvent;
+use PiggyAuth\Events\PlayerLoginEvent;
 use PiggyAuth\Tasks\TimeoutTask;
 
 use pocketmine\entity\Effect;
@@ -33,7 +35,7 @@ use pocketmine\network\protocol\MobEffectPacket;
 use pocketmine\Player;
 
 class EventListener implements Listener {
-    public function __construct($plugin) {
+    public function __construct(Main $plugin) {
         $this->plugin = $plugin;
     }
 
@@ -124,11 +126,13 @@ class EventListener implements Listener {
                         } else {
                             $player->sendMessage($this->plugin->getMessage("password-not-match"));
                             unset($this->plugin->confirmPassword[strtolower($player->getName())]);
+                            $this->plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, Main::LOGIN, Main::PASSWORDS_NOT_MATCHED));
                         }
                     }
                     if (isset($this->plugin->giveEmail[strtolower($player->getName())])) {
                         if (strtolower($message) !== "none" && !filter_var($message, FILTER_VALIDATE_EMAIL)) {
                             $player->sendMessage($this->plugin->getMessage("invalid-email"));
+                            $this->plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($player, Main::LOGIN, Main::INVALID_EMAIL));
                         } else {
                             $this->plugin->register($player, $this->plugin->confirmedPassword[strtolower($player->getName())], $this->plugin->confirmedPassword[strtolower($player->getName())], $message);
                             $this->plugin->database->updatePlayer($player->getName(), $this->plugin->database->getPassword($player->getName()), $message, $this->plugin->database->getPin($player->getName()), $player->getUniqueId()->toString(), $this->plugin->database->getUUID($player->getName()));
@@ -198,12 +202,12 @@ class EventListener implements Listener {
     }
 
     /*public function onXPChange(PlayerExperienceChangeEvent $event) {
-        $player = $event->getPlayer();
-        if ($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
-            if (!$this->plugin->getConfig()->get("allow-xp-change")) {
-                $event->setCancelled();
-            }
-        }
+    $player = $event->getPlayer();
+    if ($player instanceof Player && !$this->plugin->isAuthenticated($player)) {
+    if (!$this->plugin->getConfig()->get("allow-xp-change")) {
+    $event->setCancelled();
+    }
+    }
     }*/
 
     public function onInteract(PlayerInteractEvent $event) {
@@ -235,7 +239,10 @@ class EventListener implements Listener {
             $event->setJoinMessage(null);
         }
         if ($this->plugin->getConfig()->get("auto-authentication") && !is_null($data) && $player->getUniqueId()->toString() == $data["uuid"]) {
-            $this->plugin->force($player, true, 1);
+            $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($player, Main::UUID));
+            if (!$event->isCancelled()) {
+                $this->plugin->force($player, true, 1);
+            }
             return true;
         }
         if ($this->plugin->getConfig()->get("xbox-bypass") && $this->plugin->getServer()->getName() == "ClearSky" && $player->isAuthenticated()) {
@@ -252,7 +259,10 @@ class EventListener implements Listener {
                 $player->sendMessage(str_replace("{pin}", $this->plugin->database->getPin($player->getName()), str_replace("{password}", $randompassword, $this->plugin->getMessage("register-success-xbox"))));
             } else {
                 if (!is_null($data) && $data["xbox"] == "true") {
-                    $this->plugin->force($player, true, 2);
+                    $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($player, Main::XBOX));
+                    if (!$event->isCancelled()) {
+                        $this->plugin->force($player, true, 2);
+                    }
                 }
             }
             return true;
