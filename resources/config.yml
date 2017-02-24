@@ -15,108 +15,122 @@
 #  `---`     ---`-'   \   \  /   \   \  /     \  ' ;                                                   
 #                      `--`-'     `--`-'       `--`                                                    
 
-#If enabled, interaction with blocks will be allowed when not authenticated
-allow-block-interact: false
-#If enabled, dropping items will be allowed when not authenticated
-allow-item-drop: false
-#If enabled, picking up items will be allowed when not authenticated
-allow-item-pickup: false
-#If enabled, picking up arrows will be allowed when not authenticated
-allow-arrow-pickup: false
-#If enabled, hitting others will be allowed when not authenticated
-allow-damage-others: false
-#If enabled, placing blocks will be allowed when not authenticated
-allow-block-place: false
-#If enabled, breaking blocks will be allowed when not authenticated
-allow-block-break: false
-#If enabled, xp changes will be allowed when not authenticated
-allow-xp-change: false
-#If enabled, effect time will still go when not authenticated
-allow-effect-tick: false
-#If enabled, movement will be will be allowed when not authenticated
-allow-movement: false
-#If enabled, eating will be allowed when not authenticated
-allow-eating: false
-#If enabled, commands (other than /login, /register, /forgetpassword, /sendpin) will be allowed when not authenticated
-allow-commands: false
-#If enabled, hunger will not be stopped when not authenticated
-allow-hunger: false
-#If enabled, damage will not be stopped when not authenticated
-allow-damage: false
-#If enabled, healing will not be stopped when not authenticated
-allow-heal: false
-#If enabled, you can login without /login
-chat-login: true
-#If enabled, you will be authenticated automatically if your uuid matches the last uuid used.
-auto-authentication: false
-#Minimum password length
-minimum-password-length: 6
-#Kick players after certain time
-timeout: true
-#Seconds before kicked if not authenticated
-timeout-time: 60
-#Tries before kicked
-tries: 5
-#If enabled, a popup will be shown when not authenticated
-popup: true
-#If enabled, a tip will be shown when not authenticated
-tip: true
-#If enabled, a boss bar will be shown when not authenticated
-boss-bar: true
-#Seconds til next message
-seconds-til-next-message: 5
-#Passwords you want blocked
-blocked-passwords: ["password", "123456", "abc123", "abcdef", "qwerty"]
-#Accounts you want blocked
-blocked-accounts: ["notch"]
-#If enabled, players will be invisible til authentication
-invisible: true
-#If enabled, players will be blind til authentication
-blindness: true
-#If enabled, players can see chat messages when not authenticted
-see-messages: false
-#If enabled, players joining when another player has their username is kicked
-single-session: true
-#If enabled, players with logged in with xbox are automatically registered/logged in. (ClearSky only!)
-xbox-bypass: false
-#Disable authentication for the username Steve (default username in MCPE)
-steve-bypass: true
-#Capes will be given for registered players
-cape-for-registration: true
-#Hide items til logged in
-hide-items: true
-#BROKEN Send progress reports every certain number of players registered 
-progress-reports: true
-#BROKEN Email to send progress report to
-progress-report-email: youremail@gmail.com
-#BROKEN Number of players before send progress report
-progress-report-number: 100
-#BROKEN What progress report says
-progress-report: "Your server ({ip}:{port}) has reached {players} players! Your {players}th player is {player}."
-#If enabled, there will be a special key that resets every 5 mins and after every use to allow access to any account.
-key: true
-#Username of owner, for key
-owner: TheOwnerLovesPig
-#If on, will prevent join message til logged in
-hold-join-message: true
-#If on, there will be a seperate join message for new players
-join-message-for-new-players: true
+events:
+  #If enabled, interaction with blocks will be allowed when not authenticated
+  allow-block-interact: false
+  #If enabled, dropping items will be allowed when not authenticated
+  allow-item-drop: false
+  #If enabled, picking up items will be allowed when not authenticated
+  allow-item-pickup: false
+  #If enabled, picking up arrows will be allowed when not authenticated
+  allow-arrow-pickup: false
+  #If enabled, hitting others will be allowed when not authenticated
+  allow-damage-others: false
+  #If enabled, placing blocks will be allowed when not authenticated
+  allow-block-place: false
+  #If enabled, breaking blocks will be allowed when not authenticated
+  allow-block-break: false
+  #If enabled, xp changes will be allowed when not authenticated
+  allow-xp-change: false
+  #If enabled, effect time will still go when not authenticated
+  allow-effect-tick: false
+  #If enabled, movement will be will be allowed when not authenticated
+  allow-movement: false
+  #If enabled, eating will be allowed when not authenticated
+  allow-eating: false
+  #If enabled, commands (other than /login, /register, /forgetpassword, /sendpin) will be allowed when not authenticated
+  allow-commands: false
+  #If enabled, hunger will not be stopped when not authenticated
+  allow-hunger: false
+  #If enabled, damage will not be stopped when not authenticated
+  allow-damage: false
+  #If enabled, healing will not be stopped when not authenticated
+  allow-heal: false
+login:
+  #If enabled, you can login without /login
+  chat-login: true
+  #If enabled, you will be authenticated automatically if your uuid matches the last uuid used.
+  auto-authentication: false
+  #If enabled, players with logged in with xbox are automatically registered/logged in. (ClearSky only!)
+  xbox-bypass: false
+  #Disable authentication for the username Steve (default username in MCPE)
+  steve-bypass: true
+  #Tries before kicked
+  tries: 5
+  #Return to spawn when logged in
+  return-to-spawn: false
+  #If on, players will be set to adventure mode til logged in
+  adventure-mode: true
+  #If enabled, players joining when another player has their username is kicked
+  single-session: true
+register:
+  #Minimum password length
+  minimum-password-length: 6
+  #Passwords you want blocked
+  blocked-passwords: ["password", "123456", "abc123", "abcdef", "qwerty"]
+  #Accounts you want blocked
+  blocked-accounts: ["notch"]
+  #Capes will be given for registered players
+  cape-for-registration: true
+timeout:
+  #Kick players after certain time
+  enabled: true
+  #Seconds before kicked if not authenticated
+  timeout-time: 60
+effects:
+  #If enabled, players will be invisible til authentication
+  invisible: true
+  #If enabled, players will be blind til authentication
+  blindness: true
+  #Hide items til logged in
+  hide-items: true
+  #Hides all players til logged in
+  hide-players: true
+  #Hides true health til logged in
+  hide-health: true
+  #Hides true hunger til logged in
+  hide-hunger: true
+  #Hides true xp til logged in
+  hide-xp: true
+  #Hides effects til logged in
+  hide-effects: true
+message:
+  #If enabled, a popup will be shown when not authenticated
+  popup: true
+  #If enabled, a tip will be shown when not authenticated
+  tip: true
+  #If enabled, a boss bar will be shown when not authenticated
+  boss-bar: true
+  #Seconds til next message
+  seconds-til-next-message: 5
+  #If enabled, players can see chat messages when not authenticted
+  see-messages: false
+  #If on, will prevent join message til logged in
+  hold-join-message: true
+  #If on, there will be a seperate join message for new players
+  join-message-for-new-players: true
+  #Join message for new players
+  new-player: "&eWelcome {player} to the server!"
+progress-reports:
+  #BROKEN Send progress reports every certain number of players registered 
+  progress-reports: true
+  #BROKEN Email to send progress report to
+  progress-report-email: youremail@gmail.com
+  #BROKEN Number of players before send progress report
+  progress-report-number: 100
+  #BROKEN What progress report says
+  progress-report: "Your server ({ip}:{port}) has reached {players} players! Your {players}th player is {player}."
+email:
+  #BROKEN Emails
+  send-email-on-resetpassword: true
+  send-email-on-changepassword: true
+key:
+  #If enabled, there will be a special key that resets every 5 mins and after every use to allow access to any account.
+  enabled: true
+  #Username of owner, for key
+  owner: TheOwnerLovesPig
 #Join message for new players
 new-player: "&eWelcome {player} to the server!"
-#Hides all players til logged in
-hide-players: true
-#Hides true health til logged in
-hide-health: true
-#Hides true hunger til logged in
-hide-hunger: true
-#Hides true xp til logged in
-hide-xp: true
-#Hides effects til logged in
-hide-effects: true
-#Return to spawn when logged in
-return-to-spawn: false
-#If on, players will be set to adventure mode til logged in
-adventure-mode: true
 #Database (sqlite3, mysql)
 database: sqlite3
 #MySQL login
@@ -126,14 +140,11 @@ mysql:
   name: name
   password: password
   port: 3306
-#Version
-version: v2.0.1
-#Auto update config
-config-update: true
-
-#BROKEN Emails
-send-email-on-resetpassword: true
-send-email-on-changepassword: true
+config:
+# Version
+  version: v2.0.1
+  #Auto update config
+  config-update: true
 
 #Messages
 
@@ -141,7 +152,7 @@ send-email-on-changepassword: true
 join-message: "&6This server requires an account."
 
 #Login
-login: "&6Please login by typing in /login <password>\n&6Forgot your password? Use /forgotpassword <pin> <newpassword>"
+login-message: "&6Please login by typing in /login <password>\n&6Forgot your password? Use /forgotpassword <pin> <newpassword>"
 login-popup: "&6Please login."
 login-tip: "&6Please login."
 login-boss-bar: "&6Please login."
@@ -156,7 +167,7 @@ too-many-tries: "&cToo Many Tries to Login"
 timeout-message: "&cLogin Timeout"
 
 #Register
-register: "&6Please register by typing in /register <password> <confirm password> [email]"
+register-message: "&6Please register by typing in /register <password> <confirm password> [email]"
 register-popup: "&6Please register."
 register-tip: "&6Please register."
 register-boss-bar: "&6Please register."

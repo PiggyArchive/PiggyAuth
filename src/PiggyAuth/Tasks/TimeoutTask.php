@@ -15,7 +15,7 @@ class TimeoutTask extends PluginTask {
             if (!$this->plugin->isAuthenticated($player)) {
                 if (isset($this->plugin->timeouttick[strtolower($player->getName())])) {
                     $this->plugin->timeouttick[strtolower($player->getName())]++;
-                    if ($this->plugin->timeouttick[strtolower($player->getName())] == $this->plugin->getConfig()->get("timeout-time")) {
+                    if ($this->plugin->timeouttick[strtolower($player->getName())] == $this->plugin->getConfig()->getNested("timeout.timeout-time")) {
                         $player->kick($this->plugin->getMessage("timeout-message"));
                     }
                 }
