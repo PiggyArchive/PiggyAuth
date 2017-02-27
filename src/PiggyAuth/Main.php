@@ -457,9 +457,7 @@ class Main extends PluginBase {
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORD_TOO_SHORT));
             return false;
         }
-        $password = password_hash($password, PASSWORD_BCRYPT);
-        $pin = mt_rand(1000, 9999);
-        $this->database->insertDataWithoutPlayerObject($player, $password, $email, $pin);
+        $this->database->insertDataWithoutPlayerObject($player, $password, $email);
         $p = $this->getServer()->getPlayerExact($player);
         if ($p instanceof Player) {
             $this->force($p, false);
@@ -576,7 +574,7 @@ class Main extends PluginBase {
             }
         }
         $sender->sendMessage($this->getMessage("not-registered-two"));
-        $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $this->getServer()->getOfflinePlayer($player), self::RESET_PASSWORD, self::NOT_REGISTERED));
+        $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::RESET_PASSWORD, self::NOT_REGISTERED));
         return false;
     }
 
