@@ -2,7 +2,9 @@
 
 namespace PiggyAuth\Databases;
 
+use PiggyAuth\Tasks\MySQLTask;
 use PiggyAuth\Main;
+
 use pocketmine\Player;
 
 class MySQL implements Database {
@@ -11,24 +13,16 @@ class MySQL implements Database {
 
     public function __construct(Main $plugin, $outdated) {
         $this->plugin = $plugin;
-        $mysql = $this->plugin->getConfig()->get("mysql");
-        $this->db = new \mysqli($mysql["host"], $mysql["user"], $mysql["password"], $mysql["name"], $mysql["port"]);
-        if ($this->db->connect_error) {
-            $this->plugin->getLogger()->error($this->db->connect_error);
-        } else {
-            $this->db->query("CREATE TABLE IF NOT EXISTS players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT, xbox BIT(1));");
-        }
-        if ($outdated) {
-            $this->db->query("ALTER TABLE players ADD email VARCHAR(100) after password");
-            $this->db->query("ALTER TABLE players ADD xbox VARCHAR(5) after attempts");
-        }
+        $credentials = $this->plugin->getConfig()->get("mysql");
+        $this->db = new \mysqli($credentials["host"], $credentials["user"], $credentials["password"], $credentials["name"], $credentials["port"]);
+        $task = new MySQLTask($credentials, "CREATE TABLE IF NOT EXISTS players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT, xbox BIT(1));");
+        $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
     public function getRegisteredCount() {
-        $result = $this->db->query("SELECT count(1) FROM players");
-        $data = $result->fetch_assoc();
-        $result->free();
-        return $data["count(1)"];
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "SELECT count(1) FROM players");
+        $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
+        return $task->getResult()["count(1)"];
     }
 
     public function getPlayer($player) {
@@ -46,15 +40,18 @@ class MySQL implements Database {
     }
 
     public function updatePlayer($player, $password, $email, $pin, $uuid, $attempts) {
-        $this->db->query("UPDATE players SET password = '" . $this->db->escape_string($password) . "', email = '" . $this->db->escape_string($email) . "', pin = '" . intval($pin) . "', uuid = '" . $this->db->escape_string($uuid) . "', attempts = '" . intval($attempts) . "' WHERE name = '" . $this->db->escape_string($player) . "'");
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "UPDATE players SET password = '" . $this->db->escape_string($password) . "', email = '" . $this->db->escape_string($email) . "', pin = '" . intval($pin) . "', uuid = '" . $this->db->escape_string($uuid) . "', attempts = '" . intval($attempts) . "' WHERE name = '" . $this->db->escape_string($player) . "'");
+        $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
     public function insertData(Player $player, $password, $email, $pin, $xbox) {
-        $this->db->query("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . $pin . "', '" . $player->getUniqueId()->toString() . "', '0', '" . $xbox . "')");
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', '" . $player->getUniqueId()->toString() . "', '0', '" . $xbox . "')");
+        $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
-    public function insertDataWithoutPlayerObject($player, $password, $email) {
-        $this->db->query("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player)) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . mt_rand(1000, 9999) . "', 'uuid', '0', 'false')");
+    public function insertDataWithoutPlayerObject($player, $password, $email, $pin) {
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player)) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', 'uuid', '0', 'false')");
+        $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
     public function getPin($player) {
@@ -79,7 +76,8 @@ class MySQL implements Database {
     }
 
     public function clearPassword($player) {
-        $this->db->query("DELETE FROM players WHERE name = '" . $this->db->escape_string($player) . "'");
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "DELETE FROM players WHERE name = '" . $this->db->escape_string($player) . "'");
+        $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
     public function getEmail($player) {
