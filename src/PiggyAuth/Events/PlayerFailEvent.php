@@ -2,7 +2,7 @@
 
 namespace PiggyAuth\Events;
 
-use pocketmine\IPlayer;
+use pocketmine\Player;
 
 class PlayerFailEvent extends PlayerEvent {
     public static $handlerList = null;
@@ -10,7 +10,7 @@ class PlayerFailEvent extends PlayerEvent {
     protected $action;
     protected $error;
 
-    public function __construct($plugin, IPlayer $player, $action, $error) {
+    public function __construct($plugin, $player, $action, $error) {
         $this->player = $player;
         $this->action = $action;
         $this->error = $error;
@@ -18,7 +18,7 @@ class PlayerFailEvent extends PlayerEvent {
     }
 
     public function getPlayer() {
-        return $this->player;
+        return $this->player instanceof Player ? $this->player : null;
     }
 
     public function getAction() {

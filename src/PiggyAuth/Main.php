@@ -30,6 +30,7 @@ use PiggyAuth\Tasks\KeyTick;
 use PiggyAuth\Tasks\MessageTick;
 use PiggyAuth\Tasks\PingTask;
 use PiggyAuth\Tasks\PopupTipBarTick;
+use PiggyAuth\Tasks\SendPinTask;
 use PiggyAuth\Tasks\TimeoutTask;
 
 use pocketmine\entity\Attribute;
@@ -333,7 +334,7 @@ class Main extends PluginBase {
             }
         } else {
             if (!$mode == 3) {
-                $player->sendMessage(str_replace("{pin}", $this->database->getPin($player->getName()), $this->getMessage("register-success")));
+                $this->getServer()->getScheduler()->scheduleDelayedTask(new SendPinTask($this, $player), 20);
             }
         }
         if ($this->getConfig()->getNested("register.cape-for-registration")) {
@@ -576,7 +577,7 @@ class Main extends PluginBase {
             }
         }
         $sender->sendMessage($this->getMessage("not-registered-two"));
-        $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $this->getServer()->getOfflinePlayer($player), self::RESET_PASSWORD, self::NOT_REGISTERED));
+        $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::RESET_PASSWORD, self::NOT_REGISTERED));
         return false;
     }
 

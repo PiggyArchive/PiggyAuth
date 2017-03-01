@@ -16,10 +16,10 @@ class MySQLTask extends AsyncTask {
     public function onRun() {
         $credentials = unserialize($this->credentials);
         $db = new \mysqli($credentials["host"], $credentials["user"], $credentials["password"], $credentials["name"], $credentials["port"]);
-        /*$result = $db->query(unserialize($this->query));
-        if ($result instanceof \mysqli_result) {
-            var_dump($result);
-            $this->setResult(serialize($result));
+        $result = $db->query(unserialize($this->query));
+        /*if ($result instanceof \mysqli_result) {
+        var_dump($result);
+        $this->setResult(serialize($result));
         }*/
     }
 

@@ -20,9 +20,10 @@ class MySQL implements Database {
     }
 
     public function getRegisteredCount() {
-        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "SELECT count(1) FROM players");
-        $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
-        return $task->getResult()["count(1)"];
+        $result = $this->db->query("SELECT count(1) FROM players");
+        $data = $result->fetch_assoc();
+        $result->free();
+        return $data["count(1)"];
     }
 
     public function getPlayer($player) {
