@@ -15,7 +15,7 @@ class MySQL implements Database {
         $this->plugin = $plugin;
         $credentials = $this->plugin->getConfig()->get("mysql");
         $this->db = new \mysqli($credentials["host"], $credentials["user"], $credentials["password"], $credentials["name"], $credentials["port"]);
-        $task = new MySQLTask($credentials, "CREATE TABLE IF NOT EXISTS players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT, xbox BIT(1));");
+        $task = new MySQLTask($credentials, "CREATE TABLE IF NOT EXISTS players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, ip VARCHAR(32), uuid VARCHAR(100), attempts INT, xbox BIT(1));");
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
@@ -40,8 +40,8 @@ class MySQL implements Database {
         return null;
     }
 
-    public function updatePlayer($player, $password, $email, $pin, $uuid, $attempts) {
-        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "UPDATE players SET password = '" . $this->db->escape_string($password) . "', email = '" . $this->db->escape_string($email) . "', pin = '" . intval($pin) . "', uuid = '" . $this->db->escape_string($uuid) . "', attempts = '" . intval($attempts) . "' WHERE name = '" . $this->db->escape_string($player) . "'");
+    public function updatePlayer($player, $password, $email, $pin, $ip, $uuid, $attempts) {
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "UPDATE players SET password = '" . $this->db->escape_string($password) . "', email = '" . $this->db->escape_string($email) . "', pin = '" . intval($pin) . "', ip = '" . $this->db->escape_string($ip) . "', uuid = '" . $this->db->escape_string($uuid) . "', attempts = '" . intval($attempts) . "' WHERE name = '" . $this->db->escape_string($player) . "'");
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
@@ -90,6 +90,14 @@ class MySQL implements Database {
             return $data["email"];
         }
         return "none";
+    }
+
+    public function getIP($player) {
+        $data = $this->getPlayer($player);
+        if (!is_null($data)) {
+            return $data["ip"];
+        }
+        return null;
     }
 
     public function getUUID($player) {

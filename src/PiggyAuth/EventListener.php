@@ -135,7 +135,7 @@ class EventListener implements Listener {
                             $this->plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this->plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
                         } else {
                             $this->plugin->register($player, $this->plugin->confirmedPassword[strtolower($player->getName())], $this->plugin->confirmedPassword[strtolower($player->getName())], $message);
-                            $this->plugin->database->updatePlayer($player->getName(), $this->plugin->database->getPassword($player->getName()), $message, $this->plugin->database->getPin($player->getName()), $player->getUniqueId()->toString(), $this->plugin->database->getUUID($player->getName()));
+                            $this->plugin->database->updatePlayer($player->getName(), $this->plugin->database->getPassword($player->getName()), $message, $this->plugin->database->getPin($player->getName()), $player->getAddress(), $player->getUniqueId()->toString(), $this->plugin->database->getUUID($player->getName()));
                             unset($this->plugin->giveEmail[strtolower($player->getName())]);
                             unset($this->plugin->confirmedPassword[strtolower($player->getName())]);
                         }

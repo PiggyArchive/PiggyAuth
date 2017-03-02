@@ -74,7 +74,8 @@ class Main extends PluginBase {
     const PASSWORD_USERNAME = 21;
     const PASSWORD_TOO_SHORT = 22;
     const INVALID_EMAIL = 23;
-    const OTHER = 24;
+    const TOO_MANY_ON_IP = 24;
+    const OTHER = 25;
 
     public $authenticated;
     public $confirmPassword;
@@ -239,7 +240,7 @@ class Main extends PluginBase {
             if (isset($this->tries[strtolower($player->getName())])) {
                 $this->tries[strtolower($player->getName())]++;
                 if ($this->tries[strtolower($player->getName())] >= $this->getConfig()->getNested("login.tries")) {
-                    $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()) + 1);
+                    $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $this->database->getIP($player->getName()), $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()) + 1);
                     $player->kick($this->getMessage("too-many-tries"));
                     /*
                     if ($this->database->getEmail($player->getName()) !== "none") {
@@ -264,6 +265,32 @@ class Main extends PluginBase {
     }
 
     public function force(Player $player, $login = true, $mode = 0) {
+        if ($login) {
+            if ($this->isTooManyIPOnline($player)) {
+                $player->sendMessage($this->getMessage("too-many-on-ip"));
+                $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::TOO_MANY_ON_IP));
+                return false;
+            }
+            switch ($mode) {
+                case 1:
+                    $player->sendMessage($this->getMessage("authentication-success-uuid"));
+                    break;
+                case 2:
+                    $player->sendMessage($this->getMessage("authentication-success-xbox"));
+                    break;
+                case 0:
+                default:
+                    $player->sendMessage($this->getMessage("authentication-success"));
+                    break;
+            }
+            if (!$this->database->getAttempts($player->getName()) == 0) {
+                $player->sendMessage(str_replace("{attempts}", $this->database->getAttempts($player->getName()), $this->getMessage("attempted-logins")));
+            }
+        } else {
+            if (!$mode == 3) {
+                $this->getServer()->getScheduler()->scheduleDelayedTask(new SendPinTask($this, $player), 10);
+            }
+        }
         if (isset($this->messagetick[strtolower($player->getName())])) {
             unset($this->messagetick[strtolower($player->getName())]);
         }
@@ -315,28 +342,6 @@ class Main extends PluginBase {
         if ($this->getConfig()->getNested("login.return-to-spawn")) {
             $player->teleport($this->getServer()->getDefaultLevel()->getSafeSpawn());
         }
-        if ($login) {
-            switch ($mode) {
-                case 1:
-                    $player->sendMessage($this->getMessage("authentication-success-uuid"));
-                    break;
-                case 2:
-                    $player->sendMessage($this->getMessage("authentication-success-xbox"));
-                    break;
-                case 0:
-                default:
-                    $player->sendMessage($this->getMessage("authentication-success"));
-                    break;
-            }
-            if (!$this->database->getAttempts($player->getName()) == 0) {
-                $player->sendMessage(str_replace("{attempts}", $this->database->getAttempts($player->getName()), $this->getMessage("attempted-logins")));
-
-            }
-        } else {
-            if (!$mode == 3) {
-                $this->getServer()->getScheduler()->scheduleDelayedTask(new SendPinTask($this, $player), 20);
-            }
-        }
         if ($this->getConfig()->getNested("register.cape-for-registration")) {
             $cape = "Minecon_MineconSteveCape2016";
             if (isset($this->keepCape[strtolower($player->getName())])) {
@@ -369,7 +374,7 @@ class Main extends PluginBase {
                 unset($this->wither[strtolower($player->getName())]);
             }
         }
-        $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $player->getUniqueId()->toString(), 0);
+        $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $player->getAddress(), $player->getUniqueId()->toString(), 0);
         return true;
     }
 
@@ -503,7 +508,7 @@ class Main extends PluginBase {
         $pin = $this->generatePin($player);
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerChangePasswordEvent($player, $oldpassword, $newpassword, $oldpin, $pin));
         if (!$event->isCancelled()) {
-            $this->database->updatePlayer($player->getName(), $newpassword, $this->database->getEmail($player->getName()), $pin, $player->getUniqueId()->toString(), 0);
+            $this->database->updatePlayer($player->getName(), $newpassword, $this->database->getEmail($player->getName()), $pin, $player->getAddress(), $player->getUniqueId()->toString(), 0);
             $player->sendMessage(str_replace("{pin}", $pin, $this->getMessage("change-password-success")));
             /*
             if ($this->getConfig()->getNested("email.send-email-on-changepassword") && $this->database->getEmail($player) !== "none") {
@@ -544,7 +549,7 @@ class Main extends PluginBase {
         $newpin = $this->generatePin($player);
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerForgetPasswordEvent($this, $player, $newpassword, $pin, $newpin));
         if (!$event->isCancelled()) {
-            $this->database->updatePlayer($player->getName(), $newpassword, $this->database->getEmail($player->getName()), $newpin, $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()));
+            $this->database->updatePlayer($player->getName(), $newpassword, $this->database->getEmail($player->getName()), $newpin, $this->database->getIP($player->getName()), $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()));
             $player->sendMessage(str_replace("{pin}", $newpin, $this->getMessage("forgot-password-success")));
             /*
             if ($this->getConfig()->getNested("email.send-email-on-changepassword") && $this->database->getEmail($player) !== "none") {
@@ -731,6 +736,20 @@ class Main extends PluginBase {
             $pk->state = 0;
             $player->dataPacket($pk);
         }
+    }
+
+    public function isTooManyIPOnline(Player $player) {
+        $players = 0;
+        foreach ($this->getServer()->getOnlinePlayers() as $p) {
+            if ($p !== $player) {
+                if ($p->getAddress() == $player->getAddress()) {
+                    if ($this->isAuthenticated($p)) {
+                        $players++;
+                    }
+                }
+            }
+        }
+        return $players > ($this->getConfig()->getNested("login.ip-limit") - 1);
     }
 
     public function getKey($password) {

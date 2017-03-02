@@ -44,6 +44,8 @@ NOTE: Email server is down & will be fixed soon.
 * Fix adventure mode staying when logged in by xbox live or uuid
 * Block accounts
 * Events for developers
+* Async
+* Block too much players from certain IP
 
 ###v2.0.0
 * Improved xbox bypass

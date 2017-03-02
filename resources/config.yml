@@ -63,6 +63,8 @@ login:
   adventure-mode: true
   #If enabled, players joining when another player has their username is kicked
   single-session: true
+  #Limit of players allowed to login with same IP
+  ip-limit: 3
 register:
   #Minimum password length
   minimum-password-length: 6
@@ -165,6 +167,7 @@ incorrect-password: "&cIncorrect password. {tries} left."
 not-registered: "&cYou are not registered."
 too-many-tries: "&cToo Many Tries to Login"
 timeout-message: "&cLogin Timeout"
+too-many-on-ip: "&cToo many players have the same IP address."
 
 #Register
 register-message: "&6Please register by typing in /register <password> <confirm password> [email]"

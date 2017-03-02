@@ -7,7 +7,7 @@ use pocketmine\Player;
 interface Database {
     public function getPlayer($player);
 
-    public function updatePlayer($player, $password, $email, $pin, $uuid, $attempts);
+    public function updatePlayer($player, $password, $email, $pin, $ip, $uuid, $attempts);
 
     public function insertData(Player $player, $password, $email, $pin, $xbox);
 
@@ -16,6 +16,8 @@ interface Database {
     public function getPassword($player);
 
     public function clearPassword($player);
+
+    public function getIP($player);
 
     public function getUUID($player);
 

@@ -13,7 +13,7 @@ class SQLite3 implements Database {
         $this->plugin = $plugin;
         if (!file_exists($this->plugin->getDataFolder() . "players.db")) {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
-            $this->db->exec("CREATE TABLE players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, uuid VARCHAR(100), attempts INT, xbox BIT(1));");
+            $this->db->exec("CREATE TABLE players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, ip VARCHAR(32), uuid VARCHAR(100), attempts INT, xbox BIT(1));");
         } else {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
             //Updater
@@ -48,12 +48,13 @@ class SQLite3 implements Database {
         return null;
     }
 
-    public function updatePlayer($player, $password, $email, $pin, $uuid, $attempts) {
-        $statement = $this->db->prepare("UPDATE players SET pin = :pin, password = :password, email = :email, uuid = :uuid, attempts = :attempts WHERE name = :name");
+    public function updatePlayer($player, $password, $email, $pin, $ip, $uuid, $attempts) {
+        $statement = $this->db->prepare("UPDATE players SET pin = :pin, password = :password, email = :email, ip = :ip, uuid = :uuid, attempts = :attempts WHERE name = :name");
         $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
         $statement->bindValue(":password", $password, SQLITE3_TEXT);
         $statement->bindValue(":email", $email, SQLITE3_TEXT);
         $statement->bindValue(":pin", $pin, SQLITE3_INTEGER);
+        $statement->bindValue(":ip", $ip, SQLITE3_TEXT);
         $statement->bindValue(":uuid", $uuid, SQLITE3_TEXT);
         $statement->bindValue(":attempts", $attempts, SQLITE3_INTEGER);
         $statement->execute();
@@ -119,6 +120,14 @@ class SQLite3 implements Database {
             return $data["email"];
         }
         return "none";
+    }
+
+    public function getIP($player) {
+        $data = $this->getPlayer($player);
+        if (!is_null($data)) {
+            return $data["ip"];
+        }
+        return null;
     }
 
     public function getUUID($player) {
