@@ -13,24 +13,29 @@ use PiggyAuth\Commands\PreregisterCommand;
 use PiggyAuth\Commands\RegisterCommand;
 use PiggyAuth\Commands\ResetPasswordCommand;
 use PiggyAuth\Commands\SendPinCommand;
+use PiggyAuth\Commands\UnregisterCommand;
 use PiggyAuth\Events\PlayerChangePasswordEvent;
 use PiggyAuth\Events\PlayerFailEvent;
 use PiggyAuth\Events\PlayerForgetPasswordEvent;
 use PiggyAuth\Events\PlayerLoginEvent;
 use PiggyAuth\Events\PlayerLogoutEvent;
+use PiggyAuth\Events\PlayerPreregisterEvent;
 use PiggyAuth\Events\PlayerRegisterEvent;
 use PiggyAuth\Events\PlayerResetPasswordEvent;
 use PiggyAuth\Events\PlayerTimeoutEvent;
+use PiggyAuth\Events\PlayerUnregisterEvent;
 use PiggyAuth\Databases\MySQL;
 use PiggyAuth\Databases\SQLite3;
 use PiggyAuth\Entities\Wither;
 use PiggyAuth\Packet\BossEventPacket;
 use PiggyAuth\Tasks\AttributeTick;
+use PiggyAuth\Tasks\ForceTask; //Delayed for async
 use PiggyAuth\Tasks\KeyTick;
 use PiggyAuth\Tasks\MessageTick;
 use PiggyAuth\Tasks\PingTask;
 use PiggyAuth\Tasks\PopupTipBarTick;
-use PiggyAuth\Tasks\SendPinTask;
+use PiggyAuth\Tasks\SendPinTask; //Delayed for async
+use PiggyAuth\Tasks\StartSessionTask; //Delayed for async
 use PiggyAuth\Tasks\TimeoutTask;
 
 use pocketmine\entity\Attribute;
@@ -47,9 +52,10 @@ use pocketmine\Player;
 
 class Main extends PluginBase {
     //ACTIONS
-    const LOGIN = 1;
-    const REGISTER = 2;
-    const PREREGISTER = 3;
+    const LOGIN = 0;
+    const REGISTER = 1;
+    const PREREGISTER = 2;
+    const UNREGISTER = 3;
     const CHANGE_PASSWORD = 4;
     const FORGET_PASSWORD = 5;
     const RESET_PASSWORD = 6;
@@ -106,6 +112,7 @@ class Main extends PluginBase {
         $this->getServer()->getCommandMap()->register('register', new RegisterCommand('register', $this));
         $this->getServer()->getCommandMap()->register('resetpassword', new ResetPasswordCommand('resetpassword', $this));
         $this->getServer()->getCommandMap()->register('sendpin', new SendPinCommand('sendpin', $this));
+        $this->getServer()->getCommandMap()->register('unregister', new UnregisterCommand('unregister', $this));
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new AttributeTick($this), 20);
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new MessageTick($this), 20);
         if ($this->getConfig()->getNested("key.enabled")) {
@@ -465,19 +472,45 @@ class Main extends PluginBase {
         }
         $password = password_hash($password, PASSWORD_BCRYPT);
         $pin = mt_rand(1000, 9999);
-        $this->database->insertDataWithoutPlayerObject($player, $password, $email, $pin);
-        $p = $this->getServer()->getPlayerExact($player);
-        if ($p instanceof Player) {
-            $this->force($p, false);
+        $this->getServer()->getPluginManager()->callEvent($event = new PlayerPreregisterEvent($this, $sender, $player, $password, $email, $pin));
+        if (!$event->isCancelled()) {
+            $this->database->insertDataWithoutPlayerObject($player, $password, $email, $pin);
+            $p = $this->getServer()->getPlayerExact($player);
+            if ($p instanceof Player) {
+                $this->getServer()->getScheduler()->scheduleDelayedTask(new ForceTask($this, $p), 10);
+            }
+            /*
+            if ($this->getConfig()->getNested("progress-reports.enabled")) {
+            if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report")["progress-report-numbers"]) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report")["progress-report-numbers"]) {
+            $this->emailUser($this->getConfig()->getNested("progress-report")["progress-report-email"], "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player, $this->getMessage("progress-report"))))));
+            }
+            }
+            */
+            $sender->sendMessage($this->getMessage("preregister-success"));
         }
-        /*
-        if ($this->getConfig()->getNested("progress-reports.enabled")) {
-        if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report")["progress-report-numbers"]) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report")["progress-report-numbers"]) {
-        $this->emailUser($this->getConfig()->getNested("progress-report")["progress-report-email"], "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player, $this->getMessage("progress-report"))))));
+        return true;
+    }
+
+    public function unregister(Player $player, $password) {
+        if (!$this->isRegistered($player->getName())) {
+            $player->sendMessage($this->getMessage("not-registered"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::UNREGISTER, self::NOT_REGISTERED));
+            return false;
         }
+        if (!$this->isCorrectPassword($player, $password)) {
+            $player->sendMessage($this->getMessage("incorrect-password"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::UNREGISTER, self::WRONG_PASSWORD));
+            return false;
         }
-        */
-        $sender->sendMessage($this->getMessage("preregister-success"));
+        $this->getServer()->getPluginManager()->callEvent($event = new PlayerUnregisterEvent($this, $player));
+        if (!$event->isCancelled()) {
+            if (isset($this->authenticated[strtolower($player->getName())])) {
+                unset($this->authenticated[strtolower($player->getName())]);
+            }
+            $this->database->clearPassword($player->getName());
+            $this->getServer()->getScheduler()->scheduleDelayedTask(new StartSessionTask($this, $player), 10);
+            $player->sendMessage($this->getMessage("unregister-success"));
+        }
         return true;
     }
 
@@ -489,24 +522,24 @@ class Main extends PluginBase {
         }
         if (!$this->isCorrectPassword($player, $oldpassword)) {
             $player->sendMessage($this->getMessage("incorrect-password"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::WRONG_PASSWORD));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::CHANGE_PASSWORD, self::WRONG_PASSWORD));
             return false;
         }
         if ($this->isPasswordBlocked($newpassword)) {
             $player->sendMessage($this->getMessage("password-blocked"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORD_BLOCKED));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::CHANGE_PASSWORD, self::PASSWORD_BLOCKED));
             return false;
         }
         if (strtolower($newpassword) == strtolower($player->getName()) || strpos($newpassword, strtolower($player->getName())) !== false) {
             $player->sendMessage($this->getMessage("password-username"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORD_USERNAME));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::CHANGE_PASSWORD, self::PASSWORD_USERNAME));
             return false;
         }
         $newpassword = password_hash($newpassword, PASSWORD_BCRYPT);
         $oldpassword = password_hash($oldpassword, PASSWORD_BCRYPT);
         $oldpin = $this->database->getPin($player->getName());
         $pin = $this->generatePin($player);
-        $this->getServer()->getPluginManager()->callEvent($event = new PlayerChangePasswordEvent($player, $oldpassword, $newpassword, $oldpin, $pin));
+        $this->getServer()->getPluginManager()->callEvent($event = new PlayerChangePasswordEvent($this, $player, $oldpassword, $newpassword, $oldpin, $pin));
         if (!$event->isCancelled()) {
             $this->database->updatePlayer($player->getName(), $newpassword, $this->database->getEmail($player->getName()), $pin, $player->getAddress(), $player->getUniqueId()->toString(), 0);
             $player->sendMessage(str_replace("{pin}", $pin, $this->getMessage("change-password-success")));
@@ -575,7 +608,7 @@ class Main extends PluginBase {
                 }
                 $playerobject = $this->getServer()->getPlayerExact($player);
                 if ($playerobject instanceof Player) {
-                    $this->startSession($playerobject);
+                    $this->getServer()->getScheduler()->scheduleDelayedTask(new StartSessionTask($this, $playerobject), 10);
                 }
                 $sender->sendMessage($this->getMessage("password-reset-success"));
                 return true;

@@ -46,6 +46,8 @@ NOTE: Email server is down & will be fixed soon.
 * Events for developers
 * Async
 * Block too much players from certain IP
+* Allow accounts to bypass login
+* Unregister
 
 ###v2.0.0
 * Improved xbox bypass
@@ -101,6 +103,7 @@ NOTE: Email server is down & will be fixed soon.
 # Why use PiggyAuth?
 * No permission bugs
 * Preregister Command
+* Unregister Command
 * Changepassword Command
 * Changeemail Command
 * Resetpassword Command
@@ -114,7 +117,7 @@ NOTE: Email server is down & will be fixed soon.
 * Confirm Password Feature 
 * Prevents Saying Password
 * Xbox Bypass Feature (ClearSky Only)
-* Steve Bypass
+* Account Bypass
 * Chat Login
 * Email Support
 * Password Filters

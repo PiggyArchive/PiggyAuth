@@ -183,6 +183,9 @@ password-username: "&cUsername can't be password."
 password-not-match: "&cYour password is not the same."
 confirm-password: "&aPlease confirm your password."
 
+#Unregister
+unregister-success: "&aYou have unregistered."
+
 #Preregister
 preregister-success: "&aAccount has been registered."
 registered-two: "&cPlayer already registered."

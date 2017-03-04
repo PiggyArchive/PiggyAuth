@@ -46,3 +46,6 @@ permissions:
         piggyauth.command.sendpin:
           default: true
           description: "Allow using /sendpin"
+        piggyauth.command.unregister:
+          default: true
+          description: "Allow using /unregister"          
