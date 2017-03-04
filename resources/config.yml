@@ -53,8 +53,8 @@ login:
   auto-authentication: false
   #If enabled, players with logged in with xbox are automatically registered/logged in. (ClearSky only!)
   xbox-bypass: false
-  #Disable authentication for the username Steve (default username in MCPE)
-  steve-bypass: true
+  #Disable authentication for these usernames
+  accounts-bypassed: ["steve"]
   #Tries before kicked
   tries: 5
   #Return to spawn when logged in

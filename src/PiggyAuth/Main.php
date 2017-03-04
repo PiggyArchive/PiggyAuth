@@ -647,7 +647,7 @@ class Main extends PluginBase {
     */
 
     public function startSession(Player $player) {
-        if (strtolower($player->getName()) == "steve" && $this->getConfig()->getNested("login.steve-bypass")) {
+        if (in_array(strtolower($player->getName()), $this->getConfig()->getNested("login.accounts-bypassed"))) {
             $this->authenticated[strtolower($player->getName())] = true;
             return true;
         }
