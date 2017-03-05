@@ -28,7 +28,7 @@ class RegisterCommand extends VanillaCommand {
         if (!isset($args[2])) {
             $args[2] = "none";
         } else {
-            if (!filter_var($args[2], FILTER_VALIDATE_EMAIL)) {
+            if (!$this->plugin->isValidEmail($this->plugin->pubapi, $args[2])) {
                 $sender->sendMessage($this->plugin->getMessage("invalid-email"));
                 return false;
             }

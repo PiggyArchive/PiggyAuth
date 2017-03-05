@@ -97,6 +97,10 @@ class Main extends PluginBase {
     public $wither;
     private $key = "PiggyAuthKey";
     public $keytime = 299; //300 = Reset
+    public $pubapi;
+    public $api;
+    public $domain;
+    public $from;
     public $expiredkeys = [];
 
     public function onEnable() {
@@ -128,6 +132,10 @@ class Main extends PluginBase {
             Entity::registerEntity(Wither::class);
             $this->getServer()->getNetwork()->registerPacket(BossEventPacket::NETWORK_ID, BossEventPacket::class);
         }
+        $this->pubapi = $this->getConfig()->getNested("emails.mailgun.public-api");
+        $this->api = $this->getConfig()->getNested("emails.mailgun.api");
+        $this->domain = $this->getConfig()->getNested("emails.mailgun.domain");
+        $this->from = $this->getConfig()->getNested("emails.mailgun.from");
         $outdated = false;
         /*
         if ($this->getConfig()->getNested("config.config-update")) {
@@ -249,11 +257,9 @@ class Main extends PluginBase {
                 if ($this->tries[strtolower($player->getName())] >= $this->getConfig()->getNested("login.tries")) {
                     $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $this->database->getIP($player->getName()), $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()) + 1);
                     $player->kick($this->getMessage("too-many-tries"));
-                    /*
                     if ($this->database->getEmail($player->getName()) !== "none") {
-                    $this->emailUser($this->database->getEmail($player->getName()), $this->getMessage("email-subject-attemptedlogin"), $this->getMessage("email-attemptedlogin"));
+                        $this->emailUser($this->api, $this->domain, $this->database->getEmail($player->getName()), $this->from, $this->getMessage("email-subject-attemptedlogin"), $this->getMessage("email-attemptedlogin"));
                     }
-                    */
                     return false;
                 }
             } else {
@@ -425,13 +431,11 @@ class Main extends PluginBase {
         if (!$event->isCancelled()) {
             $this->database->insertData($player, $password, $email, $pin, $xbox);
             $this->force($player, false, $xbox == false ? 0 : 3);
-            /*
             if ($this->getConfig()->getNested("progress-reports.enabled")) {
-            if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers")) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers")) {
-            $this->emailUser($this->getConfig()->getNested("progress-report.progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->getMessage("progress-report"))))));
+                if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers")) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers")) {
+                    $this->emailUser($this->api, $this->domain, $this->getConfig()->getNested("progress-report.progress-report-email"), $this->from, "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->getMessage("progress-report"))))));
+                }
             }
-            }
-            */
         }
         return true;
     }
@@ -479,13 +483,11 @@ class Main extends PluginBase {
             if ($p instanceof Player) {
                 $this->getServer()->getScheduler()->scheduleDelayedTask(new ForceTask($this, $p), 10);
             }
-            /*
             if ($this->getConfig()->getNested("progress-reports.enabled")) {
-            if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report")["progress-report-numbers"]) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report")["progress-report-numbers"]) {
-            $this->emailUser($this->getConfig()->getNested("progress-report")["progress-report-email"], "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player, $this->getMessage("progress-report"))))));
+                if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report")["progress-report-numbers"]) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report")["progress-report-numbers"]) {
+                    $this->emailUser($this->api, $this->domain, $this->getConfig()->getNested("progress-report.progress-report-email"), $this->from, "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player, $this->getMessage("progress-report"))))));
+                }
             }
-            }
-            */
             $sender->sendMessage($this->getMessage("preregister-success"));
         }
         return true;
@@ -543,11 +545,9 @@ class Main extends PluginBase {
         if (!$event->isCancelled()) {
             $this->database->updatePlayer($player->getName(), $newpassword, $this->database->getEmail($player->getName()), $pin, $player->getAddress(), $player->getUniqueId()->toString(), 0);
             $player->sendMessage(str_replace("{pin}", $pin, $this->getMessage("change-password-success")));
-            /*
-            if ($this->getConfig()->getNested("email.send-email-on-changepassword") && $this->database->getEmail($player) !== "none") {
-            $this->emailUser($this->database->getEmail($player->getName()), $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
+            if ($this->getConfig()->getNested("emails.send-email-on-changepassword") && $this->database->getEmail($player) !== "none") {
+                $this->emailUser($this->api, $this->domain, $this->database->getEmail($player->getName()), $this->from, $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
             }
-            */
         }
         return true;
     }
@@ -584,11 +584,9 @@ class Main extends PluginBase {
         if (!$event->isCancelled()) {
             $this->database->updatePlayer($player->getName(), $newpassword, $this->database->getEmail($player->getName()), $newpin, $this->database->getIP($player->getName()), $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()));
             $player->sendMessage(str_replace("{pin}", $newpin, $this->getMessage("forgot-password-success")));
-            /*
-            if ($this->getConfig()->getNested("email.send-email-on-changepassword") && $this->database->getEmail($player) !== "none") {
-            $this->emailUser($this->database->getEmail($player->getName()), $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
+            if ($this->getConfig()->getNested("emails.send-email-on-changepassword") && $this->database->getEmail($player) !== "none") {
+                $this->emailUser($this->api, $this->domain, $this->database->getEmail($player->getName()), $this->from, $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
             }
-            */
         }
     }
 
@@ -597,11 +595,12 @@ class Main extends PluginBase {
         if ($this->isRegistered($player)) {
             $this->getServer()->getPluginManager()->callEvent($event = new PlayerResetPasswordEvent($this, $sender, $player));
             if (!$event->isCancelled()) {
-                /*
-                if ($this->getConfig()->getNested("email.send-email-on-resetpassword") && $this->database->getEmail($player) !== "none") {
-                $this->emailUser($this->database->getEmail($player), $this->getMessage("email-subject-passwordreset"), $this->getMessage("email-passwordreset"));
+                var_dump($this->getConfig()->getNested("emails.send-email-on-resetpassword"));
+                var_dump($this->getConfig()->getNested("emails.send-email-on-changepassword"));
+                var_dump($this->database->getEmail($player) !== "none");
+                if ($this->getConfig()->getNested("emails.send-email-on-resetpassword") && $this->database->getEmail($player) !== "none") {
+                    $this->emailUser($this->api, $this->domain, $this->database->getEmail($player), $this->from, $this->getMessage("email-subject-passwordreset"), $this->getMessage("email-passwordreset"));
                 }
-                */
                 $this->database->clearPassword($player);
                 if (isset($this->authenticated[$player])) {
                     unset($this->authenticated[$player]);
@@ -660,24 +659,43 @@ class Main extends PluginBase {
         return str_replace("&", "§", $this->getConfig()->getNested($message));
     }
 
-    /*
-    //Code by @xBeastMode
-    public function emailUser($to, $title, $body) {
-    $ch = curl_init();
-    $title = str_replace(" ", "+", $title);
-    $body = str_replace(" ", "+", $body);
-    $url = 'https://puremc.pw/mailserver/?to=' . $to . '&subject=' . $title . '&body=' . $body;
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_REFERER, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $result = curl_exec($ch);
-    curl_close($ch);
-    return $result;
+    public function emailUser($api, $domain, $to, $from, $subject, $body) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($ch, CURLOPT_USERPWD, 'api:' . $api);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($ch, CURLOPT_URL, 'https://api.mailgun.net/v3/' . $domain . '/messages');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+            'from' => $from,
+            'to' => $to,
+            'subject' => $subject,
+            'text' => $body));
+        $result = curl_exec($ch);
+        var_dump(curl_error($ch));
+        if (curl_error($ch) == "SSL certificate problem: unable to get local issuer certificate") {
+            $this->getLogger()->error("SSL certificate problem: unable to get local issuer certificate\nPlease make sure you have downloaded the file from https://github.com/MCPEPIG/PiggyAuth-MailGunFiles & edited the php.ini.");
+        }
+        curl_close($ch);
+        return $result;
     }
-    */
+
+
+    public function isValidEmail($api, $email) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($ch, CURLOPT_USERPWD, 'api:' . $api);
+        curl_setopt($ch, CURLOPT_URL, 'https://api.mailgun.net/v3/address/validate');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array('address' => $email));
+        $result = curl_exec($ch);
+        if (curl_error($ch) == "SSL certificate problem: unable to get local issuer certificate") {
+            $this->getLogger()->error("SSL certificate problem: unable to get local issuer certificate\nPlease make sure you have downloaded the file from https://github.com/MCPEPIG/PiggyAuth-MailGunFiles & edited the php.ini.");
+        }
+        curl_close($ch);
+        return $result == null ? filter_var($email, FILTER_VALIDATE_EMAIL) : json_decode($result)->is_valid;
+    }
 
     public function startSession(Player $player) {
         if (in_array(strtolower($player->getName()), $this->getConfig()->getNested("login.accounts-bypassed"))) {

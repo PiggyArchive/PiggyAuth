@@ -114,18 +114,22 @@ message:
   #Join message for new players
   new-player: "&eWelcome {player} to the server!"
 progress-reports:
-  #BROKEN Send progress reports every certain number of players registered 
+  #Send progress reports every certain number of players registered 
   progress-reports: true
-  #BROKEN Email to send progress report to
+  #Email to send progress report to
   progress-report-email: youremail@gmail.com
-  #BROKEN Number of players before send progress report
+  #Number of players before send progress report
   progress-report-number: 100
-  #BROKEN What progress report says
+  #What progress report says
   progress-report: "Your server ({ip}:{port}) has reached {players} players! Your {players}th player is {player}."
-email:
-  #BROKEN Emails
+emails:
   send-email-on-resetpassword: true
   send-email-on-changepassword: true
+  mailgun:
+    api: YOUR_KEY
+    public-api: YOUR_PUBLIC_KEY
+    domain: YOUR_DOMAIN
+    from: PiggyAuth <postmaster@YOUR_DOMAIN>
 key:
   #If enabled, there will be a special key that resets every 5 mins and after every use to allow access to any account.
   enabled: true

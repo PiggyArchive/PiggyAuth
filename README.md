@@ -1,9 +1,7 @@
 # PiggyAuth
 Safe & feature-rich auth plugin. Sugguest features [here.](https://github.com/MCPEPIG/PiggyAuth/issues/10)
-NOTE: Email server is down & will be fixed soon.
 
 # Credits
-* @xBeastMode for the email server
 * @thebigsmileXD for fake attributes
 
 
@@ -48,6 +46,7 @@ NOTE: Email server is down & will be fixed soon.
 * Block too much players from certain IP
 * Allow accounts to bypass login
 * Unregister
+* Mail Gun support
 
 ###v2.0.0
 * Improved xbox bypass

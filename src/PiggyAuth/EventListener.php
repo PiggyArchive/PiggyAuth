@@ -129,7 +129,7 @@ class EventListener implements Listener {
                         }
                     }
                     if (isset($this->plugin->giveEmail[strtolower($player->getName())])) {
-                        if (strtolower($message) !== "none" && !filter_var($message, FILTER_VALIDATE_EMAIL)) {
+                        if (strtolower($message) !== "none" && !$this->plugin->isValidEmail($this->plugin->pubapi, $message)) {
                             $player->sendMessage($this->plugin->getMessage("invalid-email"));
                             $this->plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this->plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
                         } else {
@@ -318,7 +318,7 @@ class EventListener implements Listener {
             if (!$this->plugin->isAuthenticated($player) && $this->plugin->getConfig()->getNested("effects.hide-effects")) {
                 if ($packet->eventId !== MobEffectPacket::EVENT_ADD) {
                     return false;
-                }                
+                }
                 if ($this->plugin->getConfig()->getNested("effects.blindness") && ($packet->effectId == 15 || $packet->effectId == 16)) {
                     return false;
                 }

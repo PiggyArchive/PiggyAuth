@@ -25,7 +25,7 @@ class ChangeEmailCommand extends VanillaCommand {
             $sender->sendMessage("/changeemail <email>");
             return false;
         } else {
-            if (!filter_var($args[0], FILTER_VALIDATE_EMAIL)) {
+            if (!$this->plugin->isValidEmail($this->plugin->pubapi, $args[0])) {
                 $sender->sendMessage($this->plugin->getMessage("invalid-email"));
                 return false;
             }

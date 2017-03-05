@@ -24,7 +24,7 @@ class PreregisterCommand extends VanillaCommand {
         if (!isset($args[3])) {
             $args[3] = "none";
         } else {
-            if (!filter_var($args[2], FILTER_VALIDATE_EMAIL)) {
+            if (!$this->plugin->isValidEmail($this->plugin->pubapi, $args[3])) {
                 $sender->sendMessage($this->plugin->getMessage("invalid-email"));
                 return false;
             }
