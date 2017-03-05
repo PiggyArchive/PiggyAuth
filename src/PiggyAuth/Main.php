@@ -312,7 +312,7 @@ class Main extends PluginBase {
             unset($this->joinMessage[strtolower($player->getName())]);
         }
         $this->authenticated[strtolower($player->getName())] = true;
-        if ($this->getConfig()->getNested("effect.invisible")) {
+        if ($this->getConfig()->getNested("effects.invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
             $player->setNameTagVisible(true);
         }
@@ -327,19 +327,19 @@ class Main extends PluginBase {
         }
         if ($this->getConfig()->getNested("effects.hide-health")) {
             $pk = new UpdateAttributesPacket();
-            $pk->entityId = 0;
+            $pk->entityId = $player->getId();
             $pk->entries = [$player->getAttributeMap()->getAttribute(Attribute::HEALTH)];
             $player->dataPacket($pk);
         }
         if ($this->getConfig()->getNested("effects.hide-hunger")) {
             $pk = new UpdateAttributesPacket();
-            $pk->entityId = 0;
+            $pk->entityId = $player->getId();
             $pk->entries = [$player->getAttributeMap()->getAttribute(Attribute::HUNGER)];
             $player->dataPacket($pk);
         }
         if ($this->getConfig()->getNested("effects.hide-xp")) {
             $pk = new UpdateAttributesPacket();
-            $pk->entityId = 0;
+            $pk->entityId = $player->getId();
             $pk->entries = [$player->getAttributeMap()->getAttribute(Attribute::EXPERIENCE)];
             $player->dataPacket($pk);
         }
@@ -366,7 +366,7 @@ class Main extends PluginBase {
             }
             $player->setSkin($player->getSkinData(), $cape);
         }
-        if ($this->getConfig()->getNested("effect.hide-items")) {
+        if ($this->getConfig()->getNested("effects.hide-items")) {
             $player->getInventory()->sendContents($player);
         }
         if ($this->getConfig()->getNested("login.adventure-mode")) {
@@ -714,11 +714,11 @@ class Main extends PluginBase {
         } else {
             $player->sendMessage($this->getMessage("register-message"));
         }
-        if ($this->getConfig()->getNested("effect.invisible")) {
+        if ($this->getConfig()->getNested("effects.invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
             $player->setNameTagVisible(false);
         }
-        if ($this->getConfig()->getNested("effect.blindness")) {
+        if ($this->getConfig()->getNested("effects.blindness")) {
             $effect = Effect::getEffect(15);
             $effect->setAmplifier(99);
             $effect->setDuration(999999);
@@ -730,7 +730,7 @@ class Main extends PluginBase {
             $effect->setVisible(false);
             $player->addEffect($effect);
         }
-        if ($this->getConfig()->getNested("effect.hide-players")) {
+        if ($this->getConfig()->getNested("effects.hide-players")) {
             foreach ($this->getServer()->getOnlinePlayers() as $p) {
                 $player->hidePlayer($p);
                 if (!$this->isAuthenticated($p)) {
@@ -738,13 +738,13 @@ class Main extends PluginBase {
                 }
             }
         }
-        if ($this->getConfig()->getNested("effect.hide-effects")) {
+        if ($this->getConfig()->getNested("effects.hide-effects")) {
             foreach ($player->getEffects() as $effect) {
                 if ($this->getConfig()->getNested("blindness") && ($effect->getId() == 15 || $effect->getId() == 16)) {
                     continue;
                 }
                 $pk = new MobEffectPacket();
-                $pk->eid = 0;
+                $pk->eid = $player->getId();
                 $pk->eventId = MobEffectPacket::EVENT_REMOVE;
                 $pk->effectId = $effect->getId();
                 $player->dataPacket($pk);

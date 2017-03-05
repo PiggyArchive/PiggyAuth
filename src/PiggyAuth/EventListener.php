@@ -316,10 +316,10 @@ class EventListener implements Listener {
         $packet = $event->getPacket();
         if ($packet instanceof MobEffectPacket) {
             if (!$this->plugin->isAuthenticated($player) && $this->plugin->getConfig()->getNested("effects.hide-effects")) {
-                if ($this->plugin->getConfig()->getNested("effects.blindness") && ($packet->effectId == 15 || $packet->effectId == 16)) {
-                    return false;
-                }
                 if ($packet->eventId !== MobEffectPacket::EVENT_ADD) {
+                    return false;
+                }                
+                if ($this->plugin->getConfig()->getNested("effects.blindness") && ($packet->effectId == 15 || $packet->effectId == 16)) {
                     return false;
                 }
                 $event->setCancelled();
