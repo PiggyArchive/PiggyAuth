@@ -2,6 +2,8 @@
 
 namespace PiggyAuth\Commands;
 
+use PiggyAuth\Tasks\ValidateEmailTask;
+
 use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
@@ -25,14 +27,21 @@ class ChangeEmailCommand extends VanillaCommand {
             $sender->sendMessage("/changeemail <email>");
             return false;
         } else {
-            if (!$this->plugin->isValidEmail($this->plugin->pubapi, $args[0])) {
-                $sender->sendMessage($this->plugin->getMessage("invalid-email"));
-                return false;
+            $function = function ($result, $args, $plugin) {
+                $sender = $plugin->getServer()->getPlayerExact($args[0]);
+                if ($result) {
+                    $plugin->database->updatePlayer($sender->getName(), $plugin->database->getPassword($sender->getName()), $args[1], $plugin->database->getPin($sender->getName()), $plugin->database->getIP($sender->getName()), $plugin->database->getUUID($sender->getName()), $plugin->database->getAttempts($sender->getName()));
+                    $sender->sendMessage($plugin->getMessage("email-change-success"));
+                } else {
+                    $sender->sendMessage($plugin->getMessage("invalid-email"));
+                }
             }
+            ;
+            $arguements = array($sender->getName(), $args[0]);
+            $task = new ValidateEmailTask($this->plugin->getConfig()->getNested("emails.mailgun.public-api"), $args[0], $function, $arguements, $this->plugin);
+            $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
+            return true;
         }
-        $this->plugin->database->updatePlayer($sender->getName(), $this->plugin->database->getPassword($sender->getName()), $args[0], $this->plugin->database->getPin($sender->getName()), $this->plugin->database->getUUID($sender->getName()), $this->plugin->database->getAttempts($sender->getName()));
-        $sender->sendMessage($this->plugin->getMessage("email-change-success"));
-        return true;
     }
 
 }

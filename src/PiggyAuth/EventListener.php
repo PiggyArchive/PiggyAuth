@@ -5,6 +5,7 @@ namespace PiggyAuth;
 use PiggyAuth\Events\PlayerFailEvent;
 use PiggyAuth\Events\PlayerLoginEvent;
 use PiggyAuth\Tasks\TimeoutTask;
+use PiggyAuth\Tasks\ValidateEmailTask;
 
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
@@ -129,15 +130,22 @@ class EventListener implements Listener {
                         }
                     }
                     if (isset($this->plugin->giveEmail[strtolower($player->getName())])) {
-                        if (strtolower($message) !== "none" && !$this->plugin->isValidEmail($this->plugin->pubapi, $message)) {
-                            $player->sendMessage($this->plugin->getMessage("invalid-email"));
-                            $this->plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this->plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
-                        } else {
-                            $this->plugin->register($player, $this->plugin->confirmedPassword[strtolower($player->getName())], $this->plugin->confirmedPassword[strtolower($player->getName())], $message);
-                            $this->plugin->database->updatePlayer($player->getName(), $this->plugin->database->getPassword($player->getName()), $message, $this->plugin->database->getPin($player->getName()), $player->getAddress(), $player->getUniqueId()->toString(), $this->plugin->database->getUUID($player->getName()));
-                            unset($this->plugin->giveEmail[strtolower($player->getName())]);
-                            unset($this->plugin->confirmedPassword[strtolower($player->getName())]);
+                        $function = function ($result, $args, $plugin) {
+                            $player = $plugin->getServer()->getPlayerExact($args[0]);
+                            $message = $args[1];
+                            if (strtolower($message) !== "none" && !$result) {
+                                $player->sendMessage($plugin->getMessage("invalid-email"));
+                                $plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
+                            } else {
+                                $plugin->register($player, $plugin->confirmedPassword[strtolower($player->getName())], $plugin->confirmedPassword[strtolower($player->getName())], $message);
+                                unset($plugin->confirmedPassword[strtolower($player->getName())]);
+                            }
                         }
+                        ;
+                        $arguements = array($player->getName(), $message);
+                        $task = new ValidateEmailTask($this->plugin->getConfig()->getNested("emails.mailgun.public-api"), $message, $function, $arguements, $this->plugin);
+                        $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
+                        $event->setCancelled();
                     }
                 }
             }

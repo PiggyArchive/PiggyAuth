@@ -34,7 +34,7 @@ use PiggyAuth\Tasks\KeyTick;
 use PiggyAuth\Tasks\MessageTick;
 use PiggyAuth\Tasks\PingTask;
 use PiggyAuth\Tasks\PopupTipBarTick;
-use PiggyAuth\Tasks\SendPinTask; //Delayed for async
+use PiggyAuth\Tasks\SendEmailTask; //Async
 use PiggyAuth\Tasks\StartSessionTask; //Delayed for async
 use PiggyAuth\Tasks\TimeoutTask;
 
@@ -301,7 +301,7 @@ class Main extends PluginBase {
             }
         } else {
             if (!$mode == 3) {
-                $this->getServer()->getScheduler()->scheduleDelayedTask(new SendPinTask($this, $player), 10);
+                $player->sendMessage(str_replace("{pin}", $this->database->getPin($player->getName()), $this->getMessage("register-success")));
             }
         }
         if (isset($this->messagetick[strtolower($player->getName())])) {
@@ -430,10 +430,10 @@ class Main extends PluginBase {
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerRegisterEvent($this, $player, $password, $email, $pin, $xbox == "false" ? self::NORMAL : self::XBOX));
         if (!$event->isCancelled()) {
             $this->database->insertData($player, $password, $email, $pin, $xbox);
-            $this->force($player, false, $xbox == false ? 0 : 3);
+            $this->getServer()->getScheduler()->scheduleDelayedTask(new ForceTask($this, $player, $xbox), 10);
             if ($this->getConfig()->getNested("progress-reports.enabled")) {
-                if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers")) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers")) {
-                    $this->emailUser($this->api, $this->domain, $this->getConfig()->getNested("progress-report.progress-report-email"), $this->from, "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->getMessage("progress-report"))))));
+                if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) {
+                    $this->emailUser($this->api, $this->domain, $this->getConfig()->getNested("progress-reports.progress-report-email"), $this->from, "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->getMessage("progress-reports.progress-report"))))));
                 }
             }
         }
@@ -484,8 +484,8 @@ class Main extends PluginBase {
                 $this->getServer()->getScheduler()->scheduleDelayedTask(new ForceTask($this, $p), 10);
             }
             if ($this->getConfig()->getNested("progress-reports.enabled")) {
-                if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report.progress-report-numbers") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report")["progress-report-numbers"]) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-report")["progress-report-numbers"]) {
-                    $this->emailUser($this->api, $this->domain, $this->getConfig()->getNested("progress-report.progress-report-email"), $this->from, "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player, $this->getMessage("progress-report"))))));
+                if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) {
+                    $this->emailUser($this->api, $this->domain, $this->getConfig()->getNested("progress-reports.progress-report-email"), $this->from, "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player, $this->getMessage("progress-reports.progress-report"))))));
                 }
             }
             $sender->sendMessage($this->getMessage("preregister-success"));
@@ -595,9 +595,6 @@ class Main extends PluginBase {
         if ($this->isRegistered($player)) {
             $this->getServer()->getPluginManager()->callEvent($event = new PlayerResetPasswordEvent($this, $sender, $player));
             if (!$event->isCancelled()) {
-                var_dump($this->getConfig()->getNested("emails.send-email-on-resetpassword"));
-                var_dump($this->getConfig()->getNested("emails.send-email-on-changepassword"));
-                var_dump($this->database->getEmail($player) !== "none");
                 if ($this->getConfig()->getNested("emails.send-email-on-resetpassword") && $this->database->getEmail($player) !== "none") {
                     $this->emailUser($this->api, $this->domain, $this->database->getEmail($player), $this->from, $this->getMessage("email-subject-passwordreset"), $this->getMessage("email-passwordreset"));
                 }
@@ -660,41 +657,8 @@ class Main extends PluginBase {
     }
 
     public function emailUser($api, $domain, $to, $from, $subject, $body) {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($ch, CURLOPT_USERPWD, 'api:' . $api);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_URL, 'https://api.mailgun.net/v3/' . $domain . '/messages');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-            'from' => $from,
-            'to' => $to,
-            'subject' => $subject,
-            'text' => $body));
-        $result = curl_exec($ch);
-        var_dump(curl_error($ch));
-        if (curl_error($ch) == "SSL certificate problem: unable to get local issuer certificate") {
-            $this->getLogger()->error("SSL certificate problem: unable to get local issuer certificate\nPlease make sure you have downloaded the file from https://github.com/MCPEPIG/PiggyAuth-MailGunFiles & edited the php.ini.");
-        }
-        curl_close($ch);
-        return $result;
-    }
-
-
-    public function isValidEmail($api, $email) {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($ch, CURLOPT_USERPWD, 'api:' . $api);
-        curl_setopt($ch, CURLOPT_URL, 'https://api.mailgun.net/v3/address/validate');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array('address' => $email));
-        $result = curl_exec($ch);
-        if (curl_error($ch) == "SSL certificate problem: unable to get local issuer certificate") {
-            $this->getLogger()->error("SSL certificate problem: unable to get local issuer certificate\nPlease make sure you have downloaded the file from https://github.com/MCPEPIG/PiggyAuth-MailGunFiles & edited the php.ini.");
-        }
-        curl_close($ch);
-        return $result == null ? filter_var($email, FILTER_VALIDATE_EMAIL) : json_decode($result)->is_valid;
+        $task = new SendEmailTask($api, $domain, $to, $from, $subject, $body);
+        $this->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
     public function startSession(Player $player) {

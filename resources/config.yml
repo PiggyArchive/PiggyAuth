@@ -115,7 +115,7 @@ message:
   new-player: "&eWelcome {player} to the server!"
 progress-reports:
   #Send progress reports every certain number of players registered 
-  progress-reports: true
+  enabled: true
   #Email to send progress report to
   progress-report-email: youremail@gmail.com
   #Number of players before send progress report
@@ -192,7 +192,7 @@ unregister-success: "&aYou have unregistered."
 
 #Preregister
 preregister-success: "&aAccount has been registered."
-registered-two: "&cPlayer already registered."
+already-registered-two: "&cPlayer already registered."
 
 #Change password
 change-password-success: "&aYour password has been changed. Your new pin is {pin}."

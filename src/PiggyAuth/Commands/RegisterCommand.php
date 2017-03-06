@@ -2,6 +2,8 @@
 
 namespace PiggyAuth\Commands;
 
+use PiggyAuth\Tasks\ValidateEmailTask;
+
 use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
@@ -28,10 +30,24 @@ class RegisterCommand extends VanillaCommand {
         if (!isset($args[2])) {
             $args[2] = "none";
         } else {
-            if (!$this->plugin->isValidEmail($this->plugin->pubapi, $args[2])) {
-                $sender->sendMessage($this->plugin->getMessage("invalid-email"));
-                return false;
+            $function = function ($result, $args, $plugin) {
+                $sender = $plugin->getServer()->getPlayerExact($args[0]);
+                if ($result) {
+                    $plugin->register($sender, $args[1], $args[2], $args[3]);
+                } else {
+                    $sender->sendMessage($plugin->getMessage("invalid-email"));
+                }
+                return true;
             }
+            ;
+            $arguements = array(
+                $sender->getName(),
+                $args[0],
+                $args[1],
+                $args[2]);
+            $task = new ValidateEmailTask($this->plugin->getConfig()->getNested("emails.mailgun.public-api"), $args[2], $function, $arguements, $this->plugin);
+            $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
+            return true;
         }
         $this->plugin->register($sender, $args[0], $args[1], $args[2]);
         return true;
