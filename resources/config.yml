@@ -130,6 +130,11 @@ emails:
     public-api: YOUR_PUBLIC_KEY
     domain: YOUR_DOMAIN
     from: PiggyAuth <postmaster@YOUR_DOMAIN>
+vipslots:
+  #Players with VIP slot
+  players: [MCPEPIG] 
+  #Ranks with VIP slot
+  ranks: ["Owner"]
 key:
   #If enabled, there will be a special key that resets every 5 mins and after every use to allow access to any account.
   enabled: true

@@ -23,6 +23,7 @@ use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerKickEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
@@ -266,6 +267,17 @@ class EventListener implements Listener {
             return true;
         }
         $this->plugin->startSession($player);
+    }
+
+    public function onKick(PlayerKickEvent $event) {
+        $player = $event->getPlayer();
+        $reason = $event->getReason();
+        $plugin = $this->plugin->getServer()->getPluginManager()->getPlugin("PurePerms");
+        if ($reason == "disconnectionScreen.serverFull") {
+            if (in_array($player->getName(), $this->plugin->getConfig()->getNested("vipslots.players")) || ($plugin !== null && in_array($plugin->getUserDataMgr()->getGroup($player)->getName(), $this->plugin->getConfig()->getNested("vipslots.ranks")))) {
+                $event->setCancelled();
+            }
+        }
     }
 
     public function onMove(PlayerMoveEvent $event) {
