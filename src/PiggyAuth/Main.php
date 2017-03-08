@@ -136,38 +136,16 @@ class Main extends PluginBase {
         $this->api = $this->getConfig()->getNested("emails.mailgun.api");
         $this->domain = $this->getConfig()->getNested("emails.mailgun.domain");
         $this->from = $this->getConfig()->getNested("emails.mailgun.from");
-        $outdated = false;
-        /*
-        if ($this->getConfig()->getNested("config.config-update")) {
-        if (!$this->getConfig()->exists("config.version")) {
-        rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config_old.yml");
-        $this->saveDefaultConfig();
-        $outdated = true;
-        } elseif ($this->getConfig()->getNested("config.version") !== $this->getDescription()->getVersion()) {
-        switch ($this->getConfig()->getNested("config.config-version")) {
-        case "2.0.0":
-        case "1.0.9":
-        case "1.0.8":
-        rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config_old.yml");
-        $this->saveDefaultConfig();
-        $outdated = true; //DB Updater
-        break;
-        }
-        $this->getConfig()->set($this->getConfig()->getNested("config.version"), $this->getDescription()->getVersion());
-        $this->getConfig()->save();
-        }
-        }
-        */
         switch ($this->getConfig()->getNested("database")) {
             case "mysql":
-                $this->database = new MySQL($this, $outdated);
+                $this->database = new MySQL($this);
                 $this->getServer()->getScheduler()->scheduleRepeatingTask(new PingTask($this, $this->database), 300);
                 break;
             case "sqlite3":
-                $this->database = new SQLite3($this, $outdated);
+                $this->database = new SQLite3($this);
                 break;
             default:
-                $this->database = new SQLite3($this, $outdated);
+                $this->database = new SQLite3($this);
                 $this->getLogger()->error("§cDatabase not found, using default.");
                 break;
         }

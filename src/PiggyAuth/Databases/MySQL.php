@@ -11,7 +11,7 @@ class MySQL implements Database {
     public $plugin;
     public $db;
 
-    public function __construct(Main $plugin, $outdated) {
+    public function __construct(Main $plugin) {
         $this->plugin = $plugin;
         $credentials = $this->plugin->getConfig()->get("mysql");
         $this->db = new \mysqli($credentials["host"], $credentials["user"], $credentials["password"], $credentials["name"], $credentials["port"]);
