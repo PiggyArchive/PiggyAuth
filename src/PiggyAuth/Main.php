@@ -568,12 +568,12 @@ class Main extends PluginBase {
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::WRONG_PIN));
             return false;
         }
-        if ($this->isPasswordBlocked($password)) {
+        if ($this->isPasswordBlocked($newpassword)) {
             $player->sendMessage($this->getMessage("password-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::PASSWORD_BLOCKED));
             return false;
         }
-        if (strtolower($password) == strtolower($player->getName()) || strpos($password, strtolower($player->getName())) !== false) {
+        if (strtolower($newpassword) == strtolower($player->getName()) || strpos($newpassword, strtolower($player->getName())) !== false) {
             $player->sendMessage($this->getMessage("password-username"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::PASSWORD_USERNAME));
             return false;
