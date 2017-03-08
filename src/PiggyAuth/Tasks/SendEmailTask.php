@@ -3,6 +3,7 @@
 namespace PiggyAuth\Tasks;
 
 use pocketmine\scheduler\AsyncTask;
+use pocketmine\Player;
 use pocketmine\Server;
 
 class SendEmailTask extends AsyncTask {
@@ -13,15 +14,17 @@ class SendEmailTask extends AsyncTask {
     private $subject;
     private $message;
     private $error;
+    private $player;
 
 
-    public function __construct($api, $domain, $to, $from, $subject, $message) {
+    public function __construct($api, $domain, $to, $from, $subject, $message, $player) {
         $this->api = serialize($api);
         $this->domain = serialize($domain);
         $this->to = serialize($to);
         $this->from = serialize($from);
         $this->subject = serialize($subject);
         $this->message = serialize($message);
+        $this->player = $player;
     }
 
     public function onRun() {
@@ -44,11 +47,16 @@ class SendEmailTask extends AsyncTask {
     }
 
     public function onCompletion(Server $server) {
+        $player = $server->getPlayerExact($this->player);
         if ($this->error !== null) {
             $server->getPluginManager()->getPlugin("PiggyAuth")->getLogger()->error($this->error);
-            $sender->sendMessage($this->plugin->getMessage("email-fail"));
+            if ($player instanceof Player) {
+                $player->sendMessage($server->getPluginManager()->getPlugin("PiggyAuth")->getMessage("email-fail"));
+            }
         } else {
-            $sender->sendMessage($this->plugin->getMessage("email-success"));
+            if ($player instanceof Player) {
+                $player->sendMessage($server->getPluginManager()->getPlugin("PiggyAuth")->getMessage("email-success"));
+            }
         }
     }
 

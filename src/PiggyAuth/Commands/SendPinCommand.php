@@ -22,7 +22,7 @@ class SendPinCommand extends VanillaCommand {
             return false;
         }
         if ($this->plugin->database->getEmail($sender->getName()) !== "none") {
-            $this->plugin->emailUser($this->plugin->api, $this->plugin->domain, $this->plugin->database->getEmail($sender->getName()), $this->plugin->from, $this->plugin->getMessage("email-subject-sendpin"), str_replace("{pin}", $this->plugin->database->getPin($sender->getName()), $this->plugin->getMessage("email-sendpin")));
+            $this->plugin->emailUser($this->plugin->api, $this->plugin->domain, $this->plugin->database->getEmail($sender->getName()), $this->plugin->from, $this->plugin->getMessage("email-subject-sendpin"), str_replace("{pin}", $this->plugin->database->getPin($sender->getName()), $this->plugin->getMessage("email-sendpin")), $sender->getName());
             return false;
         }
         $sender->sendMessage($this->plugin->getMessage("no-email"));

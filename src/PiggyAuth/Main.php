@@ -656,8 +656,8 @@ class Main extends PluginBase {
         return str_replace("&", "§", $this->getConfig()->getNested($message));
     }
 
-    public function emailUser($api, $domain, $to, $from, $subject, $body) {
-        $task = new SendEmailTask($api, $domain, $to, $from, $subject, $body);
+    public function emailUser($api, $domain, $to, $from, $subject, $body, $player = null) {
+        $task = new SendEmailTask($api, $domain, $to, $from, $subject, $body, $player);
         $this->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
