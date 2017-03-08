@@ -46,6 +46,9 @@ class SendEmailTask extends AsyncTask {
     public function onCompletion(Server $server) {
         if ($this->error !== null) {
             $server->getPluginManager()->getPlugin("PiggyAuth")->getLogger()->error($this->error);
+            $sender->sendMessage($this->plugin->getMessage("email-fail"));
+        } else {
+            $sender->sendMessage($this->plugin->getMessage("email-success"));
         }
     }
 

@@ -95,7 +95,7 @@ class MySQL implements Database {
     public function getIP($player) {
         $data = $this->getPlayer($player);
         if (!is_null($data)) {
-            if(isset($data["ip"])){
+            if (isset($data["ip"])) {
                 return $data["ip"];
             }
         }
