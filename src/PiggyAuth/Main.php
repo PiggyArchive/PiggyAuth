@@ -500,7 +500,7 @@ class Main extends PluginBase {
             return false;
         }
         if (!$this->isCorrectPassword($player, $password)) {
-            $player->sendMessage($this->getMessage("incorrect-password"));
+            $player->sendMessage($this->getMessage("incorrect-password-other"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::UNREGISTER, self::WRONG_PASSWORD));
             return false;
         }
@@ -523,7 +523,7 @@ class Main extends PluginBase {
             return false;
         }
         if (!$this->isCorrectPassword($player, $oldpassword)) {
-            $player->sendMessage($this->getMessage("incorrect-password"));
+            $player->sendMessage($this->getMessage("incorrect-password-other"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::CHANGE_PASSWORD, self::WRONG_PASSWORD));
             return false;
         }

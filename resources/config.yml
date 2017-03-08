@@ -201,6 +201,7 @@ already-registered-two: "&cPlayer already registered."
 
 #Change password
 change-password-success: "&aYour password has been changed. Your new pin is {pin}."
+incorrect-password-other: "&cIncorrect password."
 
 #Forget password
 forgot-password-success: "&aYour password has been changed. Your new pin is {pin}."
