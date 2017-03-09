@@ -153,6 +153,8 @@ mysql:
   name: name
   password: password
   port: 3306
+hash:
+  cost: 15
 config:
 # Version
   version: v2.0.1

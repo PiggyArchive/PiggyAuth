@@ -250,12 +250,13 @@ class Main extends PluginBase {
         }
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this, $player, self::NORMAL));
         if (!$event->isCancelled()) {
-            $this->force($player, true, $mode);
+            $rehashedpassword = $this->needsRehashPassword($this->database->getPassword($player->getName()), $password);
+            $this->force($player, true, $mode, $rehashedpassword);
         }
         return true;
     }
 
-    public function force(Player $player, $login = true, $mode = 0) {
+    public function force(Player $player, $login = true, $mode = 0, $rehashedpassword = null) {
         if ($login) {
             if ($this->isTooManyIPOnline($player)) {
                 $player->sendMessage($this->getMessage("too-many-on-ip"));
@@ -365,7 +366,8 @@ class Main extends PluginBase {
                 unset($this->wither[strtolower($player->getName())]);
             }
         }
-        $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $player->getAddress(), $player->getUniqueId()->toString(), 0);
+        $password = $rehashedpassword !== null ? $rehashedpassword : $this->database->getPassword($player->getName());
+        $this->database->updatePlayer($player->getName(), $password, $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $player->getAddress(), $player->getUniqueId()->toString(), 0);
         return true;
     }
 
@@ -403,7 +405,7 @@ class Main extends PluginBase {
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_TOO_SHORT));
             return false;
         }
-        $password = password_hash($password, PASSWORD_BCRYPT);
+        $password = $this->hashPassword($password);
         $pin = $this->generatePin($player);
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerRegisterEvent($this, $player, $password, $email, $pin, $xbox == "false" ? self::NORMAL : self::XBOX));
         if (!$event->isCancelled()) {
@@ -452,7 +454,7 @@ class Main extends PluginBase {
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORD_TOO_SHORT));
             return false;
         }
-        $password = password_hash($password, PASSWORD_BCRYPT);
+        $password = $this->hashPassword($password);
         $pin = mt_rand(1000, 9999);
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerPreregisterEvent($this, $sender, $player, $password, $email, $pin));
         if (!$event->isCancelled()) {
@@ -515,8 +517,8 @@ class Main extends PluginBase {
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::CHANGE_PASSWORD, self::PASSWORD_USERNAME));
             return false;
         }
-        $newpassword = password_hash($newpassword, PASSWORD_BCRYPT);
-        $oldpassword = password_hash($oldpassword, PASSWORD_BCRYPT);
+        $newpassword = $this->hashPassword($newpassword);
+        $oldpassword = $this->hashPassword($oldpassword);
         $oldpin = $this->database->getPin($player->getName());
         $pin = $this->generatePin($player);
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerChangePasswordEvent($this, $player, $oldpassword, $newpassword, $oldpin, $pin));
@@ -556,7 +558,8 @@ class Main extends PluginBase {
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::PASSWORD_USERNAME));
             return false;
         }
-        $newpassword = password_hash($newpassword, PASSWORD_BCRYPT);
+        $newpassword = $this->hashPassword($newpassword);
+        ;
         $newpin = $this->generatePin($player);
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerForgetPasswordEvent($this, $player, $newpassword, $pin, $newpin));
         if (!$event->isCancelled()) {
@@ -743,6 +746,19 @@ class Main extends PluginBase {
             }
         }
         return $players > ($this->getConfig()->getNested("login.ip-limit") - 1);
+    }
+
+    public function hashPassword($password) {
+        $options = ['cost' => $this->getConfig()->getNested("hash.cost")];
+        return password_hash($password, PASSWORD_BCRYPT, $options);
+    }
+
+    public function needsRehashPassword($password, $plainpassword) {
+        $options = ['cost' => $this->getConfig()->getNested("hash.cost")];
+        if (password_needs_rehash($password, PASSWORD_BCRYPT, $options)) {
+            return password_hash($plainpassword, PASSWORD_BCRYPT, $options);
+        }
+        return null;
     }
 
     public function getKey($password) {
