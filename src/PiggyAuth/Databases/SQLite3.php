@@ -9,7 +9,7 @@ class SQLite3 implements Database {
     public $plugin;
     public $db;
 
-    public function __construct(Main $plugin, $outdated) {
+    public function __construct(Main $plugin) {
         $this->plugin = $plugin;
         if (!file_exists($this->plugin->getDataFolder() . "players.db")) {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
@@ -17,14 +17,24 @@ class SQLite3 implements Database {
         } else {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
             //Updater
-        }
-        if ($outdated) {
-            $this->db->exec("ALTER TABLE players ADD COLUMN email VARCHAR(100)");
-            $this->db->exec("ALTER TABLE players ADD COLUMN pins INT");
-            $this->db->exec("ALTER TABLE players ADD COLUMN attempts INT");
-            $this->db->exec("ALTER TABLE players ADD COLUMN xbox VARCHAR(5)");
+            $result = $this->db->query("SELECT * FROM players;");
+            $data = $result->fetchArray(SQLITE3_ASSOC);
+            $result->finalize();
+            if (!isset($data["pin"])) {
+                $this->db->exec("ALTER TABLE players ADD COLUMN pin INT");
+            }
+            if (!isset($data["attempts"])) {
+                $this->db->exec("ALTER TABLE players ADD COLUMN attempts INT");
+            }
+            if (!isset($data["email"])) {
+                $this->db->exec("ALTER TABLE players ADD COLUMN email VARCHAR(100)");
+            }
+            if (!isset($data["ip"])) {
+                $this->db->exec("ALTER TABLE players ADD COLUMN ip VARCHAR(32)");
+            }
         }
     }
+
 
     public function getRegisteredCount() {
         return $this->db->querySingle("SELECT COUNT(*) as count FROM players");

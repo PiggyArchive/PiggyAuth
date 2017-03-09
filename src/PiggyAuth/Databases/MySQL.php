@@ -17,6 +17,12 @@ class MySQL implements Database {
         $this->db = new \mysqli($credentials["host"], $credentials["user"], $credentials["password"], $credentials["name"], $credentials["port"]);
         $task = new MySQLTask($credentials, "CREATE TABLE IF NOT EXISTS players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, ip VARCHAR(32), uuid VARCHAR(100), attempts INT, xbox BIT(1));");
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
+        //Updater
+        $result = $this->db->query("SELECT * FROM players");
+        $data = $result->fetch_assoc();
+        if (!isset($data["ip"])) {
+            $this->db->query("ALTER TABLE players ADD ip VARCHAR(32) NOT NULL");
+        }
     }
 
     public function getRegisteredCount() {

@@ -36,6 +36,8 @@ events:
   allow-effect-tick: false
   #If enabled, movement will be will be allowed when not authenticated
   allow-movement: false
+  #if enabled, head movement will be allowed when not authenticated
+  allow-head-movement: true
   #If enabled, eating will be allowed when not authenticated
   allow-eating: false
   #If enabled, commands (other than /login, /register, /forgetpassword, /sendpin) will be allowed when not authenticated

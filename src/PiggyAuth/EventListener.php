@@ -283,7 +283,7 @@ class EventListener implements Listener {
     public function onMove(PlayerMoveEvent $event) {
         $player = $event->getPlayer();
         if (!$this->plugin->isAuthenticated($player)) {
-            if (!$this->plugin->getConfig()->getNested("events.allow-movement")) {
+            if (!$this->plugin->getConfig()->getNested("events.allow-movement") && (!$this->plugin->getConfig()->getNested("events.allow-head-movement") || floor($event->getFrom()->x) !== floor($player->x) || floor($event->getFrom()->z) !== floor($player->z))) {
                 $event->setCancelled();
             }
         }
