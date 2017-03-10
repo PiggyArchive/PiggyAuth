@@ -47,8 +47,6 @@ Safe & feature-rich auth plugin. Sugguest features [here.](https://github.com/MC
 * Allow accounts to bypass login
 * Unregister
 * Mail Gun support
-* Hash cost
-* Allow head movement
 
 ###v2.0.0
 * Improved xbox bypass
