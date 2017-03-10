@@ -1,143 +1,31 @@
 # PiggyAuth
-Safe & feature-rich auth plugin. Sugguest features [here.](https://github.com/MCPEPIG/PiggyAuth/issues/10)
+PiggyAuth is a safe and feature-rich auth plugin for Minecraft: PE v1.0.4, with Async. <br>
 
-# Credits
+## Information
+ - The many features of this plugin can be viewed [here](https://github.com/MCPEPIG/PiggyAuth/wiki/Features)
+ - The changelog of this plugin can be viewed [here](https://github.com/MCPEPIG/PiggyAuth/wiki/Changelog)
+ - You can suggest features and report bugs in [this](https://github.com/MCPEPIG/PiggyAuth/issues/10) issue.
+ 
+## Installation Guide
+ - **Windows & Linux**
+   - (WINDOWS ONLY) Make sure you have the `php_sqlite3.dll` package installed in the bins folder and `extension=php_sqlite3.dll` is in `php.ini`. SQLite3 will not work without these, which is a package needed by PiggyAuth to save player data. (not needed if using MySQL)
+   - Download PiggyAuth.phar from [Poggit](https://poggit.pmmp.io/ci/MCPEPIG/PiggyAuth) and put it in your plugins folder.
+   - Startup the server, and everything should be working.
+ - Optional Windows Setup
+   - Open `plugins/PiggyAuth/config.yml` and edit to your desired settings.
+   - If you are planning to use MySQL, follow [this](https://github.com/MCPEPIG/PiggyAuth/wiki/Databases) guide to setup.
+   - If you are planning to use Mailgun, follow [this](https://github.com/MCPEPIG/PiggyAuth/wiki/MailGun) guide to setup. 
+ - **Linux (TERMINAL)**
+   - Run `cd ~/*/plugins` to enter your plugins directory
+   - Run `wget ...` to download PiggyAuth.phar (... is placeholder for now)
+     -  or `cd ~/*/plugins && wget ...`
+   - Run `cd ..` to get back into your server directory
+   - Run `./start.sh` to startup the server, and everything should be working.
+     - or `cd .. && ./start.sh`
+ - Optional Linux Setup (TERMINAL)
+   - Run `nano ~/*/plugins/PiggyAuth/config.yml` to open the configuration file and edit to your desired settings.
+   - If you are planning to use MySQL, follow [this](https://github.com/MCPEPIG/PiggyAuth/wiki/Databases) guide to setup.
+   - If you are planning to use Mailgun, follow [this](https://github.com/MCPEPIG/PiggyAuth/wiki/MailGun) guide to setup. 
+
+## Credits
 * @thebigsmileXD for fake attributes
-
-
-# Changelog
-
-###v2.0.1
-* Checks if player trying to connect has same uuid as current player with same name
-* Hides items til authenticated
-* Password Filter
-* Steve-Bypass
-* Capes for registered players
-* More configurable
-* Fix blindness & invisibility being given even if disabled
-* Progress Reports
-* Choose what events to block
-* Xbox bypass finally works!
-* Keys! :key:
-* Hold join messages & prevent quit messages for unathenticated users
-* Join messages for new players
-* Return to spawn when logged in
-* Hide players til logged in
-* Adventure mode til logged in
-* Preregister
-* Hide health, hunger, xp, effects
-* Stop effects from ticking
-* Boss Bar
-* Fix timeout when logout, it kicks you once the last timeout task ends
-* Fix errors caused by Slapper.
-* Pin safe guard
-* Now wait for email to finish auth session
-* Fix error with adventure mode
-* Now send attempt message only if attempts were made
-* Different message for UUID & xbox live login
-* Fix hunger at 0 after dying
-* Block usernames as passwords
-* Fix confirm password bug
-* Fix register message not showing if not logged in by xbox live
-* Fix adventure mode staying when logged in by xbox live or uuid
-* Block accounts
-* Events for developers
-* Async
-* Block too much players from certain IP
-* Allow accounts to bypass login
-* Unregister
-* Mail Gun support
-* Hash Cost
-* Allow Head Movement
-
-###v2.0.0
-* Improved xbox bypass
-* Config updater!
-* Emails now send! 
-* Emails get sent for /changepassword, /forgotpassword, /resetpassword, or an attempt to get into your account.
-* Now reconnects to MySQL when disconnected.
-
-###v1.0.9
-* Fixed MySQL table not being created
-* Email support! 
-* SendPin Command 
-* ChangeEmail Command
-
-###v1.0.8
-* MySQL support!
-
-###v1.0.7
-* Preparation for MySQL support!
-* Fixed messages
-* Xbox bypass, removed Xbox only (ClearSky only :unamused:)
-
-###v1.0.6
-* You can now use & for color codes
-
-###v1.0.5
-* Xbox only feature (ClearSky only :unamused:)
-* Upgraded DB updater
-* Improved /logout
-* Improved messages
-
-###v1.0.4
-* Big Fix
-
-###v1.0.3
-* Added /logout
-* Added tries
-* Added DB Updater
-* Track login attempts
-* Bug Fixes
-
-###v1.0.2
-* Bug Fix
-* Added confirm password for /register
-
-###v1.0.1
-* Added /forgotpassword
-* Fixed inventory issues
-
-###v1.0.0
-* First Release
-
-# Why use PiggyAuth?
-* No permission bugs
-* Preregister Command
-* Unregister Command
-* Changepassword Command
-* Changeemail Command
-* Resetpassword Command
-* Forgetpassword Command
-* Logout Command
-* Sendpin Command
-* Timeout Feature
-* Invisible Feature
-* Blindness Feature
-* See Messages Feature
-* Confirm Password Feature 
-* Prevents Saying Password
-* Xbox Bypass Feature (ClearSky Only)
-* Account Bypass
-* Chat Login
-* Email Support
-* Password Filters
-* Config Updater
-* Items dont't show til logged in
-* Capes for registered players
-* More configurable
-* Progress Reports
-* Keys! :key:
-* Hold join messages & prevent quit messages for unathenticated users
-* Join messages for new players
-* Return to spawn when logged in
-* Hide players til logged in
-* Adventure mode til logged in
-* Hides health, hunger, xp, effects
-* Stop effects from ticking
-* Boss Bar
-* Pin safe guard
-* Block usernames as passwords
-* No YAML
-* Constant updates!
-* Pig-Made!!! :pig:
