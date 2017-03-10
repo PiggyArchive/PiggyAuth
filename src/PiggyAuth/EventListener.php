@@ -323,6 +323,7 @@ class EventListener implements Listener {
                         $pk->slot = $packet->slot;
                         $pk->hotbarSlot = $packet->hotbarSlot;
                         $pk->item = Item::get(Item::AIR);
+                        $pk->selectSlot = $packet->selectSlot;
                         $player->dataPacket($pk);
                         $event->setCancelled();
                     }
