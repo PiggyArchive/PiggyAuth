@@ -1,5 +1,5 @@
 # PiggyAuth
-PiggyAuth a safe and feature-rich auth plugin for Minecraft: PE v1.0.4, with Async. <br>
+PiggyAuth is a safe and feature-rich auth plugin for Minecraft: PE v1.0.4, with Async. <br>
 
 ## Information
  - The many features of this plugin can be viewed [here](https://github.com/MCPEPIG/PiggyAuth/wiki/Features)
@@ -8,7 +8,7 @@ PiggyAuth a safe and feature-rich auth plugin for Minecraft: PE v1.0.4, with Asy
  
 ## Installation Guide
  - **Windows & Linux**
-   - (WINDOWS ONLY) Make sure you have the `php_sqlite3.dll` package installed in the bins folder or SQLite3 will not work, which is a package needed by PiggyAuth to save player data.
+   - (WINDOWS ONLY) Make sure you have the `php_sqlite3.dll` package installed in the bins folder and `extension=php_sqlite3.dll` is in `php.ini`. SQLite3 will not work without these, which is a package needed by PiggyAuth to save player data. (not needed if using MySQL)
    - Download PiggyAuth.phar from [Poggit](https://poggit.pmmp.io/ci/MCPEPIG/PiggyAuth) and put it in your plugins folder.
    - Startup the server, and everything should be working.
  - Optional Windows Setup
