@@ -549,9 +549,10 @@ class Main extends PluginBase {
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::WRONG_PIN));
             return false;
         }
-        if(in_array($player->getName(), $this->getConfig()->getNested("pin.cant-use-pin"))){
+        if (in_array($player->getName(), $this->getConfig()->getNested("pin.cant-use-pin"))) {
             $player->sendMessage($this->getMessage("cant-use-pin"));
-            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::CANT_USE_PIN));            
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::CANT_USE_PIN));
+            return false;
         }
         if ($this->isPasswordBlocked($newpassword)) {
             $player->sendMessage($this->getMessage("password-blocked"));
