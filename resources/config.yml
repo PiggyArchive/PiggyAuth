@@ -76,6 +76,8 @@ register:
   blocked-accounts: ["notch"]
   #Capes will be given for registered players
   cape-for-registration: true
+pin: 
+  cant-use-pin: ["Owner"]
 timeout:
   #Kick players after certain time
   enabled: true
@@ -210,6 +212,7 @@ incorrect-password-other: "&cIncorrect password."
 #Forget password
 forgot-password-success: "&aYour password has been changed. Your new pin is {pin}."
 incorrect-pin: "&cIncorrect pin."
+cant-use-pin: "Pin is disabled for this account."
 
 #Reset password
 password-reset-success: "&aPlayer's password has been reset."
@@ -234,7 +237,7 @@ email-subject-passwordreset: "PiggyAuth Password Reset Notice"
 email-passwordreset: "Your password was reset by a staff member. Please go on and register to claim your account."
 
 #Pin
-pin: "&aYour pin: {pin}"
+your-pin: "&aYour pin: {pin}"
 
 #Key
 key-expired: "&cYour key is expired."
