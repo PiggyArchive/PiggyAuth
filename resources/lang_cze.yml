@@ -1,7 +1,7 @@
 #By lolmanz0
 
 #Join
-join-message: "&6ento server vyžaduje přihlášení."
+join-message: "&6Tento server vyžaduje přihlášení."
 
 #Login
 login-message: "&6Prosím, přihlaš se zadáním příkazu /login <heslo>.\n&6Pokud jsi zapomněl heslo, zadej příkaz /forgotpassword <pin> <nové heslo>."
