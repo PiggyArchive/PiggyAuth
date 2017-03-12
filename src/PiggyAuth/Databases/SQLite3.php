@@ -82,7 +82,7 @@ class SQLite3 implements Database {
         $statement->execute();
     }
 
-    public function insertDataWithoutPlayerObject($player, $password, $email) {
+    public function insertDataWithoutPlayerObject($player, $password, $email, $pin) {
         $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox)");
         $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
         $statement->bindValue(":password", $password, SQLITE3_TEXT);
