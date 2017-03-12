@@ -20,17 +20,19 @@ class SQLite3 implements Database {
             $result = $this->db->query("SELECT * FROM players;");
             $data = $result->fetchArray(SQLITE3_ASSOC);
             $result->finalize();
-            if (!isset($data["pin"])) {
-                $this->db->exec("ALTER TABLE players ADD COLUMN pin INT");
-            }
-            if (!isset($data["attempts"])) {
-                $this->db->exec("ALTER TABLE players ADD COLUMN attempts INT");
-            }
-            if (!isset($data["email"])) {
-                $this->db->exec("ALTER TABLE players ADD COLUMN email VARCHAR(100)");
-            }
-            if (!isset($data["ip"])) {
-                $this->db->exec("ALTER TABLE players ADD COLUMN ip VARCHAR(32)");
+            if ($data instanceof \SQLite3Result) {
+                if (!isset($data["pin"])) {
+                    $this->db->exec("ALTER TABLE players ADD COLUMN pin INT");
+                }
+                if (!isset($data["attempts"])) {
+                    $this->db->exec("ALTER TABLE players ADD COLUMN attempts INT");
+                }
+                if (!isset($data["email"])) {
+                    $this->db->exec("ALTER TABLE players ADD COLUMN email VARCHAR(100)");
+                }
+                if (!isset($data["ip"])) {
+                    $this->db->exec("ALTER TABLE players ADD COLUMN ip VARCHAR(32)");
+                }
             }
         }
     }
