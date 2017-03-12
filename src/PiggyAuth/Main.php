@@ -35,7 +35,7 @@ use PiggyAuth\Tasks\MessageTick;
 use PiggyAuth\Tasks\PingTask;
 use PiggyAuth\Tasks\PopupTipBarTick;
 use PiggyAuth\Tasks\SendEmailTask; //Async
-use PiggyAuth\Tasks\StartSessionTask; //Delayed for async
+use PiggyAuth\Tasks\LogoutTask; //Delayed for async
 use PiggyAuth\Tasks\TimeoutTask;
 
 use pocketmine\entity\Attribute;
@@ -492,11 +492,8 @@ class Main extends PluginBase {
         }
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerUnregisterEvent($this, $player));
         if (!$event->isCancelled()) {
-            if (isset($this->authenticated[strtolower($player->getName())])) {
-                unset($this->authenticated[strtolower($player->getName())]);
-            }
             $this->database->clearPassword($player->getName());
-            $this->getServer()->getScheduler()->scheduleDelayedTask(new StartSessionTask($this, $player), 10);
+            $this->getServer()->getScheduler()->scheduleDelayedTask(new LogoutTask($this, $player), 10);
             $player->sendMessage($this->getMessage("unregister-success"));
         }
         return true;
@@ -591,12 +588,9 @@ class Main extends PluginBase {
                     $this->emailUser($this->api, $this->domain, $this->database->getEmail($player), $this->from, $this->getMessage("email-subject-passwordreset"), $this->getMessage("email-passwordreset"));
                 }
                 $this->database->clearPassword($player);
-                if (isset($this->authenticated[$player])) {
-                    unset($this->authenticated[$player]);
-                }
                 $playerobject = $this->getServer()->getPlayerExact($player);
                 if ($playerobject instanceof Player) {
-                    $this->getServer()->getScheduler()->scheduleDelayedTask(new StartSessionTask($this, $playerobject), 10);
+                    $this->getServer()->getScheduler()->scheduleDelayedTask(new LogoutTask($this, $playerobject), 10);
                 }
                 $sender->sendMessage($this->getMessage("password-reset-success"));
                 return true;
@@ -612,9 +606,6 @@ class Main extends PluginBase {
         if (!$event->isCancelled()) {
             if ($this->isAuthenticated($player)) {
                 unset($this->authenticated[strtolower($player->getName())]);
-                if (!$quit) {
-                    $this->startSession($player);
-                }
             } else {
                 if ($this->getConfig()->getNested("login.adventure-mode")) {
                     if (isset($this->gamemode[strtolower($player->getName())])) {
@@ -640,6 +631,9 @@ class Main extends PluginBase {
                         unset($this->wither[strtolower($player->getName())]);
                     }
                 }
+            }
+            if (!$quit) {
+                $this->startSession($player);
             }
         }
     }
