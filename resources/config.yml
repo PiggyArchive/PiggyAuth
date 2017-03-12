@@ -102,7 +102,7 @@ effects:
   hide-effects: true
 message:
   #Language
-  #Available Languages: eng
+  #Available Languages: eng, cze
   lang: eng
   #If enabled, a popup will be shown when not authenticated
   popup: true
