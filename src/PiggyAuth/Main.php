@@ -251,7 +251,7 @@ class Main extends PluginBase {
         }
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this, $player, self::NORMAL));
         if (!$event->isCancelled()) {
-            if ($player->getAddress !== $this->database->getIP()) {
+            if ($player->getAddress() !== $this->database->getIP($player->getName())) {
                 if ($this->database->getEmail($player->getName()) !== "none" && $this->getConfig()->getNested("emails.send-email-on-login-from-new-ip")) {
                     $this->emailUser($this->api, $this->domain, $this->database->getEmail($player->getName()), $this->from, $this->getMessage("email-subject-login-from-new-ip"), str_replace("{ip", $player->getAddress(), $this->getMessage("email-login-from-new-ip")));
                 }
