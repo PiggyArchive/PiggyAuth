@@ -48,6 +48,7 @@ use pocketmine\nbt\tag\ListTag;
 use pocketmine\network\protocol\MobEffectPacket;
 use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\plugin\PluginBase;
+use pocketmine\utils\Config;
 use pocketmine\Player;
 
 class Main extends PluginBase {
@@ -106,6 +107,20 @@ class Main extends PluginBase {
 
     public function onEnable() {
         $this->saveDefaultConfig();
+        if(!file_exists($this->getDataFolder() . "lang_" . $this->getConfig()->getNested("message.lang") . ".yml")){
+            if ($this->getResource("lang_" . $this->getConfig()->getNested("message.lang") . ".yml") !== null) {
+                $this->saveResource("lang_" . $this->getConfig()->getNested("message.lang") . ".yml");
+                $this->lang = new Config($this->getDataFolder() . "lang_" . $this->getConfig()->getNested("message.lang") . ".yml");
+            } else {
+                $this->getLogger()->error("Unknown language: " . $this->getConfig()->getNested("message.lang") . ". Using english.");
+                if(!file_exists($this->getDataFolder() . "lang_eng.yml")){
+                    $this->saveResource("lang_eng.yml");
+                }
+                $this->lang = new Config($this->getDataFolder() . "lang_eng.yml");
+            }
+        }else{
+            $this->lang = new Config($this->getDataFolder() . "lang_" . $this->getConfig()->getNested("message.lang") . ".yml");
+        }
         $this->getServer()->getCommandMap()->register('changepassword', new ChangePasswordCommand('changepassword', $this));
         $this->getServer()->getCommandMap()->register('changeemail', new ChangeEmailCommand('changeemail', $this));
         $this->getServer()->getCommandMap()->register('forgotpassword', new ForgotPasswordCommand('forgotpassword', $this));
@@ -639,7 +654,7 @@ class Main extends PluginBase {
     }
 
     public function getMessage($message) {
-        return str_replace("&", "§", $this->getConfig()->getNested($message));
+        return str_replace("&", "§", $this->lang->getNested($message));
     }
 
     public function emailUser($api, $domain, $to, $from, $subject, $body, $player = null) {

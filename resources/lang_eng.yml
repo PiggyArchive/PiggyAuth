@@ -1,0 +1,82 @@
+#Join
+join-message: "&6This server requires an account."
+
+#Login
+login-message: "&6Please login by typing in /login <password>\n&6Forgot your password? Use /forgotpassword <pin> <newpassword>"
+login-popup: "&6Please login."
+login-tip: "&6Please login."
+login-boss-bar: "&6Please login."
+authentication-success: "&aYou have been authenticated."
+authentication-success-uuid: "&aYou have been authenticated by UUID."
+authentication-success-xbox: "&aYou have been authenticated by Xbox Live."
+attempted-logins: "&6There have been {attempts} attempts to login into your account."
+already-authenticated: "&cYou have already logged in."
+incorrect-password: "&cIncorrect password. {tries} left."
+not-registered: "&cYou are not registered."
+too-many-tries: "&cToo Many Tries to Login"
+timeout-message: "&cLogin Timeout"
+too-many-on-ip: "&cToo many players have the same IP address."
+
+#Register
+register-message: "&6Please register by typing in /register <password> <confirm password> [email]"
+register-popup: "&6Please register."
+register-tip: "&6Please register."
+register-boss-bar: "&6Please register."
+register-success: "&aYou have been registered. Your pin is {pin}."
+register-success-xbox: "&aYou have been registered by Xbox Live. Your pin is {pin}. Your password is {password}. Change it with /changepassword."
+already-registered: "&cYou are already registered."
+password-too-short: "&cPassword is too short."
+password-blocked: "&cPassword is blocked."
+password-username: "&cUsername can't be password."
+password-not-match: "&cYour password is not the same."
+confirm-password: "&aPlease confirm your password."
+
+#Unregister
+unregister-success: "&aYou have unregistered."
+
+#Preregister
+preregister-success: "&aAccount has been registered."
+already-registered-two: "&cPlayer already registered."
+
+#Change password
+change-password-success: "&aYour password has been changed. Your new pin is {pin}."
+incorrect-password-other: "&cIncorrect password."
+
+#Forget password
+forgot-password-success: "&aYour password has been changed. Your new pin is {pin}."
+incorrect-pin: "&cIncorrect pin."
+cant-use-pin: "Pin is disabled for this account."
+
+#Reset password
+password-reset-success: "&aPlayer's password has been reset."
+not-registered-two: "&cPlayer not registered."
+
+#Email
+email: "&6Now type in your email. Type 'none' to skip."
+email-set: "&aEmail has been set."
+email-change-success:  "&aEmail changed."
+email-success: "&aEmail has been sent."
+email-fail: "&cEmail could not send."
+invalid-email: "&cInvalid email."
+no-email: "&cThere is no email connected to this account."
+
+email-subject-sendpin: "PiggyAuth Pin Request"
+email-sendpin: "Your pin is {pin}. If you did not request to send your pin, please ignore this."
+email-subject-attemptedlogin: "PiggyAuth Attempted Login Notice"
+email-attemptedlogin: "Someone has attempted to login to your account. If that was not you, please do /sendpin. You will recieve a 4 digit pin number to reset your password."
+email-subject-changedpassword: "PiggyAuth Password Changed Notice"
+email-changedpassword: "Your password was changed. If that was not you, please do /sendpin. You will recieve a 4 digit pin number to reset your password."
+email-subject-passwordreset: "PiggyAuth Password Reset Notice"
+email-passwordreset: "Your password was reset by a staff member. Please go on and register to claim your account."
+email-subject-login-from-new-ip: "PiggyAuth New IP Notice"
+email-login-from-new-ip: "Your account was logged into from {ip}. If this wasn't you, please change your password immediately."
+
+#Pin
+your-pin: "&aYour pin: {pin}"
+
+#Key
+key-expired: "&cYour key is expired."
+
+#General
+dont-say-password: "&cDo not say your password."
+account-blocked: "&cAccount is blocked."
