@@ -1,0 +1,84 @@
+#By lolmanz0
+
+#Join
+join-message: "&6ento server vyžaduje přihlášení."
+
+#Login
+login-message: "&6Prosím, přihlaš se zadáním příkazu /login <heslo>.\n&6Pokud jsi zapomněl heslo, zadej příkaz /forgotpassword <pin> <nové heslo>."
+login-popup: "&6Prosím, přihlaš se."
+login-tip: "&6Prosím, přihlaš se."
+login-boss-bar: "&6Prosím, přihlaš se."
+authentication-success: "&aByl jsi úspěšně přihlášen!"
+authentication-success-uuid: "&aByl jsi úspěšně přihlášen s pomocí UUID!"
+authentication-success-xbox: "&aByl jsi úspěšně přihlášen s pomocí Xbox Live účtu!"
+attempted-logins: "&6There have been {attempts} attempts to login into your account."
+already-authenticated: "&cJsi již přihlášen."
+incorrect-password: "&cŠpatné heslo! Zbývá ti {tries} pokusů."
+not-registered: "&cNejsi zaregistrován!"
+too-many-tries: "&cPříliš pokusů k přihlášení!"
+timeout-message: "&cPlatnost přihlášení vypršela"
+too-many-on-ip: "&cPříliš mnoho hráčů používá stejnou IP adresu!"
+
+#Register
+register-message: "&6Prosím, zaregistruj se zadáním příkazu /register <heslo> <heslo> [email]."
+register-popup: "&6Prosím, zaregistruj se."
+register-tip: "&6Prosím, zaregistruj se."
+register-boss-bar: "&6Prosím, zaregistruj se."
+register-success: "&aByl jsi úspěšně zaregistrován! Tvůj pin je {pin}."
+register-success-xbox: "&aByl jsi úspěšně zaregistrován s pomocí Xbox Live účtu! Tvůj pin je {pin}. Tvoje heslo je {password}. Pokud je chceš změnit, použij příkaz /changepassword."
+already-registered: "&cJsi již zaregistrován."
+password-too-short: "&cToto heslo je příliš krátké."
+password-blocked: "&cToto heslo je zablokované!"
+password-username: "&cNemůžeš se zaregistrovat heslem, které je stejné jako tvoje přezdívka!"
+password-not-match: "&cTvoje hesla se neshodují!"
+confirm-password: "&6Prosím, potvrď svoje heslo."
+
+#Unregister
+unregister-success: "&aTvůj účet byl odregistrován."
+
+#Preregister
+preregister-success: "&aÚčet byl úspěšně zaregistrován!"
+already-registered-two: "&cTento účet je již zaregistrován!"
+
+#Change password
+change-password-success: "&aTvoje heslo bylo úspěšně změněno! Tvůj nový pin je {pin}."
+incorrect-password-other: "&cŠpatné heslo!"
+
+#Forget password
+forgot-password-success: "&aTvoje heslo bylo úspěšně změněno! Tvůj nový pin je {pin}."
+incorrect-pin: "&cŠpatný pin!"
+cant-use-pin: "&cPin je pro tento účet zablokovaný!"
+
+#Reset password
+password-reset-success: "&aHráčovo heslo bylo úspěšně změněno!"
+not-registered-two: "&cHráč není zaregistrován!"
+
+#Email
+email: "&6Nyní zadej svůj email nebo 'none' pro přeskočení."
+email-set: "&aEmail byl úspěšně nastaven!"
+email-change-success:  "&aEmail byl úspěšně změněn!"
+email-success: "&aEmail byl odeslán."
+email-fail: "&cEmail nejde odeslat."
+invalid-email: "&cNeplatný email!"
+no-email: "&cK tomuto účtu není nastaven žádný email."
+
+email-subject-sendpin: "PiggyAuth - Žádost o zaslání pinu"
+email-sendpin: "Tvůj pin je {pin}. Pokud jsi nežádal o zaslání svého pinu, tento email ignoruj."
+email-subject-attemptedlogin: "PiggyAuth - Oznámení o pokusu o přihlášení"
+email-attemptedlogin: "Někdo se pokusil o přihlášení ke tvému účtu. Pokud jsi to nebyl ty, zadej ve hře příkaz /sendpin. Bude ti zaslán 4 místné pin číslo pro změnu nebo resetování hesla."
+email-subject-changedpassword: "PiggyAuth - Oznámení o změně hesla"
+email-changedpassword: "Tvoje heslo bylo změněno. Pokud jsi to nebyl ty, zadej ve hře příkaz /sendpin. Bude ti zaslán 4 místné pin číslo pro změnu nebo resetování hesla."
+email-subject-passwordreset: "PiggyAuth - Oznámení o resetování hesla"
+email-passwordreset: "Tvoje heslo bylo resetováno členem admin týmu. Jdi a zaregistruj se ke svému účtu."
+email-subject-login-from-new-ip: "PiggyAuth - Oznámení o přihlášení z nové IP adresy"
+email-login-from-new-ip: "Někdo se přihlásil k tvému účtu z IP adresy {ip}. Pokud jsi to nebyl ty, ihned si změň heslo!"
+
+#Pin
+your-pin: "&aTvů pin je {pin}."
+
+#Key
+key-expired: "&cTvůj klíč expiroval."
+
+#General
+dont-say-password: "&cNesděluj své heslo!"
+account-blocked: "&cÚčet je zablokovaný!"
