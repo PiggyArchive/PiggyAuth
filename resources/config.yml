@@ -129,6 +129,8 @@ progress-reports:
 emails:
   send-email-on-resetpassword: true
   send-email-on-changepassword: true
+  send-email-on-attemptedlogin: true
+  send-email-on-login-from-new-ip: true
   mailgun:
     api: YOUR_KEY
     public-api: YOUR_PUBLIC_KEY
@@ -235,6 +237,8 @@ email-subject-changedpassword: "PiggyAuth Password Changed Notice"
 email-changedpassword: "Your password was changed. If that was not you, please do /sendpin. You will recieve a 4 digit pin number to reset your password."
 email-subject-passwordreset: "PiggyAuth Password Reset Notice"
 email-passwordreset: "Your password was reset by a staff member. Please go on and register to claim your account."
+email-subject-login-from-new-ip: "PiggyAuth New IP Notice"
+email-login-from-new-ip: "Your account was logged into from {ip}. If this wasn't you, please change your password immediately."
 
 #Pin
 your-pin: "&aYour pin: {pin}"

@@ -236,7 +236,7 @@ class Main extends PluginBase {
                 if ($this->tries[strtolower($player->getName())] >= $this->getConfig()->getNested("login.tries")) {
                     $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $this->database->getIP($player->getName()), $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()) + 1);
                     $player->kick($this->getMessage("too-many-tries"));
-                    if ($this->database->getEmail($player->getName()) !== "none") {
+                    if ($this->database->getEmail($player->getName()) !== "none" && $this->getConfig()->getNested("emails.send-email-on-attemptedlogin")) {
                         $this->emailUser($this->api, $this->domain, $this->database->getEmail($player->getName()), $this->from, $this->getMessage("email-subject-attemptedlogin"), $this->getMessage("email-attemptedlogin"));
                     }
                     return false;
@@ -251,6 +251,11 @@ class Main extends PluginBase {
         }
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this, $player, self::NORMAL));
         if (!$event->isCancelled()) {
+            if ($player->getAddress !== $this->database->getIP()) {
+                if ($this->database->getEmail($player->getName()) !== "none" && $this->getConfig()->getNested("emails.send-email-on-login-from-new-ip")) {
+                    $this->emailUser($this->api, $this->domain, $this->database->getEmail($player->getName()), $this->from, $this->getMessage("email-subject-login-from-new-ip"), str_replace("{ip", $player->getAddress(), $this->getMessage("email-login-from-new-ip")));
+                }
+            }
             $rehashedpassword = $this->needsRehashPassword($this->database->getPassword($player->getName()), $password);
             $this->force($player, true, $mode, $rehashedpassword);
         }
