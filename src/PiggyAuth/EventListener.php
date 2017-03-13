@@ -134,7 +134,7 @@ class EventListener implements Listener {
                         $function = function ($result, $args, $plugin) {
                             $player = $plugin->getServer()->getPlayerExact($args[0]);
                             $message = $args[1];
-                            if (strtolower($message) !== "none" && !$result) {
+                            if (!$result) {
                                 $player->sendMessage($plugin->getMessage("invalid-email"));
                                 $plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
                             } else {

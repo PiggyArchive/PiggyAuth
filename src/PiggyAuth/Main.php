@@ -107,18 +107,18 @@ class Main extends PluginBase {
 
     public function onEnable() {
         $this->saveDefaultConfig();
-        if(!file_exists($this->getDataFolder() . "lang_" . $this->getConfig()->getNested("message.lang") . ".yml")){
+        if (!file_exists($this->getDataFolder() . "lang_" . $this->getConfig()->getNested("message.lang") . ".yml")) {
             if ($this->getResource("lang_" . $this->getConfig()->getNested("message.lang") . ".yml") !== null) {
                 $this->saveResource("lang_" . $this->getConfig()->getNested("message.lang") . ".yml");
                 $this->lang = new Config($this->getDataFolder() . "lang_" . $this->getConfig()->getNested("message.lang") . ".yml");
             } else {
                 $this->getLogger()->error("Unknown language: " . $this->getConfig()->getNested("message.lang") . ". Using english.");
-                if(!file_exists($this->getDataFolder() . "lang_eng.yml")){
+                if (!file_exists($this->getDataFolder() . "lang_eng.yml")) {
                     $this->saveResource("lang_eng.yml");
                 }
                 $this->lang = new Config($this->getDataFolder() . "lang_eng.yml");
             }
-        }else{
+        } else {
             $this->lang = new Config($this->getDataFolder() . "lang_" . $this->getConfig()->getNested("message.lang") . ".yml");
         }
         $this->getServer()->getCommandMap()->register('changepassword', new ChangePasswordCommand('changepassword', $this));

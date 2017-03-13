@@ -22,6 +22,10 @@ class ValidateEmailTask extends AsyncTask {
     }
 
     public function onRun() {
+        if (unserialize($this->email) == "none") {
+            $this->result = true;
+            return true;
+        }
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_USERPWD, 'api:' . unserialize($this->api));
@@ -29,7 +33,12 @@ class ValidateEmailTask extends AsyncTask {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
         curl_setopt($ch, CURLOPT_URL, 'https://api.mailgun.net/v3/address/validate');
         curl_setopt($ch, CURLOPT_POSTFIELDS, array('address' => unserialize($this->email)));
-        $this->result = json_decode(curl_exec($ch))->is_valid;
+        $result = json_decode(curl_exec($ch));
+        if ($result !== null) {
+            $this->result = json_decode(curl_exec($ch))->is_valid;
+        } else {
+            $this->result = null;
+        }
         if (curl_error($ch) == "SSL certificate problem: unable to get local issuer certificate") {
             $this->error = "SSL certificate problem: unable to get local issuer certificate\nPlease make sure you have downloaded the file from https://github.com/MCPEPIG/PiggyAuth-MailGunFiles & edited the php.ini.";
         }
@@ -40,8 +49,8 @@ class ValidateEmailTask extends AsyncTask {
         if ($this->error !== null) {
             $server->getPluginManager()->getPlugin("PiggyAuth")->getLogger()->error($this->error);
         } else {
-            if ($this->result == false) {
-                $this->result = filter_var($this->email, FILTER_VALIDATE_EMAIL);
+            if ($this->result == null) {
+                $this->result = filter_var(unserialize($this->email), FILTER_VALIDATE_EMAIL);
             }
             $callback = $this->callback;
             $callback($this->result, $this->args, $server->getPluginManager()->getPlugin("PiggyAuth"));
