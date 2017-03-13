@@ -1,4 +1,4 @@
-# PiggyAuth
+# PiggyAuth [![Poggit-CI](https://poggit.pmmp.io/ci.badge/MCPEPIG/PiggyAuth/PiggyAuth/master)](https://poggit.pmmp.io/ci.badge/MCPEPIG/PiggyAuth/PiggyAuth/master)
 PiggyAuth is a safe and feature-rich auth plugin for Minecraft: PE v1.0.4, with Async. <br>
 
 ## Information
