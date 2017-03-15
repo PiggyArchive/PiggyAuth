@@ -152,10 +152,10 @@ class EventListener implements Listener {
             }
             $event->setCancelled();
         } else {
-            if ($this->plugin->isCorrectPassword($player, $message)) {
+            /*if ($this->plugin->isCorrectPassword($player, $message)) {
                 $player->sendMessage($this->plugin->getMessage("dont-say-password"));
                 $event->setCancelled();
-            }
+            }*/
         }
         if (!$this->plugin->getConfig()->getNested("message.see-message")) {
             foreach ($event->getRecipients() as $recipient) {
