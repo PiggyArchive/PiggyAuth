@@ -32,10 +32,12 @@ class RegisterCommand extends VanillaCommand {
         } else {
             $function = function ($result, $args, $plugin) {
                 $sender = $plugin->getServer()->getPlayerExact($args[0]);
-                if ($result) {
-                    $plugin->register($sender, $args[1], $args[2], $args[3]);
-                } else {
-                    $sender->sendMessage($plugin->getMessage("invalid-email"));
+                if ($sender instanceof Player) { //Check to make sure player didn't log off
+                    if ($result) {
+                        $plugin->register($sender, $args[1], $args[2], $args[3]);
+                    } else {
+                        $sender->sendMessage($plugin->getMessage("invalid-email"));
+                    }
                 }
                 return true;
             }

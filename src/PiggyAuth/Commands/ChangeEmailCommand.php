@@ -29,11 +29,13 @@ class ChangeEmailCommand extends VanillaCommand {
         } else {
             $function = function ($result, $args, $plugin) {
                 $sender = $plugin->getServer()->getPlayerExact($args[0]);
-                if ($result) {
-                    $plugin->database->updatePlayer($sender->getName(), $plugin->database->getPassword($sender->getName()), $args[1], $plugin->database->getPin($sender->getName()), $plugin->database->getIP($sender->getName()), $plugin->database->getUUID($sender->getName()), $plugin->database->getAttempts($sender->getName()));
-                    $sender->sendMessage($plugin->getMessage("email-change-success"));
-                } else {
-                    $sender->sendMessage($plugin->getMessage("invalid-email"));
+                if ($sender instanceof Player) { //Check to make sure player didn't log off
+                    if ($result) {
+                        $plugin->database->updatePlayer($sender->getName(), $plugin->database->getPassword($sender->getName()), $args[1], $plugin->database->getPin($sender->getName()), $plugin->database->getIP($sender->getName()), $plugin->database->getUUID($sender->getName()), $plugin->database->getAttempts($sender->getName()));
+                        $sender->sendMessage($plugin->getMessage("email-change-success"));
+                    } else {
+                        $sender->sendMessage($plugin->getMessage("invalid-email"));
+                    }
                 }
             }
             ;

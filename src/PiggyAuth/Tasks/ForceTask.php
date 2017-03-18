@@ -14,7 +14,9 @@ class ForceTask extends PluginTask {
     }
 
     public function onRun($currentTick) {
-        $this->plugin->force($this->player, false, $this->xbox == false ? 0 : 3);
+        if($this->plugin->getServer()->getPlayerExact($this->player->getName()) instanceof Player){ //Check to make sure the player is still online
+            $this->plugin->force($this->player, false, $this->xbox == false ? 0 : 3);
+        }
     }
 
 }

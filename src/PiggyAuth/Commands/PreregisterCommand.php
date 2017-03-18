@@ -7,6 +7,7 @@ use PiggyAuth\Tasks\ValidateEmailTask;
 use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
+use pocketmine\Player;
 
 class PreregisterCommand extends VanillaCommand {
     public function __construct($name, $plugin) {
@@ -28,10 +29,12 @@ class PreregisterCommand extends VanillaCommand {
         } else {
             $function = function ($result, $args, $plugin) {
                 $sender = $args[0] instanceof ConsoleCommandSender ? $args[0] : $plugin->getServer()->getPlayerExact($args[0]);
-                if ($result) {
-                    $plugin->preregister($sender, $args[1], $args[2], $args[3], $args[4]);
-                } else {
-                    $sender->sendMessage($plugin->getMessage("invalid-email"));
+                if ($sender instanceof Player || $sender instanceof ConsoleCommandSender) { //Check to make sure player didn't log off
+                    if ($result) {
+                        $plugin->preregister($sender, $args[1], $args[2], $args[3], $args[4]);
+                    } else {
+                        $sender->sendMessage($plugin->getMessage("invalid-email"));
+                    }
                 }
                 return true;
             }

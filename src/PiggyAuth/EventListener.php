@@ -134,12 +134,14 @@ class EventListener implements Listener {
                         $function = function ($result, $args, $plugin) {
                             $player = $plugin->getServer()->getPlayerExact($args[0]);
                             $message = $args[1];
-                            if (!$result) {
-                                $player->sendMessage($plugin->getMessage("invalid-email"));
-                                $plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
-                            } else {
-                                $plugin->register($player, $plugin->confirmedPassword[strtolower($player->getName())], $plugin->confirmedPassword[strtolower($player->getName())], $message);
-                                unset($plugin->confirmedPassword[strtolower($player->getName())]);
+                            if ($player instanceof Player) {
+                                if (!$result) {
+                                    $player->sendMessage($plugin->getMessage("invalid-email"));
+                                    $plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
+                                } else {
+                                    $plugin->register($player, $plugin->confirmedPassword[strtolower($player->getName())], $plugin->confirmedPassword[strtolower($player->getName())], $message);
+                                    unset($plugin->confirmedPassword[strtolower($player->getName())]);
+                                }
                             }
                         }
                         ;
@@ -153,8 +155,8 @@ class EventListener implements Listener {
             $event->setCancelled();
         } else {
             /*if ($this->plugin->isCorrectPassword($player, $message)) {
-                $player->sendMessage($this->plugin->getMessage("dont-say-password"));
-                $event->setCancelled();
+            $player->sendMessage($this->plugin->getMessage("dont-say-password"));
+            $event->setCancelled();
             }*/
         }
         if (!$this->plugin->getConfig()->getNested("message.see-message")) {
