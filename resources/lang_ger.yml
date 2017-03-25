@@ -65,7 +65,7 @@ email-sendpin: "Deine PIN ist {pin}. Wenn du die Zusendung deiner PIN nicht ange
 email-subject-attemptedlogin: "PiggyAuth Benachrichtigung über Anmeldeversuch"
 email-attemptedlogin: "Jemand hat versucht, sich mit deiner Kennung anzumelden. Falls du das nicht selbst warst, mach bitte /sendpin. Du erhälst dann eine 4-stellige PIN, um dein Kennwort zurückzusetzen."
 email-subject-changedpassword: "PiggyAuth Benachrichtigung über Kennwortwechsel"
-email-changedpassword: "Dein Kennwort wurde geändert. Falls du das nicht selst warst, mach bitte /sendpin. Du erhälst dann eine 4-stellige PIN, um dein Kennwort zurückzusetzen."
+email-changedpassword: "Dein Kennwort wurde geändert. Falls du das nicht selbst warst, mach bitte /sendpin. Du erhälst dann eine 4-stellige PIN, um dein Kennwort zurückzusetzen."
 email-subject-passwordreset: "PiggyAuth Benachrichtigung über Kennwortrücksetzung"
 email-passwordreset: "Dein Kennwort wurde durch einen Mitarbeiter zurückgesetzt. Bitte registriere dich nun neu, um deine Kennung vor Registrierung durch andere Spieler zu schützen."
 email-subject-login-from-new-ip: "PiggyAuth Benachrichtigung über eine neue IP-Adresse"
