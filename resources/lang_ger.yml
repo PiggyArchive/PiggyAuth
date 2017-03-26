@@ -1,0 +1,82 @@
+#Join
+join-message: "&6Dieser Server verlangt eine Authentifizierung"
+
+#Login
+login-message: "&6Bitte melde dich an mit /login <Kennwort>\n&6Du hast dein Kennwort vergessen? Dann gib ein /forgotpassword <PIN> <neues Kennwort>"
+login-popup: "&6Bitte melde dich an."
+login-tip: "&6Bitte melde dich an."
+login-boss-bar: "&6Bitte melde dich an."
+authentication-success: "&aDu wurdest erfolgreich authentifiziert."
+authentication-success-uuid: "&aDu wurdest durch deine UUID authentifiziert."
+authentication-success-xbox: "&aDu wurdest durch Xbox Live authentifiziert."
+attempted-logins: "&6Es wurde {attempts} mal versucht, sich mit deiner Kennung anzumelden."
+already-authenticated: "&cDu bist bereits angemeldet."
+incorrect-password: "&cFalsches Kennwort. Noch {tries} Versuche übrig."
+not-registered: "&cDu bist noch nicht registriert."
+too-many-tries: "&cZu viele Anmeldeversuche"
+timeout-message: "&cTimeout bei der Anmeldung"
+too-many-on-ip: "&cZu viele Spieler mit der gleichen IP-Adresse."
+
+#Register
+register-message: "&6Bitte registriere dich mit /register <Kennwort> <nochmal Kennwort zur Bestätigung> [eMail]"
+register-popup: "&6Bitte registriere dich."
+register-tip: "&6Bitte registriere dich."
+register-boss-bar: "&6Bitte registriere dich."
+register-success: "&aDu hast dich registriert. Deine PIN ist {pin}."
+register-success-xbox: "&aDu wurdest durch Xbox Live registriert. Deine PIN ist {pin}. Dein Kennwort ist {password}. Ändere es mit /changepassword."
+already-registered: "&cDu bist bereits registriert."
+password-too-short: "&cDein Kennwort ist zu kurz."
+password-blocked: "&cDieses Kennwort ist nicht zulässig."
+password-username: "&cDein Spielername darf nicht als Kennwort verwendet werden."
+password-not-match: "&cDeine Kennwörter stimmen nicht überein."
+confirm-password: "&aBitte gib dein Kennwort zur Bestätigung noch einmal ein."
+
+#Unregister
+unregister-success: "&aDeine Registrierung wurde wieder entfernt."
+
+#Preregister
+preregister-success: "&aDie Kennung wurde registriert."
+already-registered-two: "&cDer Spieler ist bereits registriert."
+
+#Change password
+change-password-success: "&aDein Kennwort wurde geändert. Deine neue PIN ist {pin}."
+incorrect-password-other: "&cFalsches Kennwort."
+
+#Forget password
+forgot-password-success: "&aDein Kennwort wurde geändert. Deine neue PIN ist {pin}."
+incorrect-pin: "&cFalsche PIN."
+cant-use-pin: "Die PIN für diese Kennung ist deaktiviert."
+
+#Reset password
+password-reset-success: "&aDas Kennwort des Spielers wurde zurückgesetzt."
+not-registered-two: "&cDer Spieler ist nicht registriert."
+
+#Email
+email: "&6Gib jetzt deine eMail-Adresse ein. Zum Überspringen gib 'none' ein."
+email-set: "&aDie eMail-Adresse wurde eingetragen."
+email-change-success:  "&aDie eMail-Adresse wurde geändert."
+email-success: "&aEs wurde eine eMail gesendet."
+email-fail: "&cEs konnte keine eMail gesendet werden."
+invalid-email: "&cUngültige eMail-Adresse."
+no-email: "&cFür diese Kennung wurde keine eMail-Adresse hinterlegt."
+
+email-subject-sendpin: "PiggyAuth PIN Anforderung"
+email-sendpin: "Deine PIN ist {pin}. Wenn du die Zusendung deiner PIN nicht angefordert hast, ignoriere einfach diese Mail."
+email-subject-attemptedlogin: "PiggyAuth Benachrichtigung über Anmeldeversuch"
+email-attemptedlogin: "Jemand hat versucht, sich mit deiner Kennung anzumelden. Falls du das nicht selbst warst, mach bitte /sendpin. Du erhälst dann eine 4-stellige PIN, um dein Kennwort zurückzusetzen."
+email-subject-changedpassword: "PiggyAuth Benachrichtigung über Kennwortwechsel"
+email-changedpassword: "Dein Kennwort wurde geändert. Falls du das nicht selbst warst, mach bitte /sendpin. Du erhälst dann eine 4-stellige PIN, um dein Kennwort zurückzusetzen."
+email-subject-passwordreset: "PiggyAuth Benachrichtigung über Kennwortrücksetzung"
+email-passwordreset: "Dein Kennwort wurde durch einen Mitarbeiter zurückgesetzt. Bitte registriere dich nun neu, um deine Kennung vor Registrierung durch andere Spieler zu schützen."
+email-subject-login-from-new-ip: "PiggyAuth Benachrichtigung über eine neue IP-Adresse"
+email-login-from-new-ip: "Deine Kennung wurde angemeldet über die IP-Adresse {ip}. Falls du das nicht selbst warst, ändere bitte so schnell wie möglich dein Kennwort."
+
+#Pin
+your-pin: "&aDeine PIN: {pin}"
+
+#Key
+key-expired: "&cDein Key ist abgelaufen."
+
+#General
+dont-say-password: "&cSchreibe dein Kennwort nicht in den Chat."
+account-blocked: "&cDie Kennung ist gesperrt."
