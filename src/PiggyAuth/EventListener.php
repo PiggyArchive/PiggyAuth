@@ -31,8 +31,8 @@ use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\event\Listener;
 use pocketmine\item\Item;
-use pocketmine\network\protocol\ContainerSetSlotPacket;
-use pocketmine\network\protocol\MobEffectPacket;
+use pocketmine\network\mcpe\protocol\ContainerSetSlotPacket;
+use pocketmine\network\mcpe\protocol\MobEffectPacket;
 use pocketmine\Player;
 
 class EventListener implements Listener {
