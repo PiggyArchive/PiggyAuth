@@ -2,7 +2,7 @@
 
 namespace PiggyAuth\Tasks;
 
-use pocketmine\network\protocol\UpdateAttributesPacket;
+use pocketmine\network\mcpe\protocol\UpdateAttributesPacket;
 use pocketmine\scheduler\PluginTask;
 
 use PiggyAuth\FakeAttribute;
