@@ -124,13 +124,11 @@ class EventListener implements Listener
                 } else {
                     if (!isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
                         if (!isset($this->plugin->confirmedPassword[strtolower($player->getName())])) {
-                            echo "1";
                             $this->plugin->confirmPassword[strtolower($player->getName())] = $message;
                             $player->sendMessage($this->plugin->getMessage("confirm-password"));
                         }
                     } else {
                         if ($this->plugin->confirmPassword[strtolower($player->getName())] == $message) {
-                            echo "2";
                             unset($this->plugin->confirmPassword[strtolower($player->getName())]);
                             $this->plugin->confirmedPassword[strtolower($player->getName())] = $message;
                             $this->plugin->giveEmail[strtolower($player->getName())] = true;
@@ -138,26 +136,20 @@ class EventListener implements Listener
                             $event->setCancelled();
                             return true; //Stop the Invalid email message
                         } else {
-                            echo "2B";
                             $player->sendMessage($this->plugin->getMessage("password-not-match"));
                             unset($this->plugin->confirmPassword[strtolower($player->getName())]);
                             $this->plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this->plugin, $player, Main::LOGIN, Main::PASSWORDS_NOT_MATCHED));
                         }
                     }
                     if (isset($this->plugin->giveEmail[strtolower($player->getName())])) {
-                        echo "3";
                         $function = function ($result, $args, $plugin) {
                             $player = $plugin->getServer()->getPlayerExact($args[0]);
                             $message = $args[1];
-                            echo "4";
                             if ($player instanceof Player) {
-                                echo "5";
                                 if ($result !== true) {
-                                    echo "6";
                                     $player->sendMessage($plugin->getMessage("invalid-email"));
                                     $plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
                                 } else {
-                                    echo "6B";
                                     $plugin->register($player, $plugin->confirmedPassword[strtolower($player->getName())], $plugin->confirmedPassword[strtolower($player->getName())], $message);
                                     unset($plugin->confirmedPassword[strtolower($player->getName())]);
                                 }

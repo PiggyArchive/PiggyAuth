@@ -698,7 +698,6 @@ class Main extends PluginBase
             }
             if ($quit !== true) {
                 $this->startSession($player);
-                echo "hi;";
                 $this->sessionmanager->loadSession($player); //Reload
             } else {
                 $this->sessionmanager->unloadSession($player);
