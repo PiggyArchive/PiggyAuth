@@ -273,7 +273,7 @@ class Main extends PluginBase
         if (!$event->isCancelled()) {
             if ($player->getAddress() !== $this->sessionmanager->getSession($player)->getIP()) {
                 if ($this->sessionmanager->getSession($player)->getEmail() !== "none" && $this->getConfig()->getNested("emails.send-email-on-login-from-new-ip")) {
-                    $this->emailUser($this->api, $this->domain, $this->sessionmanager->getSession($player)->getEmail(), $this->from, $this->getMessage("email-subject-login-from-new-ip"), str_replace("{ip", $player->getAddress(), $this->getMessage("email-login-from-new-ip")));
+                    $this->emailUser($this->api, $this->domain, $this->sessionmanager->getSession($player)->getEmail(), $this->from, $this->getMessage("email-subject-login-from-new-ip"), str_replace("{ip}", $player->getAddress(), $this->getMessage("email-login-from-new-ip")));
                 }
             }
             $rehashedpassword = $this->needsRehashPassword($this->sessionmanager->getSession($player)->getPassword(), $password);
