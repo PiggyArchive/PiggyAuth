@@ -22,20 +22,19 @@ use PiggyAuth\Events\PlayerLogoutEvent;
 use PiggyAuth\Events\PlayerPreregisterEvent;
 use PiggyAuth\Events\PlayerRegisterEvent;
 use PiggyAuth\Events\PlayerResetPasswordEvent;
-use PiggyAuth\Events\PlayerTimeoutEvent;
+
 use PiggyAuth\Events\PlayerUnregisterEvent;
 use PiggyAuth\Databases\MySQL;
 use PiggyAuth\Databases\SQLite3;
 use PiggyAuth\Entities\Wither;
 use PiggyAuth\Packet\BossEventPacket;
+use PiggyAuth\Sessions\SessionManager;
 use PiggyAuth\Tasks\AttributeTick;
-use PiggyAuth\Tasks\ForceTask; //Delayed for async
 use PiggyAuth\Tasks\KeyTick;
 use PiggyAuth\Tasks\MessageTick;
 use PiggyAuth\Tasks\PingTask;
 use PiggyAuth\Tasks\PopupTipBarTick;
 use PiggyAuth\Tasks\SendEmailTask; //Async
-use PiggyAuth\Tasks\LogoutTask; //Delayed for async
 use PiggyAuth\Tasks\TimeoutTask;
 
 use pocketmine\entity\Attribute;
@@ -51,7 +50,8 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\Player;
 
-class Main extends PluginBase {
+class Main extends PluginBase
+{
     //ACTIONS
     const LOGIN = 0;
     const REGISTER = 1;
@@ -85,27 +85,29 @@ class Main extends PluginBase {
     const CANT_USE_PIN = 25;
     const OTHER = 100;
 
-    public $authenticated;
+    public $api;
     public $confirmPassword;
     public $confirmedPassword;
-    public $giveEmail;
-    public $keepCape;
-    public $joinMessage;
-    public $gamemode;
-    public $messagetick;
-    public $timeouttick;
-    public $tries;
     public $database;
-    public $wither;
+    public $domain;
+    public $expiredkeys = [];
+    public $from;
+    public $gamemode;
+    public $giveEmail;
+    public $hasJoined;
+    public $joinMessage;
+    public $keepCape;
     private $key = "PiggyAuthKey";
     public $keytime = 299; //300 = Reset
+    public $messagetick;
     public $pubapi;
-    public $api;
-    public $domain;
-    public $from;
-    public $expiredkeys = [];
+    public $sessionmanager;
+    public $timeouttick;
+    public $tries;
+    public $wither;
 
-    public function onEnable() {
+    public function onEnable()
+    {
         $this->saveDefaultConfig();
         if (!file_exists($this->getDataFolder() . "lang_" . $this->getConfig()->getNested("message.lang") . ".yml")) {
             if ($this->getResource("lang_" . $this->getConfig()->getNested("message.lang") . ".yml") !== null) {
@@ -165,6 +167,7 @@ class Main extends PluginBase {
                 $this->getLogger()->error("§cDatabase not found, using default.");
                 break;
         }
+        $this->sessionmanager = new SessionManager($this);
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         foreach ($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
             $this->startSession($player);
@@ -172,11 +175,18 @@ class Main extends PluginBase {
         $this->getLogger()->info("§aEnabled.");
     }
 
-    public function getDatabase() {
+    public function getDatabase()
+    {
         return $this->database;
     }
 
-    public function generatePin(Player $player) {
+    public function getSessionManager()
+    {
+        return $this->sessionmanager;
+    }
+
+    public function generatePin(Player $player)
+    {
         $newpin = mt_rand(1000, 9999);
         if ($this->isCorrectPin($player, $newpin) || $newpin == 1234) { //Player cant have same pin or have 1234 as pin
             return $this->generatePin($player);
@@ -184,50 +194,45 @@ class Main extends PluginBase {
         return $newpin;
     }
 
-    public function isCorrectPassword(Player $player, $password) {
-        if (password_verify($password, $this->database->getPassword($player->getName()))) {
+    public function isCorrectPassword(Player $player, $password)
+    {
+        if (password_verify($password, $this->sessionmanager->getSession($player)->getPassword())) {
             return true;
         }
         return false;
     }
 
-    public function isCorrectPin(Player $player, $pin) {
-        if ($pin == $this->database->getPin($player->getName())) {
+    public function isCorrectPin(Player $player, $pin)
+    {
+        if ($pin == $this->sessionmanager->getSession($player)->getPin()) {
             return true;
         }
         return false;
     }
 
-    public function isAuthenticated(Player $player) {
-        if (isset($this->authenticated[strtolower($player->getName())]))
-            return true;
-        return false;
-    }
-
-    public function isRegistered($player) {
-        return $this->database->getPlayer($player) !== null;
-    }
-
-    public function isBlocked($player) {
+    public function isBlocked($player)
+    {
         return in_array(strtolower($player), $this->getConfig()->getNested("register.blocked-accounts"));
     }
 
-    public function isPasswordBlocked($password) {
+    public function isPasswordBlocked($password)
+    {
         return in_array(strtolower($password), $this->getConfig()->getNested("register.blocked-passwords"));
     }
 
-    public function login(Player $player, $password, $mode = 0) {
+    public function login(Player $player, $password, $mode = 0)
+    {
         if ($this->isBlocked($player->getName())) {
             $player->sendMessage($this->getMessage("account-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::ACCOUNT_BLOCKED));
             return false;
         }
-        if ($this->isAuthenticated($player)) {
+        if ($this->sessionmanager->getSession($player)->isAuthenticated()) {
             $player->sendMessage($this->getMessage("already-authenticated"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::ALREADY_AUTHENTICATED));
             return false;
         }
-        if (!$this->isRegistered($player->getName())) {
+        if (!$this->sessionmanager->getSession($player)->isRegistered()) {
             $player->sendMessage($this->getMessage("not-registered"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::NOT_REGISTERED));
             return false;
@@ -249,11 +254,11 @@ class Main extends PluginBase {
             if (isset($this->tries[strtolower($player->getName())])) {
                 $this->tries[strtolower($player->getName())]++;
                 if ($this->tries[strtolower($player->getName())] >= $this->getConfig()->getNested("login.tries")) {
-                    $this->database->updatePlayer($player->getName(), $this->database->getPassword($player->getName()), $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $this->database->getIP($player->getName()), $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()) + 1);
-                    $player->kick($this->getMessage("too-many-tries"));
-                    if ($this->database->getEmail($player->getName()) !== "none" && $this->getConfig()->getNested("emails.send-email-on-attemptedlogin")) {
-                        $this->emailUser($this->api, $this->domain, $this->database->getEmail($player->getName()), $this->from, $this->getMessage("email-subject-attemptedlogin"), $this->getMessage("email-attemptedlogin"));
+                    $this->sessionmanager->getSession($player)->updatePlayer("attempts", $this->sessionmanager->getSession($player)->getAttempts() + 1, 1);
+                    if ($this->sessionmanager->getSession($player)->getEmail() !== "none" && $this->getConfig()->getNested("emails.send-email-on-attemptedlogin")) {
+                        $this->emailUser($this->api, $this->domain, $this->sessionmanager->getSession($player)->getEmail(), $this->from, $this->getMessage("email-subject-attemptedlogin"), $this->getMessage("email-attemptedlogin"));
                     }
+                    $player->kick($this->getMessage("too-many-tries"));
                     return false;
                 }
             } else {
@@ -266,18 +271,19 @@ class Main extends PluginBase {
         }
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this, $player, self::NORMAL));
         if (!$event->isCancelled()) {
-            if ($player->getAddress() !== $this->database->getIP($player->getName())) {
-                if ($this->database->getEmail($player->getName()) !== "none" && $this->getConfig()->getNested("emails.send-email-on-login-from-new-ip")) {
-                    $this->emailUser($this->api, $this->domain, $this->database->getEmail($player->getName()), $this->from, $this->getMessage("email-subject-login-from-new-ip"), str_replace("{ip", $player->getAddress(), $this->getMessage("email-login-from-new-ip")));
+            if ($player->getAddress() !== $this->sessionmanager->getSession($player)->getIP()) {
+                if ($this->sessionmanager->getSession($player)->getEmail() !== "none" && $this->getConfig()->getNested("emails.send-email-on-login-from-new-ip")) {
+                    $this->emailUser($this->api, $this->domain, $this->sessionmanager->getSession($player)->getEmail(), $this->from, $this->getMessage("email-subject-login-from-new-ip"), str_replace("{ip", $player->getAddress(), $this->getMessage("email-login-from-new-ip")));
                 }
             }
-            $rehashedpassword = $this->needsRehashPassword($this->database->getPassword($player->getName()), $password);
+            $rehashedpassword = $this->needsRehashPassword($this->sessionmanager->getSession($player)->getPassword(), $password);
             $this->force($player, true, $mode, $rehashedpassword);
         }
         return true;
     }
 
-    public function force(Player $player, $login = true, $mode = 0, $rehashedpassword = null) {
+    public function force(Player $player, $login = true, $mode = 0, $rehashedpassword = null)
+    {
         if ($login) {
             if ($this->isTooManyIPOnline($player)) {
                 $player->sendMessage($this->getMessage("too-many-on-ip"));
@@ -296,12 +302,12 @@ class Main extends PluginBase {
                     $player->sendMessage($this->getMessage("authentication-success"));
                     break;
             }
-            if (!$this->database->getAttempts($player->getName()) == 0) {
-                $player->sendMessage(str_replace("{attempts}", $this->database->getAttempts($player->getName()), $this->getMessage("attempted-logins")));
+            if (!$this->sessionmanager->getSession($player)->getAttempts() == 0) {
+                $player->sendMessage(str_replace("{attempts}", $this->sessionmanager->getSession($player)->getAttempts(), $this->getMessage("attempted-logins")));
             }
         } else {
             if (!$mode == 3) {
-                $player->sendMessage(str_replace("{pin}", $this->database->getPin($player->getName()), $this->getMessage("register-success")));
+                $player->sendMessage(str_replace("{pin}", $this->sessionmanager->getSession($player)->getPin(), $this->getMessage("register-success")));
             }
         }
         if (isset($this->messagetick[strtolower($player->getName())])) {
@@ -317,7 +323,7 @@ class Main extends PluginBase {
             $this->getServer()->broadcastMessage($this->joinMessage[strtolower($player->getName())]);
             unset($this->joinMessage[strtolower($player->getName())]);
         }
-        $this->authenticated[strtolower($player->getName())] = true;
+        $this->sessionmanager->getSession($player)->setAuthenticated();
         if ($this->getConfig()->getNested("effects.invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
             $player->setNameTagVisible(true);
@@ -387,12 +393,16 @@ class Main extends PluginBase {
                 unset($this->wither[strtolower($player->getName())]);
             }
         }
-        $password = $rehashedpassword !== null ? $rehashedpassword : $this->database->getPassword($player->getName());
-        $this->database->updatePlayer($player->getName(), $password, $this->database->getEmail($player->getName()), $this->database->getPin($player->getName()), $player->getAddress(), $player->getUniqueId()->toString(), 0);
+        if($rehashedpassword !== null) {
+            $this->sessionmanager->getSession($player)->updatePlayer("password", $rehashedpassword);
+        }
+        $this->sessionmanager->getSession($player)->updatePlayer("ip", $player->getAddress());
+        $this->sessionmanager->getSession($player)->updatePlayer("uuid", $player->getUniqueId()->toString());
         return true;
     }
 
-    public function register(Player $player, $password, $confirmpassword, $email = "none", $xbox = false) {
+    public function register(Player $player, $password, $confirmpassword, $email = "none", $xbox = false)
+    {
         if (isset($this->confirmPassword[strtolower($player->getName())])) {
             unset($this->confirmPassword[strtolower($player->getName())]);
         }
@@ -401,7 +411,7 @@ class Main extends PluginBase {
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::ACCOUNT_BLOCKED));
             return false;
         }
-        if ($this->isRegistered($player->getName())) {
+        if ($this->sessionmanager->getSession($player)->isRegistered()) {
             $player->sendMessage($this->getMessage("already-registered"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::ALREADY_REGISTERED));
             return false;
@@ -430,8 +440,14 @@ class Main extends PluginBase {
         $pin = $this->generatePin($player);
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerRegisterEvent($this, $player, $password, $email, $pin, $xbox == "false" ? self::NORMAL : self::XBOX));
         if (!$event->isCancelled()) {
-            $this->database->insertData($player, $password, $email, $pin, $xbox);
-            $this->getServer()->getScheduler()->scheduleDelayedTask(new ForceTask($this, $player, $xbox), 10);
+            $callback = function ($result, $args, $plugin) {
+                $player = $plugin->getServer()->getPlayerExact($args[0]);
+                if ($player instanceof Player) {
+                    $plugin->force($player, false, $args[1] == false ? 0 : 3);
+                }
+            };
+            $args = array($player->getName(), $xbox);
+            $this->sessionmanager->getSession($player)->insertData($password, $email, $pin, $xbox, $callback, $args);
             if ($this->getConfig()->getNested("progress-reports.enabled")) {
                 if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) {
                     $this->emailUser($this->api, $this->domain, $this->getConfig()->getNested("progress-reports.progress-report-email"), $this->from, "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->getMessage("progress-reports.progress-report"))))));
@@ -441,7 +457,8 @@ class Main extends PluginBase {
         return true;
     }
 
-    public function preregister($sender, $player, $password, $confirmpassword, $email = "none") {
+    public function preregister($sender, $player, $password, $confirmpassword, $email = "none")
+    {
         if (isset($this->confirmPassword[strtolower($player)])) {
             unset($this->confirmPassword[strtolower($player)]);
         }
@@ -450,7 +467,7 @@ class Main extends PluginBase {
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::ACCOUNT_BLOCKED));
             return false;
         }
-        if ($this->isRegistered($player)) {
+        if ($this->database->getOfflinePlayer($player) !== null) {
             $sender->sendMessage($this->getMessage("already-registered-two"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::ALREADY_REGISTERED));
             return false;
@@ -479,11 +496,14 @@ class Main extends PluginBase {
         $pin = mt_rand(1000, 9999);
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerPreregisterEvent($this, $sender, $player, $password, $email, $pin));
         if (!$event->isCancelled()) {
-            $this->database->insertDataWithoutPlayerObject($player, $password, $email, $pin);
-            $p = $this->getServer()->getPlayerExact($player);
-            if ($p instanceof Player) {
-                $this->getServer()->getScheduler()->scheduleDelayedTask(new ForceTask($this, $p), 10);
-            }
+            $callback = function ($result, $args, $plugin) {
+                $player = $this->getServer()->getPlayerExact($args[0]);
+                if ($player instanceof Player) {
+                    $plugin->force($player, false);
+                }
+            };
+            $args = array($player);
+            $this->database->insertDataWithoutPlayerObject($player, $password, $email, $pin, $callback, $args);
             if ($this->getConfig()->getNested("progress-reports.enabled")) {
                 if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) {
                     $this->emailUser($this->api, $this->domain, $this->getConfig()->getNested("progress-reports.progress-report-email"), $this->from, "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player, $this->getMessage("progress-reports.progress-report"))))));
@@ -494,8 +514,9 @@ class Main extends PluginBase {
         return true;
     }
 
-    public function unregister(Player $player, $password) {
-        if (!$this->isRegistered($player->getName())) {
+    public function unregister(Player $player, $password)
+    {
+        if (!$this->sessionmanager->getSession($player)->isRegistered()) {
             $player->sendMessage($this->getMessage("not-registered"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::UNREGISTER, self::NOT_REGISTERED));
             return false;
@@ -507,15 +528,22 @@ class Main extends PluginBase {
         }
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerUnregisterEvent($this, $player));
         if (!$event->isCancelled()) {
-            $this->database->clearPassword($player->getName());
-            $this->getServer()->getScheduler()->scheduleDelayedTask(new LogoutTask($this, $player), 10);
+            $callback = function ($result, $args, $plugin) {
+                $player = $plugin->getServer()->getPlayerExact($args[0]);
+                if ($player instanceof Player) {
+                    $plugin->logout($player, false);
+                }
+            };
+            $args = array($player->getName());
+            $this->sessionmanager->getSession($player)->clearPassword($callback, $args);
             $player->sendMessage($this->getMessage("unregister-success"));
         }
         return true;
     }
 
-    public function changepassword(Player $player, $oldpassword, $newpassword) {
-        if (!$this->isRegistered($player->getName())) {
+    public function changepassword(Player $player, $oldpassword, $newpassword)
+    {
+        if (!$this->sessionmanager->getSession($player)->isRegistered()) {
             $player->sendMessage($this->getMessage("not-registered"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::CHANGE_PASSWORD, self::NOT_REGISTERED));
             return false;
@@ -537,26 +565,28 @@ class Main extends PluginBase {
         }
         $newpassword = $this->hashPassword($newpassword);
         $oldpassword = $this->hashPassword($oldpassword);
-        $oldpin = $this->database->getPin($player->getName());
+        $oldpin = $this->sessionmanager->getSession($player)->getPin();
         $pin = $this->generatePin($player);
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerChangePasswordEvent($this, $player, $oldpassword, $newpassword, $oldpin, $pin));
         if (!$event->isCancelled()) {
-            $this->database->updatePlayer($player->getName(), $newpassword, $this->database->getEmail($player->getName()), $pin, $player->getAddress(), $player->getUniqueId()->toString(), 0);
+            $this->sessionmanager->getSession($player)->updatePlayer("password", $newpassword);
+            $this->sessionmanager->getSession($player)->updatePlayer("pin", $pin, 1);
             $player->sendMessage(str_replace("{pin}", $pin, $this->getMessage("change-password-success")));
-            if ($this->getConfig()->getNested("emails.send-email-on-changepassword") && $this->database->getEmail($player) !== "none") {
-                $this->emailUser($this->api, $this->domain, $this->database->getEmail($player->getName()), $this->from, $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
+            if ($this->getConfig()->getNested("emails.send-email-on-changepassword") && $this->sessionmanager->getSession($player)->getEmail() !== "none") {
+                $this->emailUser($this->api, $this->domain, $this->sessionmanager->getSession($player)->getEmail(), $this->from, $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
             }
         }
         return true;
     }
 
-    public function forgotpassword(Player $player, $pin, $newpassword) {
-        if (!$this->isRegistered($player->getName())) {
+    public function forgotpassword(Player $player, $pin, $newpassword)
+    {
+        if (!$this->sessionmanager->getSession($player)->isRegistered()) {
             $player->sendMessage($this->getMessage("not-registered"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::NOT_REGISTERED));
             return false;
         }
-        if ($this->isAuthenticated($player)) {
+        if ($this->sessionmanager->getSession($player)->isAuthenticated()) {
             $player->sendMessage($this->getMessage("already-authenticated"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::ALREADY_AUTHENTICATED));
             return false;
@@ -581,46 +611,59 @@ class Main extends PluginBase {
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::PASSWORD_USERNAME));
             return false;
         }
-        $newpassword = $this->hashPassword($newpassword);
-        ;
+        $newpassword = $this->hashPassword($newpassword);;
         $newpin = $this->generatePin($player);
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerForgetPasswordEvent($this, $player, $newpassword, $pin, $newpin));
         if (!$event->isCancelled()) {
-            $this->database->updatePlayer($player->getName(), $newpassword, $this->database->getEmail($player->getName()), $newpin, $this->database->getIP($player->getName()), $this->database->getUUID($player->getName()), $this->database->getAttempts($player->getName()));
+            $callback = function($result, $args, $plugin){
+                $player = $plugin->getServer()->getPlayerExact($args[0]);
+                if($player instanceof Player){
+                    $plugin->force($player, false);
+                }
+            };
+            $args = array($player->getName());
+            $this->sessionmanager->getSession($player)->updatePlayer("password", $newpassword, 0, $callback, $args);
+            $this->sessionmanager->getSession($player)->updatePlayer("pin", $newpin, 1);
             $player->sendMessage(str_replace("{pin}", $newpin, $this->getMessage("forgot-password-success")));
-            if ($this->getConfig()->getNested("emails.send-email-on-changepassword") && $this->database->getEmail($player) !== "none") {
+            if ($this->getConfig()->getNested("emails.send-email-on-changepassword") && $this->sessionmanager->getSession($player)->getEmail() !== "none") {
                 $this->emailUser($this->api, $this->domain, $this->database->getEmail($player->getName()), $this->from, $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
             }
         }
     }
 
-    public function resetpassword($player, $sender) {
-        $player = strtolower($player);
-        if ($this->isRegistered($player)) {
+    public function resetpassword($player, $sender)
+    {
+        $data = $this->database->getOfflinePlayer($player);
+        if ($data !== null) {
             $this->getServer()->getPluginManager()->callEvent($event = new PlayerResetPasswordEvent($this, $sender, $player));
             if (!$event->isCancelled()) {
-                if ($this->getConfig()->getNested("emails.send-email-on-resetpassword") && $this->database->getEmail($player) !== "none") {
+                if ($this->getConfig()->getNested("emails.send-email-on-resetpassword") && $data["email"] !== "none") {
                     $this->emailUser($this->api, $this->domain, $this->database->getEmail($player), $this->from, $this->getMessage("email-subject-passwordreset"), $this->getMessage("email-passwordreset"));
                 }
-                $this->database->clearPassword($player);
-                $playerobject = $this->getServer()->getPlayerExact($player);
-                if ($playerobject instanceof Player) {
-                    $this->getServer()->getScheduler()->scheduleDelayedTask(new LogoutTask($this, $playerobject), 10);
-                }
+                $callback = function ($result, $args, $plugin) {
+                    $player = $plugin->getServer()->getPlayerExact($args[0]);
+                    if ($player instanceof Player) {
+                        $plugin->logout($player, false);
+                    }
+                };
+                $args = array($player);
+                $this->database->clearPassword($player, $callback, $args);
                 $sender->sendMessage($this->getMessage("password-reset-success"));
                 return true;
             }
+
         }
         $sender->sendMessage($this->getMessage("not-registered-two"));
         $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::RESET_PASSWORD, self::NOT_REGISTERED));
         return false;
     }
 
-    public function logout(Player $player, $quit = true) {
+    public function logout(Player $player, $quit = true)
+    {
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerLogoutEvent($this, $player));
         if (!$event->isCancelled()) {
-            if ($this->isAuthenticated($player)) {
-                unset($this->authenticated[strtolower($player->getName())]);
+            if ($this->sessionmanager->getSession($player)->isAuthenticated()) {
+                $this->sessionmanager->getSession($player)->setAuthenticated(false);
             } else {
                 if ($this->getConfig()->getNested("login.adventure-mode")) {
                     if (isset($this->gamemode[strtolower($player->getName())])) {
@@ -630,6 +673,12 @@ class Main extends PluginBase {
                 }
                 if (isset($this->confirmPassword[strtolower($player->getName())])) {
                     unset($this->confirmPassword[strtolower($player->getName())]);
+                }
+                if (isset($this->confirmedPassword[strtolower($player->getName())])) {
+                    unset($this->confirmedPassword[strtolower($player->getName())]);
+                }
+                if (isset($this->giveEmail[strtolower($player->getName())])) {
+                    unset($this->giveEmail[strtolower($player->getName())]);
                 }
                 if (isset($this->messagetick[strtolower($player->getName())])) {
                     unset($this->messagetick[strtolower($player->getName())]);
@@ -647,22 +696,29 @@ class Main extends PluginBase {
                     }
                 }
             }
-            if (!$quit) {
+            if ($quit !== true) {
                 $this->startSession($player);
+                echo "hi;";
+                $this->sessionmanager->loadSession($player); //Reload
+            } else {
+                $this->sessionmanager->unloadSession($player);
             }
         }
     }
 
-    public function getMessage($message) {
+    public function getMessage($message)
+    {
         return str_replace("&", "§", $this->lang->getNested($message));
     }
 
-    public function emailUser($api, $domain, $to, $from, $subject, $body, $player = null) {
+    public function emailUser($api, $domain, $to, $from, $subject, $body, $player = null)
+    {
         $task = new SendEmailTask($api, $domain, $to, $from, $subject, $body, $player);
         $this->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
-    public function startSession(Player $player) {
+    public function startSession(Player $player)
+    {
         if (in_array(strtolower($player->getName()), $this->getConfig()->getNested("login.accounts-bypassed"))) {
             $this->authenticated[strtolower($player->getName())] = true;
             return true;
@@ -692,7 +748,7 @@ class Main extends PluginBase {
                 }
             }
         }
-        if ($this->isRegistered($player->getName())) {
+        if ($this->sessionmanager->getSession($player)->isRegistered()) {
             $player->sendMessage($this->getMessage("login-message"));
         } else {
             $player->sendMessage($this->getMessage("register-message"));
@@ -719,7 +775,7 @@ class Main extends PluginBase {
         if ($this->getConfig()->getNested("effects.hide-players")) {
             foreach ($this->getServer()->getOnlinePlayers() as $p) {
                 $player->hidePlayer($p);
-                if (!$this->isAuthenticated($p)) {
+                if (!$this->sessionmanager->getSession($p)->isAuthenticated($p)) {
                     $p->hidePlayer($player);
                 }
             }
@@ -746,7 +802,7 @@ class Main extends PluginBase {
         if ($this->getConfig()->getNested("message.boss-bar")) {
             $wither = Entity::createEntity("Wither", $player->getLevel(), new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $player->x + 0.5), new DoubleTag("", $player->y - 25), new DoubleTag("", $player->z + 0.5)]), "Motion" => new ListTag("Motion", [new DoubleTag("", 0), new DoubleTag("", 0), new DoubleTag("", 0)]), "Rotation" => new ListTag("Rotation", [new FloatTag("", 0), new FloatTag("", 0)])]));
             $wither->spawnTo($player);
-            $wither->setNameTag($this->isRegistered($player->getName()) == false ? $this->getMessage("register-boss-bar") : $this->getMessage("login-boss-bar"));
+            $wither->setNameTag($this->sessionmanager->getSession($player)->isRegistered() == false ? $this->getMessage("register-boss-bar") : $this->getMessage("login-boss-bar"));
             $this->wither[strtolower($player->getName())] = $wither;
             $wither->setMaxHealth($this->getConfig()->getNested("timeout.timeout-time"));
             $wither->setHealth($this->getConfig()->getNested("timeout.timeout-time"));
@@ -757,12 +813,13 @@ class Main extends PluginBase {
         }
     }
 
-    public function isTooManyIPOnline(Player $player) {
+    public function isTooManyIPOnline(Player $player)
+    {
         $players = 0;
         foreach ($this->getServer()->getOnlinePlayers() as $p) {
             if ($p !== $player) {
                 if ($p->getAddress() == $player->getAddress()) {
-                    if ($this->isAuthenticated($p)) {
+                    if ($this->sessionmanager->getPlayer($p)->isAuthenticated()) {
                         $players++;
                     }
                 }
@@ -771,12 +828,14 @@ class Main extends PluginBase {
         return $players > ($this->getConfig()->getNested("login.ip-limit") - 1);
     }
 
-    public function hashPassword($password) {
+    public function hashPassword($password)
+    {
         $options = ['cost' => $this->getConfig()->getNested("hash.cost")];
         return password_hash($password, PASSWORD_BCRYPT, $options);
     }
 
-    public function needsRehashPassword($password, $plainpassword) {
+    public function needsRehashPassword($password, $plainpassword)
+    {
         $options = ['cost' => $this->getConfig()->getNested("hash.cost")];
         if (password_needs_rehash($password, PASSWORD_BCRYPT, $options)) {
             return password_hash($plainpassword, PASSWORD_BCRYPT, $options);
@@ -784,14 +843,16 @@ class Main extends PluginBase {
         return null;
     }
 
-    public function getKey($password) {
-        if (password_verify($password, $this->database->getPassword($this->getConfig()->getNested("key.owner")))) {
+    public function getKey($password)
+    {
+        if (password_verify($password, $this->database->getOfflinePlayer($this->getConfig()->getNested("key.owner"))["password"])) {
             return $this->key;
         }
         return false;
     }
 
-    public function changeKey() {
+    public function changeKey()
+    {
         array_push($this->expiredkeys, $this->key);
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
         $key = [];

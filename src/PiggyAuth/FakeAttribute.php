@@ -2,33 +2,40 @@
 
 //Credits to @thebigsmileXD
 namespace PiggyAuth;
-class FakeAttribute {
+class FakeAttribute
+{
     public $min, $max, $value, $name;
 
-    public function __construct($min, $max, $value, $name) {
+    public function __construct($min, $max, $value, $name)
+    {
         $this->min = $min;
         $this->max = $max;
         $this->value = $value;
         $this->name = $name;
     }
 
-    public function getMinValue() {
+    public function getMinValue()
+    {
         return $this->min;
     }
 
-    public function getMaxValue() {
+    public function getMaxValue()
+    {
         return $this->max;
     }
 
-    public function getValue() {
+    public function getValue()
+    {
         return $this->value;
     }
 
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
-    public function getDefaultValue() {
+    public function getDefaultValue()
+    {
         return $this->min;
     }
 

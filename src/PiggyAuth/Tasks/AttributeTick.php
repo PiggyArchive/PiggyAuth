@@ -7,15 +7,18 @@ use pocketmine\scheduler\PluginTask;
 
 use PiggyAuth\FakeAttribute;
 
-class AttributeTick extends PluginTask {
-    public function __construct($plugin) {
+class AttributeTick extends PluginTask
+{
+    public function __construct($plugin)
+    {
         parent::__construct($plugin);
         $this->plugin = $plugin;
     }
 
-    public function onRun($currentTick) {
+    public function onRun($currentTick)
+    {
         foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {
-            if (!$this->plugin->isAuthenticated($player)) {
+            if ($this->plugin->sessionmanager->getSession($player) !== null && !$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
                 if ($this->plugin->getConfig()->getNested("effects.hide-health")) {
                     $pk = new UpdateAttributesPacket();
                     $pk->entityId = $player->getId();

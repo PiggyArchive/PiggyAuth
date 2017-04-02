@@ -6,14 +6,17 @@ use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
-class ChangePasswordCommand extends VanillaCommand {
-    public function __construct($name, $plugin) {
+class ChangePasswordCommand extends VanillaCommand
+{
+    public function __construct($name, $plugin)
+    {
         parent::__construct($name, "Change your password", "/changepassword <old password> <new password>", ["changepw", "changepwd", "cpw", "cpwd"]);
         $this->setPermission("piggyauth.command.changepassword");
         $this->plugin = $plugin;
     }
 
-    public function execute(CommandSender $sender, $currentAlias, array $args) {
+    public function execute(CommandSender $sender, $currentAlias, array $args)
+    {
         if (!$this->testPermission($sender)) {
             return true;
         }

@@ -5,7 +5,8 @@ namespace PiggyAuth\Events;
 use pocketmine\event\Cancellable;
 use pocketmine\Player;
 
-class PlayerRegisterEvent extends PlayerEvent implements Cancellable {
+class PlayerRegisterEvent extends PlayerEvent implements Cancellable
+{
     public static $handlerList = null;
     protected $player;
     protected $password; //don't worry, it's encrypted ;)
@@ -13,7 +14,8 @@ class PlayerRegisterEvent extends PlayerEvent implements Cancellable {
     protected $pin;
     protected $mode;
 
-    public function __construct($plugin, Player $player, $password, $email, $pin, $mode) {
+    public function __construct($plugin, Player $player, $password, $email, $pin, $mode)
+    {
         $this->player = $player;
         $this->password = $password;
         $this->email = $email;
@@ -22,23 +24,28 @@ class PlayerRegisterEvent extends PlayerEvent implements Cancellable {
         parent::__construct($plugin);
     }
 
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->player;
     }
 
-    private function getPassword() {
+    private function getPassword()
+    {
         return $this->password;
     }
 
-    private function getEmail() {
+    private function getEmail()
+    {
         return $this->email;
     }
 
-    private function getPin() {
+    private function getPin()
+    {
         return $this->pin;
     }
 
-    public function getMode() {
+    public function getMode()
+    {
         return $this->mode;
     }
 }

@@ -5,11 +5,13 @@ namespace PiggyAuth\Events;
 use pocketmine\event\Cancellable;
 use pocketmine\Player;
 
-class PlayerForgetPasswordEvent extends PlayerEvent implements Cancellable {
+class PlayerForgetPasswordEvent extends PlayerEvent implements Cancellable
+{
     public static $handlerList = null;
     protected $player;
 
-    public function __construct($plugin, Player $player, $password, $oldpin, $pin) {
+    public function __construct($plugin, Player $player, $password, $oldpin, $pin)
+    {
         $this->player = $player;
         $this->password = $password;
         $this->oldpin = $oldpin;
@@ -17,19 +19,23 @@ class PlayerForgetPasswordEvent extends PlayerEvent implements Cancellable {
         parent::__construct($plugin);
     }
 
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->player;
     }
 
-    private function getPassword() {
+    private function getPassword()
+    {
         return $this->password;
     }
 
-    private function getOldPin() {
+    private function getOldPin()
+    {
         return $this->oldpin;
     }
 
-    private function getPin() {
+    private function getPin()
+    {
         return $this->pin;
     }
 

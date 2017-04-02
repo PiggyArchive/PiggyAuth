@@ -3,22 +3,27 @@
 namespace PiggyAuth\Entities;
 
 use pocketmine\entity\Entity;
-use pocketmine\item\Item as ItemItem;
+
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-class Wither extends Entity {
+class Wither extends Entity
+{
     const NETWORK_ID = 52;
 
-    public function getName() {
+    public function getName()
+    {
         return "Wither";
     }
-    public function initEntity() {
+
+    public function initEntity()
+    {
         $this->setMaxHealth(300);
         parent::initEntity();
     }
 
-    public function spawnTo(Player $player) {
+    public function spawnTo(Player $player)
+    {
         $pk = new AddEntityPacket();
         $pk->eid = $this->getId();
         $pk->type = Wither::NETWORK_ID;

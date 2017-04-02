@@ -6,14 +6,17 @@ use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
-class KeyCommand extends VanillaCommand {
-    public function __construct($name, $plugin) {
+class KeyCommand extends VanillaCommand
+{
+    public function __construct($name, $plugin)
+    {
         parent::__construct($name, "Get the key", "/key <password>");
         $this->setPermission("piggyauth.command.key");
         $this->plugin = $plugin;
     }
 
-    public function execute(CommandSender $sender, $currentAlias, array $args) {
+    public function execute(CommandSender $sender, $currentAlias, array $args)
+    {
         if (!$this->testPermission($sender)) {
             return true;
         }

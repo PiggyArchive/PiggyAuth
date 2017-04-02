@@ -9,14 +9,17 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\Player;
 
-class PreregisterCommand extends VanillaCommand {
-    public function __construct($name, $plugin) {
+class PreregisterCommand extends VanillaCommand
+{
+    public function __construct($name, $plugin)
+    {
         parent::__construct($name, "Register an account", "/preregister <player> <password> <confirm password> [email]");
         $this->setPermission("piggyauth.command.preregister");
         $this->plugin = $plugin;
     }
 
-    public function execute(CommandSender $sender, $currentAlias, array $args) {
+    public function execute(CommandSender $sender, $currentAlias, array $args)
+    {
         if (!$this->testPermission($sender)) {
             return true;
         }
@@ -37,8 +40,7 @@ class PreregisterCommand extends VanillaCommand {
                     }
                 }
                 return true;
-            }
-            ;
+            };
             $arguements = array(
                 $sender instanceof ConsoleCommandSender ? $sender : $sender->getName(),
                 $args[0],

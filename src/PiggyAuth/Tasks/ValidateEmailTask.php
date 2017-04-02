@@ -5,7 +5,8 @@ namespace PiggyAuth\Tasks;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 
-class ValidateEmailTask extends AsyncTask {
+class ValidateEmailTask extends AsyncTask
+{
     private $api;
     private $email;
     private $result;
@@ -14,14 +15,16 @@ class ValidateEmailTask extends AsyncTask {
     private $args;
 
 
-    public function __construct($api, $email, $callback, $args) {
+    public function __construct($api, $email, $callback, $args)
+    {
         $this->api = serialize($api);
         $this->email = serialize($email);
         $this->callback = $callback;
         $this->args = $args;
     }
 
-    public function onRun() {
+    public function onRun()
+    {
         if (unserialize($this->email) == "none") {
             $this->result = true;
             return true;
@@ -45,7 +48,8 @@ class ValidateEmailTask extends AsyncTask {
         curl_close($ch);
     }
 
-    public function onCompletion(Server $server) {
+    public function onCompletion(Server $server)
+    {
         if ($server->getPluginManager()->getPlugin("PiggyAuth")->isEnabled()) {
             if ($this->error !== null) {
                 $server->getPluginManager()->getPlugin("PiggyAuth")->getLogger()->error($this->error);

@@ -7,11 +7,13 @@ use PiggyAuth\Main;
 
 use pocketmine\Player;
 
-class MySQL implements Database {
-    public $plugin;
+class MySQL implements Database
+{
+    private $plugin;
     public $db;
 
-    public function __construct(Main $plugin) {
+    public function __construct(Main $plugin)
+    {
         $this->plugin = $plugin;
         $credentials = $this->plugin->getConfig()->get("mysql");
         $this->db = new \mysqli($credentials["host"], $credentials["user"], $credentials["password"], $credentials["name"], $credentials["port"]);
@@ -25,106 +27,60 @@ class MySQL implements Database {
         }
     }
 
-    public function getRegisteredCount() {
+    public function getRegisteredCount()
+    {
         $result = $this->db->query("SELECT count(1) FROM players");
         $data = $result->fetch_assoc();
         $result->free();
         return $data["count(1)"];
     }
 
-    public function getPlayer($player) {
+    public function getOfflinePlayer($player)
+    { //@S0F3, don't turn me into bacon for this
         $player = strtolower($player);
         $result = $this->db->query("SELECT * FROM players WHERE name = '" . $this->db->escape_string($player) . "'");
         if ($result instanceof \mysqli_result) {
             $data = $result->fetch_assoc();
             $result->free();
-            if (isset($data["name"])) {
-                unset($data["name"]);
-                return $data;
-            }
+            return $data;
         }
         return null;
     }
 
-    public function updatePlayer($player, $password, $email, $pin, $ip, $uuid, $attempts) {
-        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "UPDATE players SET password = '" . $this->db->escape_string($password) . "', email = '" . $this->db->escape_string($email) . "', pin = '" . intval($pin) . "', ip = '" . $this->db->escape_string($ip) . "', uuid = '" . $this->db->escape_string($uuid) . "', attempts = '" . intval($attempts) . "' WHERE name = '" . $this->db->escape_string($player) . "'");
+    public function getPlayer($player, $callback, $args)
+    {
+        $player = strtolower($player);
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "SELECT * FROM players WHERE name = '" . $this->db->escape_string($player) . "'", $callback, $args);
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
-    public function insertData(Player $player, $password, $email, $pin, $xbox) {
-        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', '" . $player->getUniqueId()->toString() . "', '0', '" . $xbox . "')");
+    public function updatePlayer($player, $column, $arg, $type = SQLITE3_TEXT, $callback = null, $args = null)
+    {
+        if($type == 0){
+            $arg = $this->db->escape_string($arg);
+        }else{
+            $arg = intval($arg);
+        }
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "UPDATE players SET " . $column . " = '" . $arg . "' WHERE name = '" . $this->db->escape_string(strtolower($player)) . "'", $callback, $args);
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
-    public function insertDataWithoutPlayerObject($player, $password, $email, $pin) {
+    public function insertData(Player $player, $password, $email, $pin, $xbox, $callback = null, $args = null)
+    {
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', '" . $player->getUniqueId()->toString() . "', '0', '" . $xbox . "')", $callback, $args);
+        $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
+    }
+
+    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $callback = null, $args = null)
+    {
         $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player)) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', 'uuid', '0', 'false')");
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
-    public function getPin($player) {
-        $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            if (!isset($data["pin"])) {
-                $pin = mt_rand(1000, 9999); //If you use $this->generatePin(), there will be issues!
-                $this->updatePlayer($player, $this->getPassword($player), $this->getEmail($player), $pin, $this->getUUID($player), $this->getAttempts($player));
-                return $pin;
-            }
-            return $data["pin"];
-        }
-        return null;
-    }
-
-    public function getPassword($player) { //ENCRYPTED!
-        $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            return $data["password"];
-        }
-        return null;
-    }
-
-    public function clearPassword($player) {
-        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "DELETE FROM players WHERE name = '" . $this->db->escape_string($player) . "'");
+    public function clearPassword($player, $callback = null, $args = null)
+    {
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "DELETE FROM players WHERE name = '" . $this->db->escape_string($player) . "'", $callback, $args);
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
-    public function getEmail($player) {
-        $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            if (!isset($data["email"])) {
-                return "none";
-            }
-            return $data["email"];
-        }
-        return "none";
-    }
-
-    public function getIP($player) {
-        $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            if (isset($data["ip"])) {
-                return $data["ip"];
-            }
-        }
-        return null;
-    }
-
-    public function getUUID($player) {
-        $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            return $data["uuid"];
-        }
-        return null;
-    }
-
-    public function getAttempts($player) {
-        $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            if (!isset($data["attempts"])) {
-                $this->updatePlayer($player, $this->getPassword($player), $this->getEmail($player), $this->getPin($player), $this->getUUID($player), 0);
-                return 0;
-            }
-            return $data["attempts"];
-        }
-        return null;
-    }
 }

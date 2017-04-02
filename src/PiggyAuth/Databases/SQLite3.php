@@ -5,11 +5,13 @@ namespace PiggyAuth\Databases;
 use PiggyAuth\Main;
 use pocketmine\Player;
 
-class SQLite3 implements Database {
-    public $plugin;
+class SQLite3 implements Database
+{
+    private $plugin;
     public $db;
 
-    public function __construct(Main $plugin) {
+    public function __construct(Main $plugin)
+    {
         $this->plugin = $plugin;
         if (!file_exists($this->plugin->getDataFolder() . "players.db")) {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
@@ -38,11 +40,13 @@ class SQLite3 implements Database {
     }
 
 
-    public function getRegisteredCount() {
+    public function getRegisteredCount()
+    {
         return $this->db->querySingle("SELECT COUNT(*) as count FROM players");
     }
 
-    public function getPlayer($player) {
+    public function getPlayer($player, $callback, $args)
+    {
         $player = strtolower($player);
         $statement = $this->db->prepare("SELECT * FROM players WHERE name = :name");
         $statement->bindValue(":name", $player, SQLITE3_TEXT);
@@ -53,26 +57,46 @@ class SQLite3 implements Database {
             if (isset($data["name"])) {
                 unset($data["name"]);
                 $statement->close();
-                return $data;
             }
+        } else {
+            $data = null;
         }
-        $statement->close();
+        if ($callback !== null) {
+            $callback($data, $args, $this->plugin);
+        }
+    }
+
+    public function getOfflinePlayer($player)
+    {
+        $player = strtolower($player);
+        $statement = $this->db->prepare("SELECT * FROM players WHERE name = :name");
+        $statement->bindValue(":name", $player, SQLITE3_TEXT);
+        $result = $statement->execute();
+        $data = $result->fetchArray(SQLITE3_ASSOC);
+        if ($data !== false) {
+            $result->finalize();
+            if (isset($data["name"])) {
+                unset($data["name"]);
+                $statement->close();
+            }
+            return $data;
+        }
         return null;
     }
 
-    public function updatePlayer($player, $password, $email, $pin, $ip, $uuid, $attempts) {
-        $statement = $this->db->prepare("UPDATE players SET pin = :pin, password = :password, email = :email, ip = :ip, uuid = :uuid, attempts = :attempts WHERE name = :name");
+    public function updatePlayer($player, $column, $arg, $type = 0, $callback = null, $args = null)
+    {
+        $statement = $this->db->prepare("UPDATE players SET " . $column . " = :" . $column . " WHERE name = :name");
         $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
-        $statement->bindValue(":password", $password, SQLITE3_TEXT);
-        $statement->bindValue(":email", $email, SQLITE3_TEXT);
-        $statement->bindValue(":pin", $pin, SQLITE3_INTEGER);
-        $statement->bindValue(":ip", $ip, SQLITE3_TEXT);
-        $statement->bindValue(":uuid", $uuid, SQLITE3_TEXT);
-        $statement->bindValue(":attempts", $attempts, SQLITE3_INTEGER);
-        $statement->execute();
+        $statement->bindValue(":" . $column, $arg, $type == 0 ? SQLITE3_TEXT : SQLITE3_INTEGER);
+        $result = $statement->execute();
+        if ($callback !== null) {
+            $callback($result, $args, $this->plugin);
+        }
     }
 
-    public function insertData(Player $player, $password, $email, $pin, $xbox) {
+    public function insertData(Player $player, $password, $email, $pin, $xbox, $callback = null, $args = null)
+    {
         $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox)");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
         $statement->bindValue(":password", $password, SQLITE3_TEXT);
@@ -81,10 +105,14 @@ class SQLite3 implements Database {
         $statement->bindValue(":uuid", $player->getUniqueId()->toString(), SQLITE3_TEXT);
         $statement->bindValue(":attempts", 0, SQLITE3_INTEGER);
         $statement->bindValue(":xbox", $xbox, SQLITE3_TEXT);
-        $statement->execute();
+        $result = $statement->execute();
+        if ($callback !== null) {
+            $callback($result, $args, $this->plugin);
+        }
     }
 
-    public function insertDataWithoutPlayerObject($player, $password, $email, $pin) {
+    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $callback = null, $args = null)
+    {
         $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox)");
         $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
         $statement->bindValue(":password", $password, SQLITE3_TEXT);
@@ -93,72 +121,20 @@ class SQLite3 implements Database {
         $statement->bindValue(":uuid", "uuid", SQLITE3_TEXT);
         $statement->bindValue(":attempts", 0, SQLITE3_INTEGER);
         $statement->bindValue(":xbox", false, SQLITE3_TEXT);
-        $statement->execute();
-    }
-
-    public function getPin($player) {
-        $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            if (!isset($data["pin"])) {
-                $pin = mt_rand(1000, 9999); //If you use $this->generatePin(), there will be issues!
-                $this->updatePlayer($player, $this->getPassword($player), $pin, $this->getUUID($player), $this->getAttempts($player));
-                return $pin;
-            }
-            return $data["pin"];
+        $result = $statement->execute();
+        if ($callback !== null) {
+            $callback($result, $args, $this->plugin);
         }
-        return null;
     }
 
-    public function getPassword($player) { //ENCRYPTED!
-        $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            return $data["password"];
-        }
-        return null;
-    }
-
-    public function clearPassword($player) {
+    public function clearPassword($player, $callback = null, $args = null)
+    {
         $statement = $this->db->prepare("DELETE FROM players WHERE name = :name");
         $statement->bindValue(":name", $player, SQLITE3_TEXT);
-        $statement->execute();
+        $result = $statement->execute();
+        if ($callback !== null) {
+            $callback($result, $args, $this->plugin);
+        }
     }
 
-    public function getEmail($player) {
-        $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            if (!isset($data["email"])) {
-                return "none";
-            }
-            return $data["email"];
-        }
-        return "none";
-    }
-
-    public function getIP($player) {
-        $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            return $data["ip"];
-        }
-        return null;
-    }
-
-    public function getUUID($player) {
-        $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            return $data["uuid"];
-        }
-        return null;
-    }
-
-    public function getAttempts($player) {
-        $data = $this->getPlayer($player);
-        if (!is_null($data)) {
-            if (!isset($data["attempts"])) {
-                $this->updatePlayer($player, $this->getPassword($player), $this->getPin($player), $this->getUUID($player), 0);
-                return 0;
-            }
-            return $data["attempts"];
-        }
-        return null;
-    }
 }

@@ -8,14 +8,17 @@ use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
-class ChangeEmailCommand extends VanillaCommand {
-    public function __construct($name, $plugin) {
+class ChangeEmailCommand extends VanillaCommand
+{
+    public function __construct($name, $plugin)
+    {
         parent::__construct($name, "Change your email", "/changeemail <email>");
         $this->setPermission("piggyauth.command.changeemail");
         $this->plugin = $plugin;
     }
 
-    public function execute(CommandSender $sender, $currentAlias, array $args) {
+    public function execute(CommandSender $sender, $currentAlias, array $args)
+    {
         if (!$this->testPermission($sender)) {
             return true;
         }
@@ -31,14 +34,13 @@ class ChangeEmailCommand extends VanillaCommand {
                 $sender = $plugin->getServer()->getPlayerExact($args[0]);
                 if ($sender instanceof Player) { //Check to make sure player didn't log off
                     if ($result) {
-                        $plugin->database->updatePlayer($sender->getName(), $plugin->database->getPassword($sender->getName()), $args[1], $plugin->database->getPin($sender->getName()), $plugin->database->getIP($sender->getName()), $plugin->database->getUUID($sender->getName()), $plugin->database->getAttempts($sender->getName()));
+                        $plugin->sessionmanager->getSession($sender)->updatePlayer("email", $args[1]);
                         $sender->sendMessage($plugin->getMessage("email-change-success"));
                     } else {
                         $sender->sendMessage($plugin->getMessage("invalid-email"));
                     }
                 }
-            }
-            ;
+            };
             $arguements = array($sender->getName(), $args[0]);
             $task = new ValidateEmailTask($this->plugin->getConfig()->getNested("emails.mailgun.public-api"), $args[0], $function, $arguements, $this->plugin);
             $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
