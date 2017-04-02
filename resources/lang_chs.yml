@@ -19,7 +19,7 @@ already-authenticated: "&c您已经登入."
 incorrect-password: "&c密码不对. 剩下 {tries} 尝试."
 not-registered: "&c您还没中注册."
 too-many-tries: "&c太多登记尝试"
-timeout-message: "&cLogin Timeout" #need help
+timeout-message: "&c登录超时" #need help
 too-many-on-ip: "&c太多用户有同样IP地址."
 
 #Register
