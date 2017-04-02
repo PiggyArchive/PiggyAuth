@@ -1,4 +1,5 @@
 # Chinese Simplifyed Translation
+# Not Completed
 # Authors:
 # Thunder33345
 
@@ -11,40 +12,40 @@ login-popup: "&6请登入."
 login-tip: "&6请登入."
 login-boss-bar: "&6请登入."
 authentication-success: "&a登入成功."
-authentication-success-uuid: "&aYou have been authenticated by UUID."
-authentication-success-xbox: "&aYou have been authenticated by Xbox Live."
-attempted-logins: "&6There have been {attempts} attempts to login into your account."
-already-authenticated: "&cYou have already logged in."
-incorrect-password: "&cIncorrect password. {tries} left."
-not-registered: "&cYou are not registered."
-too-many-tries: "&cToo Many Tries to Login"
-timeout-message: "&cLogin Timeout"
+authentication-success-uuid: "&a自动登入(UUID)."
+authentication-success-xbox: "&a自动登入(Xbox Live)."
+attempted-logins: "&6您账户已有 {attempts} 登入尝试."
+already-authenticated: "&c您已经登入."
+incorrect-password: "&c密码不对. 剩下 {tries} 尝试."
+not-registered: "&c您还没中注册."
+too-many-tries: "&c太多登记尝试"
+timeout-message: "&cLogin Timeout" #need help
 too-many-on-ip: "&cToo many players have the same IP address."
 
 #Register
-register-message: "&6Please register by typing in /register <password> <confirm password> [email]"
-register-popup: "&6Please register."
-register-tip: "&6Please register."
-register-boss-bar: "&6Please register."
+register-message: "&6请注册 by typing in /register <password> <confirm password> [email]"
+register-popup: "&6请注册."
+register-tip: "&6请注册."
+register-boss-bar: "&6请注册."
 register-success: "&aYou have been registered. Your pin is {pin}."
 register-success-xbox: "&aYou have been registered by Xbox Live. Your pin is {pin}. Your password is {password}. Change it with /changepassword."
-already-registered: "&cYou are already registered."
-password-too-short: "&cPassword is too short."
-password-blocked: "&cPassword is blocked."
-password-username: "&cUsername can't be password."
-password-not-match: "&cYour password is not the same."
-confirm-password: "&aPlease confirm your password."
+already-registered: "&c您已经注册."
+password-too-short: "&c您密码太短."
+password-blocked: "&c密码已被阻止." #need checking
+password-username: "&c您用户名不能当密码."
+password-not-match: "&c您密码不对."
+confirm-password: "&a请确认您的密码."
 
 #Unregister
-unregister-success: "&aYou have unregistered."
+unregister-success: "&a您成功注销."
 
 #Preregister
-preregister-success: "&aAccount has been registered."
-already-registered-two: "&cPlayer already registered."
+preregister-success: "&a账户成功注册."
+already-registered-two: "&c账号已被注册."
 
 #Change password
 change-password-success: "&aYour password has been changed. Your new pin is {pin}."
-incorrect-password-other: "&cIncorrect password."
+incorrect-password-other: "&c密码不对."
 
 #Forget password
 forgot-password-success: "&aYour password has been changed. Your new pin is {pin}."
@@ -52,8 +53,8 @@ incorrect-pin: "&cIncorrect pin."
 cant-use-pin: "Pin is disabled for this account."
 
 #Reset password
-password-reset-success: "&aPlayer's password has been reset."
-not-registered-two: "&cPlayer not registered."
+password-reset-success: "&a此用户密码已被重设."
+not-registered-two: "&c此用户没被登记."
 
 #Email
 email: "&6Now type in your email. Type 'none' to skip."
@@ -82,5 +83,5 @@ your-pin: "&aYour pin: {pin}"
 key-expired: "&cYour key is expired."
 
 #General
-dont-say-password: "&cDo not say your password."
-account-blocked: "&cAccount is blocked."
+dont-say-password: "&c请别分享您的密码." #need checking
+account-blocked: "&c此账户已受阻." #need checking
