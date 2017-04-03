@@ -532,7 +532,6 @@ class Main extends PluginBase
                 $player = $plugin->getServer()->getPlayerExact($args[0]);
                 if ($player instanceof Player) {
                     $plugin->logout($player, false);
-                    $plugin->sessionmanager->getSession($player)->setRegistered(false); //Fix
                 }
             };
             $args = array($player->getName());
@@ -645,11 +644,11 @@ class Main extends PluginBase
                     $player = $plugin->getServer()->getPlayerExact($args[0]);
                     if ($player instanceof Player) {
                         $plugin->logout($player, false);
-                        $plugin->sessionmanager->getSession($player)->setRegistered(false); //Fix
                     }
                 };
                 $args = array($player);
                 $this->database->clearPassword($player, $callback, $args);
+
                 $sender->sendMessage($this->getMessage("password-reset-success"));
                 return true;
             }

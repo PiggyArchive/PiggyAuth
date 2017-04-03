@@ -92,6 +92,7 @@ class PiggyAuthSession implements Session
     public function clearPassword($callback = null, $args = null)
     {
         $this->authenticated = false;
+        $this->registered = false;
         $this->data = null;
         $this->plugin->database->clearPassword($this->getName(), $callback, $args);
     }

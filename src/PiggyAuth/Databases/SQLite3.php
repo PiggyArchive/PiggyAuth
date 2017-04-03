@@ -49,7 +49,7 @@ class SQLite3 implements Database
     {
         $player = strtolower($player);
         $statement = $this->db->prepare("SELECT * FROM players WHERE name = :name");
-        $statement->bindValue(":name", $player, SQLITE3_TEXT);
+        $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
         $result = $statement->execute();
         if ($result instanceof \SQLite3Result) {
             $data = $result->fetchArray(SQLITE3_ASSOC);
@@ -70,7 +70,7 @@ class SQLite3 implements Database
     {
         $player = strtolower($player);
         $statement = $this->db->prepare("SELECT * FROM players WHERE name = :name");
-        $statement->bindValue(":name", $player, SQLITE3_TEXT);
+        $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
         $result = $statement->execute();
         $data = $result->fetchArray(SQLITE3_ASSOC);
         if ($data !== false) {
@@ -130,7 +130,7 @@ class SQLite3 implements Database
     public function clearPassword($player, $callback = null, $args = null)
     {
         $statement = $this->db->prepare("DELETE FROM players WHERE name = :name");
-        $statement->bindValue(":name", $player, SQLITE3_TEXT);
+        $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
         $result = $statement->execute();
         if ($callback !== null) {
             $callback($result, $args, $this->plugin);
