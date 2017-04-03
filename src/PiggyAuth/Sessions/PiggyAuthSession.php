@@ -10,12 +10,16 @@ class PiggyAuthSession implements Session
     private $plugin;
     private $data;
     private $authenticated = false;
+    private $registered = false;
 
     public function __construct(Player $player, $plugin, $data)
     {
         $this->player = $player;
         $this->plugin = $plugin;
         $this->data = $data;
+        if(is_null($this->data) !== true && $this->data !== false){
+            $this->registered = true;
+        }
     }
 
     public function getPlayer()
@@ -30,7 +34,14 @@ class PiggyAuthSession implements Session
 
     public function isRegistered()
     {
-        return is_null($this->data) !== true && $this->data !== false;
+        return $this->registered;
+
+
+    }
+
+    public function setRegistered($args)
+    {
+        $this->registered = $args;
     }
 
     public function isAuthenticated()

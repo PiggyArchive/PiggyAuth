@@ -305,10 +305,6 @@ class Main extends PluginBase
             if (!$this->sessionmanager->getSession($player)->getAttempts() == 0) {
                 $player->sendMessage(str_replace("{attempts}", $this->sessionmanager->getSession($player)->getAttempts(), $this->getMessage("attempted-logins")));
             }
-        } else {
-            if (!$mode == 3) {
-                $player->sendMessage(str_replace("{pin}", $this->sessionmanager->getSession($player)->getPin(), $this->getMessage("register-success")));
-            }
         }
         if (isset($this->messagetick[strtolower($player->getName())])) {
             unset($this->messagetick[strtolower($player->getName())]);
@@ -444,6 +440,9 @@ class Main extends PluginBase
                 $player = $plugin->getServer()->getPlayerExact($args[0]);
                 if ($player instanceof Player) {
                     $plugin->force($player, false, $args[1] == false ? 0 : 3);
+                    if($args[1] == false){
+                        $player->sendMessage(str_replace("{pin}", $plugin->sessionmanager->getSession($player)->getPin(), $plugin->getMessage("register-success")));
+                    }
                 }
             };
             $args = array($player->getName(), $xbox);
@@ -500,6 +499,7 @@ class Main extends PluginBase
                 $player = $this->getServer()->getPlayerExact($args[0]);
                 if ($player instanceof Player) {
                     $plugin->force($player, false);
+                    $player->sendMessage(str_replace("{pin}", $plugin->sessionmanager->getSession($player)->getPin(), $plugin->getMessage("register-success")));
                 }
             };
             $args = array($player);
@@ -532,6 +532,7 @@ class Main extends PluginBase
                 $player = $plugin->getServer()->getPlayerExact($args[0]);
                 if ($player instanceof Player) {
                     $plugin->logout($player, false);
+                    $plugin->sessionmanager->getSession($player)->setRegistered(false); //Fix
                 }
             };
             $args = array($player->getName());
@@ -644,6 +645,7 @@ class Main extends PluginBase
                     $player = $plugin->getServer()->getPlayerExact($args[0]);
                     if ($player instanceof Player) {
                         $plugin->logout($player, false);
+                        $plugin->sessionmanager->getSession($player)->setRegistered(false); //Fix
                     }
                 };
                 $args = array($player);
