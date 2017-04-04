@@ -30,6 +30,7 @@ use PiggyAuth\Entities\Wither;
 use PiggyAuth\Packet\BossEventPacket;
 use PiggyAuth\Sessions\SessionManager;
 use PiggyAuth\Tasks\AttributeTick;
+use PiggyAuth\Tasks\DelayedPinTask;
 use PiggyAuth\Tasks\KeyTick;
 use PiggyAuth\Tasks\MessageTick;
 use PiggyAuth\Tasks\PingTask;
@@ -441,7 +442,11 @@ class Main extends PluginBase
                 if ($player instanceof Player) {
                     $plugin->force($player, false, $args[1] == false ? 0 : 3);
                     if($args[1] == false){
-                        $player->sendMessage(str_replace("{pin}", $plugin->sessionmanager->getSession($player)->getPin(), $plugin->getMessage("register-success")));
+                        if($plugin->database instanceof MySQL) {
+                            $plugin->getServer()->getScheduler()->scheduleDelayedTask(new DelayedPinTask($plugin, $player), 5);
+                        }else{
+                            $player->sendMessage(str_replace("{pin}", $plugin->sessionmanager->getSession($player)->getPin(), $plugin->getMessage("register-success")));
+                        }
                     }
                 }
             };

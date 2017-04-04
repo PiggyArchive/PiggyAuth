@@ -38,7 +38,7 @@ class MySQL implements Database
     public function getOfflinePlayer($player)
     { //@S0F3, don't turn me into bacon for this
         $player = strtolower($player);
-        $result = $this->db->query("SELECT * FROM players WHERE name = '" . $this->db->escape_string($player) . "'");
+        $result = $this->db->query("SELECT * FROM players WHERE name = '" . $this->db->escape_string(strtolower($player)) . "'");
         if ($result instanceof \mysqli_result) {
             $data = $result->fetch_assoc();
             $result->free();
@@ -79,7 +79,7 @@ class MySQL implements Database
 
     public function clearPassword($player, $callback = null, $args = null)
     {
-        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "DELETE FROM players WHERE name = '" . $this->db->escape_string($player) . "'", $callback, $args);
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "DELETE FROM players WHERE name = '" . $this->db->escape_string(strtolower($player)) . "'", $callback, $args);
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
