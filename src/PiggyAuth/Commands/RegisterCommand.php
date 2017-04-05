@@ -49,11 +49,9 @@ class RegisterCommand extends VanillaCommand
                 $args[0],
                 $args[1],
                 $args[2]);
-            $task = new ValidateEmailTask($this->plugin->getConfig()->getNested("emails.mailgun.public-api"), $args[2], $function, $arguements, $this->plugin);
-            $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
+            $this->plugin->emailmanager->validateEmail($args[2], $function, $arguements);
             return true;
         }
-        $this->plugin->register($sender, $args[0], $args[1], $args[2]);
         return true;
     }
 

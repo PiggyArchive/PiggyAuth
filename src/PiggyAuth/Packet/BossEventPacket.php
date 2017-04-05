@@ -6,7 +6,7 @@ use pocketmine\network\protocol\DataPacket;
 
 class BossEventPacket extends DataPacket
 {
-    const NETWORK_ID = 0x4b;
+    const NETWORK_ID = 0x4c;
 
     public $eid;
     public $state;

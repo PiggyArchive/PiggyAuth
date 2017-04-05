@@ -157,8 +157,7 @@ class EventListener implements Listener
                             unset($plugin->giveEmail[strtolower($args[0])]);
                         };
                         $arguements = array($player->getName(), $message);
-                        $task = new ValidateEmailTask($this->plugin->getConfig()->getNested("emails.mailgun.public-api"), $message, $function, $arguements, $this->plugin);
-                        $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
+                        $this->plugin->emailmanager->validateEmail($message, $function, $arguements);
                         $event->setCancelled();
                     }
                 }

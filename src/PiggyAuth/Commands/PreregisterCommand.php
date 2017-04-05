@@ -47,11 +47,9 @@ class PreregisterCommand extends VanillaCommand
                 $args[1],
                 $args[2],
                 $args[3]);
-            $task = new ValidateEmailTask($this->plugin->getConfig()->getNested("emails.mailgun.public-api"), $args[3], $function, $arguements, $this->plugin);
-            $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
+            $this->plugin->emailmanager->validateEmail($args[3], $function, $arguements);
             return true;
         }
-        $this->plugin->preregister($sender, $args[0], $args[1], $args[2], $args[3]);
         return true;
     }
 

@@ -18,7 +18,7 @@ class SendEmailTask extends AsyncTask
     private $player;
 
 
-    public function __construct($api, $domain, $to, $from, $subject, $message, $player)
+    public function __construct($api, $domain, $to, $from, $subject, $message, $player = null)
     {
         $this->api = serialize($api);
         $this->domain = serialize($domain);
@@ -43,8 +43,13 @@ class SendEmailTask extends AsyncTask
             'subject' => unserialize($this->subject),
             'text' => unserialize($this->message)));
         $result = curl_exec($ch);
-        if (curl_error($ch) == "SSL certificate problem: unable to get local issuer certificate") {
+        $error = curl_error($ch);
+        if ($error == "SSL certificate problem: unable to get local issuer certificate") {
             $this->error = "SSL certificate problem: unable to get local issuer certificate\nPlease make sure you have downloaded the file from https://github.com/MCPEPIG/PiggyAuth-MailGunFiles & edited the php.ini.";
+        }else{
+            if($error !== ""){
+                $this->error = $error;
+            }
         }
         curl_close($ch);
     }

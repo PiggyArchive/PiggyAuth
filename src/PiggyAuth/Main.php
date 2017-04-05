@@ -14,6 +14,7 @@ use PiggyAuth\Commands\RegisterCommand;
 use PiggyAuth\Commands\ResetPasswordCommand;
 use PiggyAuth\Commands\SendPinCommand;
 use PiggyAuth\Commands\UnregisterCommand;
+use PiggyAuth\Emails\EmailManager;
 use PiggyAuth\Events\PlayerChangePasswordEvent;
 use PiggyAuth\Events\PlayerFailEvent;
 use PiggyAuth\Events\PlayerForgetPasswordEvent;
@@ -86,13 +87,11 @@ class Main extends PluginBase
     const CANT_USE_PIN = 25;
     const OTHER = 100;
 
-    public $api;
     public $confirmPassword;
     public $confirmedPassword;
     public $database;
-    public $domain;
+    public $emailmanager;
     public $expiredkeys = [];
-    public $from;
     public $gamemode;
     public $giveEmail;
     public $hasJoined;
@@ -101,7 +100,6 @@ class Main extends PluginBase
     private $key = "PiggyAuthKey";
     public $keytime = 299; //300 = Reset
     public $messagetick;
-    public $pubapi;
     public $sessionmanager;
     public $timeouttick;
     public $tries;
@@ -151,10 +149,6 @@ class Main extends PluginBase
             Entity::registerEntity(Wither::class);
             $this->getServer()->getNetwork()->registerPacket(BossEventPacket::NETWORK_ID, BossEventPacket::class);
         }
-        $this->pubapi = $this->getConfig()->getNested("emails.mailgun.public-api");
-        $this->api = $this->getConfig()->getNested("emails.mailgun.api");
-        $this->domain = $this->getConfig()->getNested("emails.mailgun.domain");
-        $this->from = $this->getConfig()->getNested("emails.mailgun.from");
         switch ($this->getConfig()->getNested("database")) {
             case "mysql":
                 $this->database = new MySQL($this);
@@ -169,6 +163,7 @@ class Main extends PluginBase
                 break;
         }
         $this->sessionmanager = new SessionManager($this);
+        $this->emailmanager = new EmailManager($this, $this->getConfig()->getNested("emails.mailgun.domain"), $this->getConfig()->getNested("emails.mailgun.api"), $this->getConfig()->getNested("emails.mailgun.public-api"), $this->getConfig()->getNested("emails.mailgun.from"));
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         foreach ($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
             $this->startSession($player);
@@ -184,6 +179,11 @@ class Main extends PluginBase
     public function getSessionManager()
     {
         return $this->sessionmanager;
+    }
+
+    public function getEmailManager()
+    {
+        return $this->emailmanager;
     }
 
     public function generatePin(Player $player)
@@ -256,8 +256,8 @@ class Main extends PluginBase
                 $this->tries[strtolower($player->getName())]++;
                 if ($this->tries[strtolower($player->getName())] >= $this->getConfig()->getNested("login.tries")) {
                     $this->sessionmanager->getSession($player)->updatePlayer("attempts", $this->sessionmanager->getSession($player)->getAttempts() + 1, 1);
-                    if ($this->sessionmanager->getSession($player)->getEmail() !== "none" && $this->getConfig()->getNested("emails.send-email-on-attemptedlogin")) {
-                        $this->emailUser($this->api, $this->domain, $this->sessionmanager->getSession($player)->getEmail(), $this->from, $this->getMessage("email-subject-attemptedlogin"), $this->getMessage("email-attemptedlogin"));
+                    if ($this->getConfig()->getNested("emails.send-email-on-attemptedlogin")) {
+                        $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->getMessage("email-subject-attemptedlogin"), $this->getMessage("email-attemptedlogin"));
                     }
                     $player->kick($this->getMessage("too-many-tries"));
                     return false;
@@ -273,8 +273,8 @@ class Main extends PluginBase
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this, $player, self::NORMAL));
         if (!$event->isCancelled()) {
             if ($player->getAddress() !== $this->sessionmanager->getSession($player)->getIP()) {
-                if ($this->sessionmanager->getSession($player)->getEmail() !== "none" && $this->getConfig()->getNested("emails.send-email-on-login-from-new-ip")) {
-                    $this->emailUser($this->api, $this->domain, $this->sessionmanager->getSession($player)->getEmail(), $this->from, $this->getMessage("email-subject-login-from-new-ip"), str_replace("{ip}", $player->getAddress(), $this->getMessage("email-login-from-new-ip")));
+                if ($this->getConfig()->getNested("emails.send-email-on-login-from-new-ip")) {
+                    $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->getMessage("email-subject-login-from-new-ip"), str_replace("{ip}", $player->getAddress(), $this->getMessage("email-login-from-new-ip")));
                 }
             }
             $rehashedpassword = $this->needsRehashPassword($this->sessionmanager->getSession($player)->getPassword(), $password);
@@ -390,7 +390,7 @@ class Main extends PluginBase
                 unset($this->wither[strtolower($player->getName())]);
             }
         }
-        if($rehashedpassword !== null) {
+        if ($rehashedpassword !== null) {
             $this->sessionmanager->getSession($player)->updatePlayer("password", $rehashedpassword);
         }
         $this->sessionmanager->getSession($player)->updatePlayer("ip", $player->getAddress());
@@ -441,10 +441,10 @@ class Main extends PluginBase
                 $player = $plugin->getServer()->getPlayerExact($args[0]);
                 if ($player instanceof Player) {
                     $plugin->force($player, false, $args[1] == false ? 0 : 3);
-                    if($args[1] == false){
-                        if($plugin->database instanceof MySQL) {
+                    if ($args[1] == false) {
+                        if ($plugin->database instanceof MySQL) {
                             $plugin->getServer()->getScheduler()->scheduleDelayedTask(new DelayedPinTask($plugin, $player), 5);
-                        }else{
+                        } else {
                             $player->sendMessage(str_replace("{pin}", $plugin->sessionmanager->getSession($player)->getPin(), $plugin->getMessage("register-success")));
                         }
                     }
@@ -454,7 +454,7 @@ class Main extends PluginBase
             $this->sessionmanager->getSession($player)->insertData($password, $email, $pin, $xbox, $callback, $args);
             if ($this->getConfig()->getNested("progress-reports.enabled")) {
                 if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) {
-                    $this->emailUser($this->api, $this->domain, $this->getConfig()->getNested("progress-reports.progress-report-email"), $this->from, "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->getMessage("progress-reports.progress-report"))))));
+                    $this->emailmanager->sendEmail($this->getConfig()->getNested("progress-reports.progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->getMessage("progress-reports.progress-report"))))));
                 }
             }
         }
@@ -511,7 +511,7 @@ class Main extends PluginBase
             $this->database->insertDataWithoutPlayerObject($player, $password, $email, $pin, $callback, $args);
             if ($this->getConfig()->getNested("progress-reports.enabled")) {
                 if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) {
-                    $this->emailUser($this->api, $this->domain, $this->getConfig()->getNested("progress-reports.progress-report-email"), $this->from, "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player, $this->getMessage("progress-reports.progress-report"))))));
+                    $this->emailmanager->sendEmail($this->getConfig()->getNested("progress-reports.progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player, $this->getMessage("progress-reports.progress-report"))))));
                 }
             }
             $sender->sendMessage($this->getMessage("preregister-success"));
@@ -577,8 +577,8 @@ class Main extends PluginBase
             $this->sessionmanager->getSession($player)->updatePlayer("password", $newpassword);
             $this->sessionmanager->getSession($player)->updatePlayer("pin", $pin, 1);
             $player->sendMessage(str_replace("{pin}", $pin, $this->getMessage("change-password-success")));
-            if ($this->getConfig()->getNested("emails.send-email-on-changepassword") && $this->sessionmanager->getSession($player)->getEmail() !== "none") {
-                $this->emailUser($this->api, $this->domain, $this->sessionmanager->getSession($player)->getEmail(), $this->from, $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
+            if ($this->getConfig()->getNested("emails.send-email-on-changepassword")) {
+                $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
             }
         }
         return true;
@@ -620,9 +620,9 @@ class Main extends PluginBase
         $newpin = $this->generatePin($player);
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerForgetPasswordEvent($this, $player, $newpassword, $pin, $newpin));
         if (!$event->isCancelled()) {
-            $callback = function($result, $args, $plugin){
+            $callback = function ($result, $args, $plugin) {
                 $player = $plugin->getServer()->getPlayerExact($args[0]);
-                if($player instanceof Player){
+                if ($player instanceof Player) {
                     $plugin->force($player, false);
                 }
             };
@@ -630,8 +630,8 @@ class Main extends PluginBase
             $this->sessionmanager->getSession($player)->updatePlayer("password", $newpassword, 0, $callback, $args);
             $this->sessionmanager->getSession($player)->updatePlayer("pin", $newpin, 1);
             $player->sendMessage(str_replace("{pin}", $newpin, $this->getMessage("forgot-password-success")));
-            if ($this->getConfig()->getNested("emails.send-email-on-changepassword") && $this->sessionmanager->getSession($player)->getEmail() !== "none") {
-                $this->emailUser($this->api, $this->domain, $this->database->getEmail($player->getName()), $this->from, $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
+            if ($this->getConfig()->getNested("emails.send-email-on-changepassword")) {
+                $this->emailmanager->sendEmail($this->database->getEmail($player->getName()), $this->getMessage("email-subject-changedpassword"), $this->getMessage("email-changedpassword"));
             }
         }
     }
@@ -642,8 +642,8 @@ class Main extends PluginBase
         if ($data !== null) {
             $this->getServer()->getPluginManager()->callEvent($event = new PlayerResetPasswordEvent($this, $sender, $player));
             if (!$event->isCancelled()) {
-                if ($this->getConfig()->getNested("emails.send-email-on-resetpassword") && $data["email"] !== "none") {
-                    $this->emailUser($this->api, $this->domain, $this->database->getEmail($player), $this->from, $this->getMessage("email-subject-passwordreset"), $this->getMessage("email-passwordreset"));
+                if ($this->getConfig()->getNested("emails.send-email-on-resetpassword")) {
+                    $this->emailmanager->sendEmail($this->database->getOfflinePlayer($player)["email"], $this->getMessage("email-subject-passwordreset"), $this->getMessage("email-passwordreset"));
                 }
                 $callback = function ($result, $args, $plugin) {
                     $player = $plugin->getServer()->getPlayerExact($args[0]);
@@ -714,12 +714,6 @@ class Main extends PluginBase
     public function getMessage($message)
     {
         return str_replace("&", "§", $this->lang->getNested($message));
-    }
-
-    public function emailUser($api, $domain, $to, $from, $subject, $body, $player = null)
-    {
-        $task = new SendEmailTask($api, $domain, $to, $from, $subject, $body, $player);
-        $this->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
     public function startSession(Player $player)

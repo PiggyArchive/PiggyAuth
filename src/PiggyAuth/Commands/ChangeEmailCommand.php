@@ -2,8 +2,6 @@
 
 namespace PiggyAuth\Commands;
 
-use PiggyAuth\Tasks\ValidateEmailTask;
-
 use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
@@ -42,8 +40,7 @@ class ChangeEmailCommand extends VanillaCommand
                 }
             };
             $arguements = array($sender->getName(), $args[0]);
-            $task = new ValidateEmailTask($this->plugin->getConfig()->getNested("emails.mailgun.public-api"), $args[0], $function, $arguements, $this->plugin);
-            $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
+            $this->plugin->emailmanager->validateEmail($args[0], $function, $arguements);
             return true;
         }
     }
