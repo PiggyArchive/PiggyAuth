@@ -6,7 +6,7 @@ login-message: "&6Por favor inicia sessão escrevendo /login <password>\n&6Esque
 login-popup: "&6Por favor inicia sessão."
 login-tip: "&6Por favor inicia sessão."
 login-boss-bar: "&6Por favor inicie sessão"
-authentication-success: "&aFoste autenticado."
+authentication-success: "&aSessão iniciada com sucesso."
 authentication-success-uuid: "&aFoste autenticado através do teu UUID!"
 authentication-success-xbox: "&aFoste autenticado através da Xbox Live!"
 attempted-logins: "&6Houveram {attempts} tentativas de entrar na tua conta."
