@@ -1,0 +1,82 @@
+#Join
+join-message: "&6Este servidor requer autenticação!"
+
+#Login
+login-message: "&6Por favor inicia sessão escrevendo /login <password>\n&6Esqueceste-te da palavra-passe? Escreve /forgotpassword <pin> <nova palavra-passe>"
+login-popup: "&6Por favor inicia sessão."
+login-tip: "&6Por favor inicia sessão."
+login-boss-bar: "&6Por favor inicie sessão"
+authentication-success: "&aSessão iniciada com sucesso."
+authentication-success-uuid: "&aFoste autenticado através do teu UUID!"
+authentication-success-xbox: "&aFoste autenticado através da Xbox Live!"
+attempted-logins: "&6Houveram {attempts} tentativas de entrar na tua conta."
+already-authenticated: "&cJá tens sessão iniciada."
+incorrect-password: "&cPalavra-passe errada! Tentativas restantes: {tries}"
+not-registered: "&cNão estás registado!"
+too-many-tries: "&cDemasiadas tentativas de inicio de sessão!"
+timeout-message: "&cUltrapassaste o limite de tempo para iniciares sessão."
+too-many-on-ip: "&cDemasiadas pessoas ligadas com o mesmo endereço de IP!"
+
+#Register
+register-message: "&6Regista-te com o comando /register <palavra-passe <confirmar palavra-passe> [email]"
+register-popup: "&6Regista-te."
+register-tip: "&6Regista-te."
+register-boss-bar: "&6Regista-te."
+register-success: "&aA tua conta foi registada, e o teu PIN é {pin}."
+register-success-xbox: "&aA tua conta foi registada através dos serviços da Xbox Live. O teu pin é {pin}. A tua password é {password}. Podes mudá-la com o comando /changepassword."
+already-registered: "&Já estás registado!"
+password-too-short: "&cA palavra-passe escolhida é demasiado curta."
+password-blocked: "&cA palavra-passe está bloqueada."
+password-username: "&cNão podes utilizar o teu nickname como password!"
+password-not-match: "&cAs palavras-passe não são iguais."
+confirm-password: "&aPor favor, confirma a tua palavra-passe."
+
+#Unregister
+unregister-success: "&aSucesso: Registo/conta removidos."
+
+#Preregister
+preregister-success: "&aConta registada."
+already-registered-two: "&cEste jogador já foi registado."
+
+#Change password
+change-password-success: "&aA tua palavra palavra-passe foi mudada com sucesso. O teu novo PIN é {pin}."
+incorrect-password-other: "&cPalavra-passe incorreta."
+
+#Forget password
+forgot-password-success: "&aA tua palavra-passe foi alterada. O teu novo PIN é {pin}."
+incorrect-pin: "&cPIN incorreto."
+cant-use-pin: "A utilização do PIN não é permitida para esta conta."
+
+#Reset password
+password-reset-success: "&aA palavra-passe do jogador foi mudada com sucesso."
+not-registered-two: "&cEste jogador não está registado."
+
+#Email
+email: "&6Agora, escreve o teu endereço de e-mail. Escreve 'none' se não tens, ou se não queres fornecê-lo."
+email-set: "&aEmail definido."
+email-change-success:  "&aEmail alterado."
+email-success: "&aO email foi enviado com sucesso."
+email-fail: "&cFalha ao enviar o email!"
+invalid-email: "&cEndereço de email inválido."
+no-email: "&cNão há nenhum email associado com esta conta!"
+
+email-subject-sendpin: "Pedido do PIN PiggyAuth"
+email-sendpin: "O teu {pin}. Se não pediste que o teu PIN fosse enviado, ignora este email."
+email-subject-attemptedlogin: "Aviso de inicio de sessão PiggyAuth"
+email-attemptedlogin: "Alguém tentou entrar na tua conta. Se não foste tu, escreve o seguinte comando: /sendpin. Receberás então um código PIN de quatro dígitos para alterar a tua password."
+email-subject-changedpassword: "Aviso de password alterada PiggyAuth"
+email-changedpassword: "A tua palavra-passe foi alterada. Se não foste tu, dá o comando /sendpin. Receberás então um código PIN de quatro dígitos para a alterares."
+email-subject-passwordreset: "Aviso de paassword alterada - PiggyAuth"
+email-passwordreset: "A tua palavra-passe foi alterada/removida por um membro da equipa administrativa/de moderadores. Por favor entra no jogo e regista-te para reclamares a tua conta."
+email-subject-login-from-new-ip: "Aviso de novo IP PiggyAuth"
+email-login-from-new-ip: "Alguém acabou de iniciar sessão na tua conta a partir doutro IP ({ip}). Se não foste tu, por favor altera a tua palavra-passe imediatamente."
+
+#Pin
+your-pin: "&aO teu PIN: {pin}"
+
+#Key
+key-expired: "&cA tua chave passou do prazo de validade!"
+
+#General
+dont-say-password: "&cNunca digas a tua palavra-passe a ninguém!"
+account-blocked: "&cA tua conta está bloqueada."
