@@ -2,7 +2,7 @@
 join-message: "&6Este servidor requer autenticação!"
 
 #Login
-login-message: "&6Por favor inicia sessão escrevendo /login <password>\n&6Esqueceu-se da palavra-passe? Escreve /forgotpassword <pin> <newpassword>"
+login-message: "&6Por favor inicia sessão escrevendo /login <password>\n&6Esqueceste-te da palavra-passe? Escreve /forgotpassword <pin> <newpassword>"
 login-popup: "&6Por favor inicia sessão."
 login-tip: "&6Por favor inicia sessão."
 login-boss-bar: "&6Por favor inicie sessão"
