@@ -36,7 +36,6 @@ use PiggyAuth\Tasks\KeyTick;
 use PiggyAuth\Tasks\MessageTick;
 use PiggyAuth\Tasks\PingTask;
 use PiggyAuth\Tasks\PopupTipBarTick;
-use PiggyAuth\Tasks\SendEmailTask; //Async
 use PiggyAuth\Tasks\TimeoutTask;
 
 use pocketmine\entity\Attribute;
