@@ -2,6 +2,7 @@
 
 namespace PiggyAuth\Tasks;
 
+use PiggyAuth\Events\PlayerTimeoutEvent;
 use pocketmine\scheduler\PluginTask;
 
 class TimeoutTask extends PluginTask
@@ -19,7 +20,10 @@ class TimeoutTask extends PluginTask
                 if (isset($this->plugin->timeouttick[strtolower($player->getName())])) {
                     $this->plugin->timeouttick[strtolower($player->getName())]++;
                     if ($this->plugin->timeouttick[strtolower($player->getName())] == $this->plugin->getConfig()->getNested("timeout.timeout-time")) {
-                        $player->kick($this->plugin->getMessage("timeout-message"));
+                        $this->getServer()->getPluginManager()->callEvent($event = new PlayerTimeoutEvent($this->plugin, $player));
+                        if (!$event->isCancelled()) {
+                            $player->kick($this->plugin->getMessage("timeout-message"));
+                        }
                     }
                 }
             }
