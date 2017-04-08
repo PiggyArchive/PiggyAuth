@@ -17,7 +17,7 @@ class PiggyAuthSession implements Session
         $this->player = $player;
         $this->plugin = $plugin;
         $this->data = $data;
-        if(is_null($this->data) !== true && $this->data !== false){
+        if (is_null($this->data) !== true && $this->data !== false) {
             $this->registered = true;
         }
     }
@@ -87,6 +87,14 @@ class PiggyAuthSession implements Session
     public function getAttempts()
     {
         return $this->data["attempts"];
+    }
+
+    public function getLanguage()
+    {
+        if($this->plugin->languagemanager->isLanguage($this->data["language"])){
+            return $this->data["language"];
+        }
+        return $this->plugin->languagemanager->getDefaultLanguage();
     }
 
     public function clearPassword($callback = null, $args = null)

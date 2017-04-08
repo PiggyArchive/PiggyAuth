@@ -79,6 +79,10 @@ your-pin: "&aYour pin: {pin}"
 #Key
 key-expired: "&cYour key is expired."
 
+#Language
+invalid-language: "&cLanguage not available.\nAvailable languages: {languages}"
+language-changed: "&aLanguage has changed."
+
 #General
 dont-say-password: "&cDo not say your password."
 account-blocked: "&cAccount is blocked."

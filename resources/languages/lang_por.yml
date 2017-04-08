@@ -79,6 +79,10 @@ your-pin: "&aO teu PIN: {pin}"
 #Key
 key-expired: "&cA tua chave passou do prazo de validade!"
 
+#Language
+invalid-language: "&cLanguage not available.\nAvailable languages: {languages}" #Needs translation
+language-changed: "&aLanguage has changed." #Needs translation
+
 #General
 dont-say-password: "&cNunca digas a tua palavra-passe a ninguém!"
 account-blocked: "&cA tua conta está bloqueada."

@@ -60,11 +60,11 @@ class SendEmailTask extends AsyncTask
         if ($this->error !== null) {
             $server->getPluginManager()->getPlugin("PiggyAuth")->getLogger()->error($this->error);
             if ($player instanceof Player) {
-                $player->sendMessage($server->getPluginManager()->getPlugin("PiggyAuth")->getMessage("email-fail"));
+                $player->sendMessage($server->getPluginManager()->getPlugin("PiggyAuth")->languagemanager->getMessage($player, "email-fail"));
             }
         } else {
             if ($player instanceof Player) {
-                $player->sendMessage($server->getPluginManager()->getPlugin("PiggyAuth")->getMessage("email-success"));
+                $player->sendMessage($server->getPluginManager()->getPlugin("PiggyAuth")->languagemanager->getMessage($player, "email-success"));
             }
         }
     }

@@ -21,16 +21,16 @@ class PopupTipBarTick extends PluginTask
             if ($this->plugin->sessionmanager->getSession($player) !== null && !$this->plugin->sessionmanager->getSession($player)->isAuthenticated() && !isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
                 if ($this->plugin->getConfig()->getNested("message.popup")) {
                     if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
-                        $player->sendPopup($this->plugin->getMessage("login-popup"));
+                        $player->sendPopup($this->plugin->languagemanager->getMessage($player, "login-popup"));
                     } else {
-                        $player->sendPopup($this->plugin->getMessage("register-popup"));
+                        $player->sendPopup($this->plugin->languagemanager->getMessage($player, "register-popup"));
                     }
                 }
                 if ($this->plugin->getConfig()->getNested("message.tip")) {
                     if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
-                        $player->sendTip($this->plugin->getMessage("login-tip"));
+                        $player->sendTip($this->plugin->languagemanager->getMessage($player, "login-tip"));
                     } else {
-                        $player->sendTip($this->plugin->getMessage("register-tip"));
+                        $player->sendTip($this->plugin->languagemanager->getMessage($player, "register-tip"));
                     }
                 }
                 if ($this->plugin->getConfig()->getNested("message.boss-bar")) {

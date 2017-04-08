@@ -24,7 +24,7 @@ class SendPinCommand extends VanillaCommand
             $sender->sendMessage("§cYou must use the command in-game.");
             return false;
         }
-        $result = $this->plugin->emailmanager->sendEmail($this->plugin->sessionmanager->getSender($sender)->getEmail(), $this->plugin->getMessage("email-subject-sendpin"), str_replace("{pin}", $this->plugin->sessionmanager->getSender($sender)->getPin(), $this->plugin->getMessage("email-sendpin")), $sender);
+        $result = $this->plugin->emailmanager->sendEmail($this->plugin->sessionmanager->getSender($sender)->getEmail(), $this->plugin->languagemanager->getMessage($sender, "email-subject-sendpin"), str_replace("{pin}", $this->plugin->sessionmanager->getSender($sender)->getPin(), $this->plugin->languagemanager->getMessage($sender, "email-sendpin")), $sender);
         return true;
     }
 

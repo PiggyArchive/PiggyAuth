@@ -25,6 +25,9 @@ class MySQL implements Database
         if (!isset($data["ip"])) {
             $this->db->query("ALTER TABLE players ADD ip VARCHAR(32) NOT NULL");
         }
+        if (!isset($data["language"])) {
+            $this->db->query("ALTER TABLE players ADD language VARCHAR(3) NOT NULL");
+        }
     }
 
     public function getRegisteredCount()
@@ -67,13 +70,13 @@ class MySQL implements Database
 
     public function insertData(Player $player, $password, $email, $pin, $xbox, $callback = null, $args = null)
     {
-        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', '" . $player->getUniqueId()->toString() . "', '0', '" . $xbox . "')", $callback, $args);
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', '" . $player->getUniqueId()->toString() . "', '0', '" . $xbox . "', '" . $this->db->escape_string($this->plugin->languagemanager->getDefaultLanguage())  . "')", $callback, $args);
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
     public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $callback = null, $args = null)
     {
-        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox) VALUES ('" . $this->db->escape_string(strtolower($player)) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', 'uuid', '0', 'false')");
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language) VALUES ('" . $this->db->escape_string(strtolower($player)) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', 'uuid', '0', 'false', '" . $this->db->escape_string($this->plugin->languagemanager->getDefaultLanguage()) . "')");
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 

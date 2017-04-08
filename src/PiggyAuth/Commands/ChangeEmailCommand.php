@@ -33,9 +33,9 @@ class ChangeEmailCommand extends VanillaCommand
                 if ($sender instanceof Player) { //Check to make sure player didn't log off
                     if ($result) {
                         $plugin->sessionmanager->getSession($sender)->updatePlayer("email", $args[1]);
-                        $sender->sendMessage($plugin->getMessage("email-change-success"));
+                        $sender->sendMessage($plugin->languagemanager->getMessage($sender, "email-change-success"));
                     } else {
-                        $sender->sendMessage($plugin->getMessage("invalid-email"));
+                        $sender->sendMessage($plugin->languagemanager->getMessage($sender, "invalid-email"));
                     }
                 }
             };

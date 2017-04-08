@@ -46,6 +46,9 @@ permissions:
         piggyauth.command.sendpin:
           default: true
           description: "Allow using /sendpin"
+        piggyauth.command.setlanguage:
+          default: true
+          description: "Allow using /setlanguage"
         piggyauth.command.unregister:
           default: true
           description: "Allow using /unregister"          

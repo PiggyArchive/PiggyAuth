@@ -19,9 +19,9 @@ class MessageTick extends PluginTask
                 if ($this->plugin->messagetick[strtolower($player->getName())] == $this->plugin->getConfig()->getNested("message.seconds-til-next-message")) {
                     $this->plugin->messagetick[strtolower($player->getName())] = 0;
                     if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
-                        $player->sendMessage($this->plugin->getMessage("login-message"));
+                        $player->sendMessage($this->plugin->languagemanager->getMessage($player, "login-message"));
                     } else {
-                        $player->sendMessage($this->plugin->getMessage("register-message"));
+                        $player->sendMessage($this->plugin->languagemanager->getMessage($player, "register-message"));
                     }
                 } else {
                     $this->plugin->messagetick[strtolower($player->getName())] += 1;

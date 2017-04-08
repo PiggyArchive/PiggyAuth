@@ -40,10 +40,12 @@ class MySQLTask extends AsyncTask
 
     public function onCompletion(Server $server)
     {
+        $plugin = $server->getPluginManager()->getPlugin("PiggyAuth");
         if ($this->callback !== null && $this->args !== null) {
-            if ($server->getPluginManager()->getPlugin("PiggyAuth")->isEnabled()) {
+            if ($plugin->isEnabled()) {
                 $callback = $this->callback;
-                $callback(unserialize($this->result), $this->args, $server->getPluginManager()->getPlugin("PiggyAuth"));
+                $result = unserialize($this->result);
+                $callback($result, $this->args, $plugin);
             }
         }
     }

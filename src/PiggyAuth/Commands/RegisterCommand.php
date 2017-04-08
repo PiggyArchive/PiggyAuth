@@ -39,7 +39,7 @@ class RegisterCommand extends VanillaCommand
                     if ($result) {
                         $plugin->register($sender, $args[1], $args[2], $args[3]);
                     } else {
-                        $sender->sendMessage($plugin->getMessage("invalid-email"));
+                        $sender->sendMessage($plugin->languagemanager->getMessage($sender, "invalid-email"));
                     }
                 }
                 return true;

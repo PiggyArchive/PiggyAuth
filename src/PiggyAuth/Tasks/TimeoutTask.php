@@ -22,7 +22,7 @@ class TimeoutTask extends PluginTask
                     if ($this->plugin->timeouttick[strtolower($player->getName())] == $this->plugin->getConfig()->getNested("timeout.timeout-time")) {
                         $this->getServer()->getPluginManager()->callEvent($event = new PlayerTimeoutEvent($this->plugin, $player));
                         if (!$event->isCancelled()) {
-                            $player->kick($this->plugin->getMessage("timeout-message"));
+                            $player->kick($this->plugin->languagemanager->getMessage($player, "timeout-message"));
                         }
                     }
                 }

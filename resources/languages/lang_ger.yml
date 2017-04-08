@@ -79,6 +79,10 @@ your-pin: "&aDeine PIN: {pin}"
 #Key
 key-expired: "&cDein Key ist abgelaufen."
 
+#Language
+invalid-language: "&cLanguage not available.\nAvailable languages: {languages}" #Needs translation
+language-changed: "&aLanguage has changed." #Needs translation
+
 #General
 dont-say-password: "&cSchreibe dein Kennwort nicht in den Chat."
 account-blocked: "&cDie Kennung ist gesperrt."
