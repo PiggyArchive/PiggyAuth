@@ -8,16 +8,18 @@ PiggyAuth is a safe and feature-rich auth plugin for PMMP.
  
 ## Installation Guide
  - **Windows & Linux**
-   - (WINDOWS ONLY) Make sure you have the `php_sqlite3.dll` package installed in the bins folder and `extension=php_sqlite3.dll` is in `php.ini`. SQLite3 will not work without these, which is a package needed by PiggyAuth to save player data. (not needed if using MySQL)
+   - (WINDOWS) Make sure you have the `php_sqlite3.dll` package installed in the bins folder and `extension=php_sqlite3.dll` is in `php.ini`.
+   - (LINUX) Make sure you have the sqlite3 package installed. If you don't, run: `sudo apt-get php7.0-sqlite3`
    - Download PiggyAuth.phar from [Poggit](https://poggit.pmmp.io/ci/MCPEPIG/PiggyAuth) and put it in your plugins folder.
    - Startup the server, and everything should be working.
  - Optional Windows Setup
    - Open `plugins/PiggyAuth/config.yml` and edit to your desired settings.
    - If you are planning to use MySQL, follow [this guide.](https://github.com/MCPEPIG/PiggyAuth/wiki/Databases) guide to setup.
-   - If you are planning to use Mailgun, follow [this guide.](https://github.com/MCPEPIG/PiggyAuth/wiki/MailGun) guide to setup. 
+   - If you are planning to use Mailgun, follow [this guide.](https://github.com/MCPEPIG/PiggyAuth/wiki/MailGun) guide to setup.
+<!-- 
  - **Linux (TERMINAL)**
    - Run `cd ~/*/plugins` to enter your plugins directory
-   - Run `wget ...` to download PiggyAuth.phar (... is placeholder for now)
+   - Run `wget ...` to download PiggyAuth.phar
      -  or `cd ~/*/plugins && wget ...`
    - Run `cd ..` to get back into your server directory
    - Run `./start.sh` to startup the server, and everything should be working.
@@ -26,6 +28,7 @@ PiggyAuth is a safe and feature-rich auth plugin for PMMP.
    - Run `nano ~/*/plugins/PiggyAuth/config.yml` to open the configuration file and edit to your desired settings.
    - If you are planning to use MySQL, follow [this guide.](https://github.com/MCPEPIG/PiggyAuth/wiki/Databases) guide to setup.
    - If you are planning to use Mailgun, follow [this guide.](https://github.com/MCPEPIG/PiggyAuth/wiki/MailGun) guide to setup. 
+-->
 
 ## Credits
 * @thebigsmileXD for fake attributes
