@@ -8,9 +8,6 @@ use PiggyAuth\Events\PlayerFailEvent;
 use PiggyAuth\Events\PlayerLoginEvent;
 
 
-use PiggyAuth\Tasks\ValidateEmailTask;
-
-
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageEvent;
