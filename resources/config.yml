@@ -108,6 +108,12 @@ message:
   popup: true
   #If enabled, a tip will be shown when not authenticated
   tip: true
+  #If enabled, a title will be shown when not authenticated
+  title: true
+  #If enabled, a subtitle will be shown when not authenticated
+  subtitle: true
+  #If enabled, a actionbar will be shown when not authenticated
+  actionbar: true
   #If enabled, a boss bar will be shown when not authenticated
   boss-bar: true
   #Seconds til next message

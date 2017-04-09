@@ -37,7 +37,7 @@ use PiggyAuth\Tasks\DelayedPinTask;
 use PiggyAuth\Tasks\KeyTick;
 use PiggyAuth\Tasks\MessageTick;
 use PiggyAuth\Tasks\PingTask;
-use PiggyAuth\Tasks\PopupTipBarTick;
+use PiggyAuth\Tasks\OtherMessageTypeTick;
 use PiggyAuth\Tasks\TimeoutTask;
 
 use pocketmine\entity\Attribute;
@@ -50,7 +50,6 @@ use pocketmine\nbt\tag\ListTag;
 use pocketmine\network\protocol\MobEffectPacket;
 use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\plugin\PluginBase;
-use pocketmine\utils\Config;
 use pocketmine\Player;
 
 class Main extends PluginBase
@@ -129,7 +128,7 @@ class Main extends PluginBase
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new KeyTick($this), 20);
         }
         if ($this->getConfig()->getNested("message.popup") || $this->getConfig()->getNested("message.tip") || $this->getConfig()->getNested("message.boss-bar")) {
-            $this->getServer()->getScheduler()->scheduleRepeatingTask(new PopupTipBarTick($this), 20);
+            $this->getServer()->getScheduler()->scheduleRepeatingTask(new OtherMessageTypeTick($this), 20);
         }
         if ($this->getConfig()->getNested("timeout.enabled")) {
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new TimeoutTask($this), 20);
@@ -300,6 +299,7 @@ class Main extends PluginBase
             }
             if (!$this->sessionmanager->getSession($player)->getAttempts() == 0) {
                 $player->sendMessage(str_replace("{attempts}", $this->sessionmanager->getSession($player)->getAttempts(), $this->languagemanager->getMessage($player, "attempted-logins")));
+                $this->sessionmanager->getSession($player)->updatePlayer("attempts", 0);
             }
         }
         if (isset($this->messagetick[strtolower($player->getName())])) {
@@ -592,7 +592,21 @@ class Main extends PluginBase
             return false;
         }
         if (!$this->isCorrectPin($player, $pin)) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "incorrect-pin"));
+            if (isset($this->tries[strtolower($player->getName())])) {
+                $this->tries[strtolower($player->getName())]++;
+                if ($this->tries[strtolower($player->getName())] >= $this->getConfig()->getNested("login.tries")) {
+                    $this->sessionmanager->getSession($player)->updatePlayer("attempts", $this->sessionmanager->getSession($player)->getAttempts() + 1, 1);
+                    if ($this->getConfig()->getNested("emails.send-email-on-attemptedlogin")) {
+                        $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->languagemanager->getMessage($player, "email-subject-attemptedlogin"), $this->languagemanager->getMessage($player, "email-attemptedlogin"));
+                    }
+                    $player->kick($this->languagemanager->getMessage($player, "too-many-tries"));
+                    return false;
+                }
+            } else {
+                $this->tries[strtolower($player->getName())] = 1;
+            }
+            $tries = $this->getConfig()->getNested("login.tries") - $this->tries[strtolower($player->getName())];
+            $player->sendMessage(str_replace("{tries}", $tries, $this->languagemanager->getMessage($player, "incorrect-pin")));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::WRONG_PIN));
             return false;
         }
@@ -626,7 +640,7 @@ class Main extends PluginBase
             $this->sessionmanager->getSession($player)->updatePlayer("pin", $newpin, 1);
             $player->sendMessage(str_replace("{pin}", $newpin, $this->languagemanager->getMessage($player, "forgot-password-success")));
             if ($this->getConfig()->getNested("emails.send-email-on-changepassword")) {
-                $this->emailmanager->sendEmail($this->database->getEmail($player->getName()), $this->languagemanager->getMessage($player, "email-subject-changedpassword"), $this->languagemanager->getMessage($player, "email-changedpassword"));
+                $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->languagemanager->getMessage($player, "email-subject-changedpassword"), $this->languagemanager->getMessage($player, "email-changedpassword"));
             }
         }
     }
