@@ -4,7 +4,7 @@ PiggyAuth is a safe and feature-rich auth plugin for PMMP.
 ## Information
  - The many features of this plugin can be viewed [here.](https://github.com/MCPEPIG/PiggyAuth/wiki/Features)
  - The changelog of this plugin can be viewed [here.](https://github.com/MCPEPIG/PiggyAuth/wiki/Changelog)
- - You can suggest features and report bugs in [here.](https://github.com/MCPEPIG/PiggyAuth/issues/10)
+ - You can suggest features and report bugs in [here.](https://github.com/MCPEPIG/PiggyAuth/issues/39)
  
 ## Installation Guide
  - **Windows & Linux**
