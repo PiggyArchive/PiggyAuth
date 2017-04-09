@@ -20,7 +20,7 @@ timeout-message: "&cTimeout bei der Anmeldung"
 too-many-on-ip: "&cZu viele Spieler mit der gleichen IP-Adresse."
 
 #Register
-register-message: "&6Bitte registriere dich mit /register <Kennwort> <nochmal Kennwort zur Bestätigung> [eMail]"
+register-message: "&6Bitte registriere dich mit /register <Kennwort> <nochmal Kennwort> [eMail]"
 register-popup: "&6Bitte registriere dich."
 register-tip: "&6Bitte registriere dich."
 register-boss-bar: "&6Bitte registriere dich."
@@ -80,9 +80,9 @@ your-pin: "&aDeine PIN: {pin}"
 key-expired: "&cDein Key ist abgelaufen."
 
 #Language
-invalid-language: "&cLanguage not available.\nAvailable languages: {languages}" #Needs translation
-language-changed: "&aLanguage has changed." #Needs translation
+invalid-language: "&cSprache nicht verfügbar.\nVerfügbare Sprachen: {languages}"
+language-changed: "&aSprache wurde geändert."
 
 #General
-dont-say-password: "&cSchreibe dein Kennwort nicht in den Chat."
+dont-say-password: "&cSchreib dein Kennwort nicht in den Chat!"
 account-blocked: "&cDie Kennung ist gesperrt."
