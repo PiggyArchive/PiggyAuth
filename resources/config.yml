@@ -101,8 +101,8 @@ effects:
   #Hides effects til logged in
   hide-effects: true
 message:
-  #Language
-  #Available Languages: eng, cze, ger
+  #Default Language
+  #Available Languages: eng, cze, ger, por
   lang: eng
   #If enabled, a popup will be shown when not authenticated
   popup: true
