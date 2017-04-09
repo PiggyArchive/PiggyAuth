@@ -86,8 +86,8 @@ your-pin: "&aTvů pin je {pin}."
 key-expired: "&cTvůj klíč expiroval."
 
 #Language
-invalid-language: "&cLanguage not available.\nAvailable languages: {languages}" #Needs translation
-language-changed: "&aLanguage has changed." #Needs translation
+invalid-language: "&cJazyk není dostupný.\nDostupné jazyky: {languages}"
+language-changed: "&aJazyk byl změněn."
 
 #General
 dont-say-password: "&cNesděluj své heslo!"
