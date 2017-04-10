@@ -155,8 +155,6 @@ key:
   enabled: true
   #Username of owner, for key
   owner: TheOwnerLovesPig
-#Join message for new players
-new-player: "&eWelcome {player} to the server!"
 #Database (sqlite3, mysql)
 database: sqlite3
 #MySQL login
