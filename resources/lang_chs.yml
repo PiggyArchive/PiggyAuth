@@ -1,10 +1,11 @@
 # Chinese Simplifyed Translation
-# Not Completed
+# Not Fully Checked
 # Authors:
 # Thunder33345
 
 #Join
 join-message: "&6此服务器需要密码认真."
+new-player: "&e欢迎 {player} 来到吃此服务器"
 
 #Login
 login-message: "&6请登入通过 /login <密码>\n&忘记您的密码? 用 /forgotpassword <pin> <新密码>"
@@ -17,9 +18,9 @@ authentication-success-xbox: "&a自动登入(Xbox Live)." #need help for better 
 attempted-logins: "&6您账户已有 {attempts} 登入尝试." #need help for better translation
 already-authenticated: "&c您已经登入."
 incorrect-password: "&c密码不对. 剩下 {tries} 尝试."
-not-registered: "&c您还没中注册."
-too-many-tries: "&c太多登记尝试"
-timeout-message: "&c登录超时" #need help
+not-registered: "&c您还没注册."
+too-many-tries: "&c太多登入尝试"
+timeout-message: "&c登入超时"
 too-many-on-ip: "&c太多用户有同样IP地址."
 
 #Register
@@ -27,11 +28,11 @@ register-message: "&6请注册通过 /register <密码> <确认密码> [电邮]"
 register-popup: "&6请注册."
 register-tip: "&6请注册."
 register-boss-bar: "&6请注册."
-register-success: "&a成功登记. 您的 pin 是 {pin}." #need help with any thing related to pin
+register-success: "&a成功注册. 您的 pin 是 {pin}."
 register-success-xbox: "&a您已成功登记使用 Xbox Live. 您的 pin 是 {pin}. 您的密码是 {password}. 更改与 /changepassword."
 already-registered: "&c您已经注册."
 password-too-short: "&c您密码太短."
-password-blocked: "&c密码已被阻止." #need checking
+password-blocked: "&c密码已被阻止." #This seems like incorrect to me for the blocking part, i dont think raw translating will work
 password-username: "&c您用户名不能当密码."
 password-not-match: "&c您密码不对."
 confirm-password: "&a请确认您的密码."
@@ -77,11 +78,11 @@ email-subject-login-from-new-ip: "PiggyAuth 新IP地址通知"
 email-login-from-new-ip: "您的账户已被登录在 {ip} (IP地址). 如果那不是您,请马上更换您的密码."
 
 #Pin
-your-pin: "&a您的 pin: {pin}"
+your-pin: "&a您的 pin: {pin}" #Need help to translate PIN into chinese
 
 #Key
 key-expired: "&c您的密钥已过期."
 
 #General
-dont-say-password: "&c请别分享您的密码." #need checking
-account-blocked: "&c此账户已受阻." #need checking
+dont-say-password: "&c请别分享您的密码."
+account-blocked: "&c此账户已受阻." #This seems like incorrect to me for the blocking part, i dont think raw translating will work
