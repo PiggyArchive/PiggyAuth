@@ -2,6 +2,7 @@
 
 #Join
 join-message: "&6Tento server vyžaduje přihlášení."
+new-player: "&eWelcome {player} to the server!" #Needs translation
 
 #Login
 login-message: "&6Prosím, přihlaš se zadáním příkazu /login <heslo>.\n&6Pokud jsi zapomněl heslo, zadej příkaz /forgotpassword <pin> <nové heslo>."

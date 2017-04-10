@@ -124,8 +124,6 @@ message:
   hold-join-message: true
   #If on, there will be a seperate join message for new players
   join-message-for-new-players: true
-  #Join message for new players
-  new-player: "&eWelcome {player} to the server!"
 progress-reports:
   #Send progress reports every certain number of players registered 
   enabled: true

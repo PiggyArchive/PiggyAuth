@@ -2,6 +2,7 @@
 
 #Join
 join-message: "&6This server requires authentication"
+new-player: "&eWelcome {player} to the server!"
 
 #Login
 login-message: "&6Please login by typing in /login <password>\n&6Forgot your password? Use /forgotpassword <pin> <newpassword>"
