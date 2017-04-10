@@ -5,7 +5,7 @@
 
 #Join
 join-message: "&6此服务器需要密码认真."
-new-player: "&e欢迎 {player} 来到吃此服务器"
+new-player: "&e欢迎 {player} 来到此服务器"
 
 #Login
 login-message: "&6请登入通过 /login <密码>\n&忘记您的密码? 用 /forgotpassword <pin> <新密码>"
