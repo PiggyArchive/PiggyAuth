@@ -11,6 +11,9 @@ new-player: "&e欢迎 {player} 来到此服务器"
 login-message: "&6请登入通过 /login <密码>\n&忘记您的密码? 用 /forgotpassword <pin> <新密码>"
 login-popup: "&6请登入."
 login-tip: "&6请登入."
+login-title: "&6请登入."
+login-subtitle: "&6请登入."
+login-actionbar: "&6请登入."
 login-boss-bar: "&6请登入."
 authentication-success: "&a登入成功."
 authentication-success-uuid: "&a自动登入(UUID)." #need help for better translation
@@ -27,6 +30,9 @@ too-many-on-ip: "&c太多用户有同样IP地址."
 register-message: "&6请注册通过 /register <密码> <确认密码> [电邮]"
 register-popup: "&6请注册."
 register-tip: "&6请注册."
+register-title: "&6请注册."
+register-subtitle: "&6请注册."
+register-actionbar: "&6请注册."
 register-boss-bar: "&6请注册."
 register-success: "&a成功注册. 您的 pin 是 {pin}."
 register-success-xbox: "&a您已成功登记使用 Xbox Live. 您的 pin 是 {pin}. 您的密码是 {password}. 更改与 /changepassword."
@@ -50,7 +56,7 @@ incorrect-password-other: "&c密码不对."
 
 #Forget password
 forgot-password-success: "&a您的密码已被更换. 您的 pin 是 {pin}."
-incorrect-pin: "&cpin 不对."
+incorrect-pin: "&cpin 不对, {tries} 尝试剩下."
 cant-use-pin: "Pin 已被禁用在此用户."
 
 #Reset password
