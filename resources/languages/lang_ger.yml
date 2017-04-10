@@ -2,7 +2,7 @@
 
 #Join
 join-message: "&6Dieser Server verlangt eine Authentifizierung"
-new-player: "&eWelcome {player} to the server!" #Needs translation
+new-player: "&eWillkommen auf dem Server {player}!"
 
 #Login
 login-message: "&6Bitte melde dich an mit /login <Kennwort>\n&6Du hast dein Kennwort vergessen? Dann gib ein /forgotpassword <PIN> <neues Kennwort>"
