@@ -97,7 +97,7 @@ file-not-db: "&cO ficheiro {file} não é do formato DB (base de dados)"
 invalid-file: "&cFicheiro inexistente!" 
 invalid-directory: "&cDiretório/pasta não existente!" 
 invalid-database: "&cBase de dados inválida.\nBases de dados suportadas: {db}" 
-invalid-auth: "&cO plugin de conversão não existe ou não é suportado pelo conversor.\nPlugins de autenticação suportados: {auth}" #Needs translation
+invalid-auth: "&cO plugin de conversão não existe ou não é suportado pelo conversor.\nPlugins de autenticação suportados: {auth}"
 
 #General
 dont-say-password: "&cNunca digas a tua palavra-passe a ninguém!"
