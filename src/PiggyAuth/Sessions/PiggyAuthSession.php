@@ -35,8 +35,6 @@ class PiggyAuthSession implements Session
     public function isRegistered()
     {
         return $this->registered;
-
-
     }
 
     public function setRegistered($args)
@@ -91,10 +89,15 @@ class PiggyAuthSession implements Session
 
     public function getLanguage()
     {
-        if($this->plugin->languagemanager->isLanguage($this->data["language"])){
+        if ($this->plugin->languagemanager->isLanguage($this->data["language"])) {
             return $this->data["language"];
         }
         return $this->plugin->languagemanager->getDefaultLanguage();
+    }
+
+    public function getOriginAuth()
+    {
+        return $this->data["auth"];
     }
 
     public function clearPassword($callback = null, $args = null)

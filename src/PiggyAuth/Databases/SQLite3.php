@@ -15,7 +15,7 @@ class SQLite3 implements Database
         $this->plugin = $plugin;
         if (!file_exists($this->plugin->getDataFolder() . "players.db")) {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
-            $this->db->exec("CREATE TABLE players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, ip VARCHAR(32), uuid VARCHAR(100), attempts INT, xbox BIT(1));");
+            $this->db->exec("CREATE TABLE players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(200), email VARCHAR(100), pin INT, ip VARCHAR(32), uuid VARCHAR(100), attempts INT, xbox BIT(1), language VARCHAR(3), auth VARCHAR(10));");
         } else {
             $this->db = new \SQLite3($this->plugin->getDataFolder() . "players.db", SQLITE3_OPEN_READWRITE);
             //Updater
@@ -37,6 +37,9 @@ class SQLite3 implements Database
                 }
                 if (!isset($data["language"])) {
                     $this->db->exec("ALTER TABLE players ADD COLUMN language VARCHAR(3)");
+                }
+                if (!isset($data["auth"])) {
+                    $this->db->exec("ALTER TABLE players ADD COLUMN auth VARCHAR(10)");
                 }
             }
         }
@@ -100,7 +103,7 @@ class SQLite3 implements Database
 
     public function insertData(Player $player, $password, $email, $pin, $xbox, $callback = null, $args = null)
     {
-        $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox, :language)");
+        $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language, auth) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox, :language, :auth)");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
         $statement->bindValue(":password", $password, SQLITE3_TEXT);
         $statement->bindValue(":email", $email, SQLITE3_TEXT);
@@ -109,15 +112,16 @@ class SQLite3 implements Database
         $statement->bindValue(":attempts", 0, SQLITE3_INTEGER);
         $statement->bindValue(":xbox", $xbox, SQLITE3_TEXT);
         $statement->bindValue(":language", $this->plugin->languagemanager->getDefaultLanguage(), SQLITE3_TEXT);
+        $statement->bindValue("::auth", "PiggyAuth", SQLITE3_TEXT);
         $result = $statement->execute();
         if ($callback !== null) {
             $callback($result, $args, $this->plugin);
         }
     }
 
-    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $callback = null, $args = null)
+    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $auth = "PiggyAuth", $callback = null, $args = null)
     {
-        $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox, :language)");
+        $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language, auth) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox, :language, :auth)");
         $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
         $statement->bindValue(":password", $password, SQLITE3_TEXT);
         $statement->bindValue(":email", $email, SQLITE3_TEXT);
@@ -125,6 +129,7 @@ class SQLite3 implements Database
         $statement->bindValue(":uuid", "uuid", SQLITE3_TEXT);
         $statement->bindValue(":attempts", 0, SQLITE3_INTEGER);
         $statement->bindValue(":xbox", false, SQLITE3_TEXT);
+        $statement->bindValue("::auth", $auth, SQLITE3_TEXT);
         $statement->bindValue(":language", $this->plugin->languagemanager->getDefaultLanguage(), SQLITE3_TEXT);
         $result = $statement->execute();
         if ($callback !== null) {

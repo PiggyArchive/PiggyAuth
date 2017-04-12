@@ -14,7 +14,7 @@ interface Database
 
     public function insertData(Player $player, $password, $email, $pin, $xbox, $callback = null, $args = null);
 
-    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $callback = null, $args = null);
+    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $auth = "PiggyAuth", $callback = null, $args = null);
 
     public function clearPassword($player, $callback = null, $args = null);
 
