@@ -75,7 +75,7 @@ email-subject-attemptedlogin: "Aviso de inicio de sessão PiggyAuth"
 email-attemptedlogin: "Alguém tentou entrar na tua conta. Se não foste tu, escreve o seguinte comando: /sendpin. Receberás então um código PIN de quatro dígitos para alterar a tua password."
 email-subject-changedpassword: "Aviso de password alterada PiggyAuth"
 email-changedpassword: "A tua palavra-passe foi alterada. Se não foste tu, dá o comando /sendpin. Receberás então um código PIN de quatro dígitos para a alterares."
-email-subject-passwordreset: "Aviso de paassword alterada - PiggyAuth"
+email-subject-passwordreset: "Aviso de password alterada - PiggyAuth"
 email-passwordreset: "A tua palavra-passe foi alterada/removida por um membro da equipa administrativa/de moderadores. Por favor entra no jogo e regista-te para reclamares a tua conta."
 email-subject-login-from-new-ip: "Aviso de novo IP PiggyAuth"
 email-login-from-new-ip: "Alguém acabou de iniciar sessão na tua conta a partir doutro IP ({ip}). Se não foste tu, por favor altera a tua palavra-passe imediatamente."
@@ -87,17 +87,17 @@ your-pin: "&aO teu PIN: {pin}"
 key-expired: "&cA tua chave passou do prazo de validade!"
 
 #Language
-invalid-language: "&cLanguage not available.\nAvailable languages: {languages}" #Needs translation
-language-changed: "&aLanguage has changed." #Needs translation
+invalid-language: "&cIdioma não dísponível.\nIdiomas dísponíveis: {languages}" 
+language-changed: "&aIdioma alterado." 
 
 #Converting
-player-account-already-exists: "&cAccount {player} already exists" #Needs translation
-file-not-yml: "&cFile {file} is not YML." #Needs translation
-file-not-db: "&cFile {file} is not DB" #Needs translation
-invalid-file: "&cFile does not exist" #Needs translation
-invalid-directory: "&cDirectory does not exist" #Needs translation
-invalid-database: "&cInvalid database.\nAvailable databases: {db}" #Needs translation
-invalid-auth: "&cThe auth plugin does not exist or is not supported by the converter.\nSupported auth plugins: {auth}" #Needs translation
+player-account-already-exists: "&cA conta de jogador '{player}' já existe." 
+file-not-yml: "&cO ficheiro {file} não é do formato YML." 
+file-not-db: "&cO ficheiro {file} não é do formato DB (base de dados)"
+invalid-file: "&cFicheiro inexistente!" 
+invalid-directory: "&cDiretório/pasta não existente!" 
+invalid-database: "&cBase de dados inválida.\nBases de dados suportadas: {db}" 
+invalid-auth: "&cO plugin de conversão não existe ou não é suportado pelo conversor.\nPlugins de autenticação suportados: {auth}" #Needs translation
 
 #General
 dont-say-password: "&cNunca digas a tua palavra-passe a ninguém!"
