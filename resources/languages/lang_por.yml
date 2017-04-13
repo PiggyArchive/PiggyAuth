@@ -98,12 +98,12 @@ invalid-file: "&cFicheiro inexistente!"
 invalid-directory: "&cDiretório/pasta não existente!" 
 invalid-database: "&cBase de dados inválida.\nBases de dados suportadas: {db}" 
 invalid-auth: "&cO plugin de conversão não existe ou não é suportado pelo conversor.\nPlugins de autenticação suportados: {auth}"
-invalid-hash-algorithm: "&c{algorithm} is not a valid hashing algorithm.\nAvailable algorithms are: {algorithms}." #Needs translation
+invalid-hash-algorithm: "&cO algoritmo de encriptação/criptografia {algorithm} não é válido. \nOs algoritmos disponiveis são: {algorithms}."
 
 #Updater
-plugin-outdated: "&cA new version of this plugin is out." #Need translation
-plugin-up-to-date: "&aThe plugin is up to date" #Need translation
-plugin-auto-updated: "&athe plugin has been updated to {version}" #Need translation
+plugin-outdated: "&cUma nova versão deste plugin já foi dísponibilizada."
+plugin-up-to-date: "&aO plugin está atualizado." 
+plugin-auto-updated: "&aO plugin acabou de ser atualizado para a versão {version}." 
 
 #General
 dont-say-password: "&cNunca digas a tua palavra-passe a ninguém!"
