@@ -12,12 +12,12 @@ class SimpleAuthConverter implements Converter
         $this->plugin = $plugin;
     }
 
-    public function convertFromSQLite3($file)
+    public function convertFromSQLite3($file, $table, $otherinfo = null)
     {
         if (file_exists($this->plugin->getDataFolder() . "convert/" . $file)) {
             if (strpos($file, ".db") !== false) {
                 $db = new \SQLite3($this->plugin->getDataFolder() . "convert/" . $file, SQLITE3_OPEN_READWRITE);
-                $result = $db->query("SELECT * from players");
+                $result = $db->query("SELECT * from " . $table);
                 while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                     if ($this->plugin->database->getOfflinePlayer($row["name"])) {
                         $this->plugin->getLogger()->info(str_replace("{player}", $row["name"], $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "player-account-already-exists")));
@@ -36,16 +36,16 @@ class SimpleAuthConverter implements Converter
         return true;
     }
 
-    public function convertFromMySQL($host, $user, $password, $name, $port)
+    public function convertFromMySQL($host, $user, $password, $name, $port, $table, $otherinfo = null)
     {
         $credentials = $this->plugin->getConfig()->get("mysql");
         $database = null;
         if ($credentials["host"] == $host && $credentials["user"] == $user && $credentials["password"] == $password && $credentials["name"] == $name && $credentials["port"] == $port) {
             $database = $this->plugin->database->db;
         } else {
-            $database = new \mysqli("sql3.freemysqlhosting.net", "sql3160794", "EA37ny32Gg", "sql3160794", 3606);
+            $database = new \mysqli($credentials["host"], $credentials["user"], $credentials["password"], $credentials["name"], $credentials["port"]);
         }
-        $result = $database->query("SELECT * FROM simpleauth_players");
+        $result = $database->query("SELECT * FROM " . $table);
         if ($result instanceof \mysqli_result) {
             while ($row = $result->fetch_assoc()) {
                 if ($this->plugin->database->getOfflinePlayer($row["name"])) {
@@ -59,7 +59,7 @@ class SimpleAuthConverter implements Converter
         }
     }
 
-    public function convertFromYML($directoryname)
+    public function convertFromYML($directoryname,  $otherinfo = null)
     {
         if (is_dir($this->plugin->getDataFolder() . "convert/" . $directoryname . "/")) {
             $directories = scandir($this->plugin->getDataFolder() . "convert/" . $directoryname . "/");

@@ -16,6 +16,7 @@ use PiggyAuth\Commands\ResetPasswordCommand;
 use PiggyAuth\Commands\SendPinCommand;
 use PiggyAuth\Commands\SetLanguageCommand;
 use PiggyAuth\Commands\UnregisterCommand;
+use PiggyAuth\Converter\ServerAuthConverter;
 use PiggyAuth\Converter\SimpleAuthConverter;
 use PiggyAuth\Emails\EmailManager;
 use PiggyAuth\Events\PlayerChangePasswordEvent;
@@ -103,6 +104,7 @@ class Main extends PluginBase
     public $keytime = 299; //300 = Reset
     public $languagemanager;
     public $messagetick;
+    public $serverauthconverter;
     public $sessionmanager;
     public $simpleauthconverter;
     public $timeouttick;
@@ -159,6 +161,7 @@ class Main extends PluginBase
         $this->languagemanager = new LanguageManager($this);
         $this->emailmanager = new EmailManager($this, $this->getConfig()->getNested("emails.mailgun.domain"), $this->getConfig()->getNested("emails.mailgun.api"), $this->getConfig()->getNested("emails.mailgun.public-api"), $this->getConfig()->getNested("emails.mailgun.from"));
         $this->simpleauthconverter = new SimpleAuthConverter($this);
+        $this->serverauthconverter = new ServerAuthConverter($this);
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         foreach ($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
             $this->startSession($player);
@@ -197,6 +200,16 @@ class Main extends PluginBase
 
     public function isCorrectPassword(Player $player, $password)
     {
+        if (strpos($this->sessionmanager->getSession($player)->getOriginAuth(), "ServerAuth") !== false) {
+            $auth = explode("_", $this->sessionmanager->getSession($player)->getOriginAuth());
+            if (isset($auth[0]) && isset($auth[1])) {
+                if (hash($auth[1], $password) == $this->sessionmanager->getSession($player)->getPassword()) {
+                    $this->sessionmanager->getSession($player)->updatePlayer("auth", "PiggyAuth");
+                    return true;
+                }
+                return false;
+            }
+        }
         switch ($this->sessionmanager->getSession($player)->getOriginAuth()) {
             case "SimpleAuth":
                 if (hash_equals($this->sessionmanager->getSession($player)->getPassword(), $this->hashSimpleAuth(strtolower($player->getName()), $password))) {

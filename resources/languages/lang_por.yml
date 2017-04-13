@@ -98,6 +98,7 @@ invalid-file: "&cFicheiro inexistente!"
 invalid-directory: "&cDiretório/pasta não existente!" 
 invalid-database: "&cBase de dados inválida.\nBases de dados suportadas: {db}" 
 invalid-auth: "&cO plugin de conversão não existe ou não é suportado pelo conversor.\nPlugins de autenticação suportados: {auth}"
+invalid-hash-algorithm: "&c{algorithm} is not a valid hashing algorithm.\nAvailable algorithms are: {algorithms}." #Needs translation
 
 #General
 dont-say-password: "&cNunca digas a tua palavra-passe a ninguém!"
