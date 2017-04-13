@@ -164,8 +164,6 @@ mysql:
   port: 3306
 hash:
   cost: 15
-config:
-# Version
-  version: v2.0.1
-  #Auto update config
-  config-update: true
+auto-updater:
+  enabled: true
+  auto-install: true

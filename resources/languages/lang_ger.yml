@@ -100,6 +100,11 @@ invalid-database: "&cInvalid database.\nAvailable databases: {db}" #Needs transl
 invalid-auth: "&cThe auth plugin does not exist or is not supported by the converter.\nSupported auth plugins: {auth}" #Needs translation
 invalid-hash-algorithm: "&c{algorithm} is not a valid hashing algorithm.\nAvailable algorithms are: {algorithms}." #Needs translation
 
+#Updater
+plugin-outdated: "&cA new version of this plugin is out." #Need translation
+plugin-up-to-date: "&aThe plugin is up to date" #Need translation
+plugin-auto-updated: "&athe plugin has been updated to {version}" #Need translation
+
 #General
 dont-say-password: "&cSchreib dein Kennwort nicht in den Chat!"
 account-blocked: "&cDie Kennung ist gesperrt."

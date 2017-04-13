@@ -36,6 +36,7 @@ use PiggyAuth\Language\LanguageManager;
 use PiggyAuth\Packet\BossEventPacket;
 use PiggyAuth\Sessions\SessionManager;
 use PiggyAuth\Tasks\AttributeTick;
+use PiggyAuth\Tasks\AutoUpdaterTask;
 use PiggyAuth\Tasks\DelayedPinTask;
 use PiggyAuth\Tasks\KeyTick;
 use PiggyAuth\Tasks\MessageTick;
@@ -131,6 +132,9 @@ class Main extends PluginBase
         $this->getServer()->getCommandMap()->register('unregister', new UnregisterCommand('unregister', $this));
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new AttributeTick($this), 20);
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new MessageTick($this), 20);
+        if($this->getConfig()->getNested("auto-updater.enabled")) {
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new AutoUpdaterTask($this->getConfig()->getNested("auto-updater.auto-install")));
+        }
         if ($this->getConfig()->getNested("key.enabled")) {
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new KeyTick($this), 20);
         }

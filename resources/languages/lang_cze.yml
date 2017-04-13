@@ -2,7 +2,7 @@
 
 #Join
 join-message: "&6Tento server vyžaduje přihlášení."
-new-player: "&eWelcome {player} to the server!" #Needs translation
+new-player: "&eVítej {player} na serveru!"
 
 #Login
 login-message: "&6Prosím, přihlaš se zadáním příkazu /login <heslo>.\n&6Pokud jsi zapomněl heslo, zadej příkaz /forgotpassword <pin> <nové heslo>."
@@ -91,14 +91,19 @@ invalid-language: "&cJazyk není dostupný.\nDostupné jazyky: {languages}"
 language-changed: "&aJazyk byl změněn."
 
 #Converting
-player-account-already-exists: "&cAccount {player} already exists" #Needs translation
-file-not-yml: "&cFile {file} is not YML." #Needs translation
-file-not-db: "&cFile {file} is not DB" #Needs translation
-invalid-file: "&cFile does not exist" #Needs translation
-invalid-directory: "&cDirectory does not exist" #Needs translation
-invalid-database: "&cInvalid database.\nAvailable databases: {db}" #Needs translation
-invalid-auth: "&cThe auth plugin does not exist or is not supported by the converter.\nSupported auth plugins: {auth}" #Needs translation
-invalid-hash-algorithm: "&c{algorithm} is not a valid hashing algorithm.\nAvailable algorithms are: {algorithms}." #Needs translation
+player-account-already-exists: "&cÚčet {player} již existuje"
+file-not-yml: "&cSoubor {file} není typu YML."
+file-not-db: "&cSoubor {file} není typu DB"
+invalid-file: "&cSoubor neexistuje"
+invalid-directory: "&cAdresář neexistuje"
+invalid-database: "&cNeplatná databáze.\nDostupné databáze: {db}"
+invalid-auth: "&cPřihlašovací plugin neexistuje nebo není podporován konvertorem.\nPodporované přihlašovací pluginy: {auth}"
+invalid-hash-algorithm: "&c{algorithm} není platný hashovací algoritmus.\nDostupné algoritmy jsou: {algorithms}."
+
+#Updater
+plugin-outdated: "&cA new version of this plugin is out." #Need translation
+plugin-up-to-date: "&aThe plugin is up to date" #Need translation
+plugin-auto-updated: "&athe plugin has been updated to {version}" #Need translation
 
 #General
 dont-say-password: "&cNesděluj své heslo!"
