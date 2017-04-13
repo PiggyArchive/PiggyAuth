@@ -89,6 +89,20 @@ your-pin: "&a您的 pin: {pin}" #Need help to translate PIN into chinese
 #Key
 key-expired: "&c您的密钥已过期."
 
+#Language
+invalid-language: "&cLanguage not available.\nAvailable languages: {languages}"
+language-changed: "&aLanguage has changed."
+
+#Converting
+player-account-already-exists: "&cAccount {player} already exists"
+file-not-yml: "&cFile {file} is not YML."
+file-not-db: "&cFile {file} is not DB"
+invalid-file: "&cFile does not exist"
+invalid-directory: "&cDirectory does not exist"
+invalid-database: "&cInvalid database.\nAvailable databases: {db}"
+invalid-auth: "&cThe auth plugin does not exist or is not supported by the converter.\nSupported auth plugins: {auth}"
+invalid-hash-algorithm: "&c{algorithm} is not a valid hashing algorithm.\nAvailable algorithms are: {algorithms}."
+
 #General
 dont-say-password: "&c请别分享您的密码."
 account-blocked: "&c此账户已受阻." #This seems like incorrect to me for the blocking part, i dont think raw translating will work
