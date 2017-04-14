@@ -91,20 +91,20 @@ invalid-language: "&cSprache nicht verfügbar.\nVerfügbare Sprachen: {languages
 language-changed: "&aSprache wurde geändert."
 
 #Converting
-player-account-already-exists: "&cAccount {player} already exists" #Needs translation
-file-not-yml: "&cFile {file} is not YML." #Needs translation
-file-not-db: "&cFile {file} is not DB" #Needs translation
-invalid-file: "&cFile does not exist" #Needs translation
-invalid-directory: "&cDirectory does not exist" #Needs translation
-invalid-database: "&cInvalid database.\nAvailable databases: {db}" #Needs translation
-invalid-auth: "&cThe auth plugin does not exist or is not supported by the converter.\nSupported auth plugins: {auth}" #Needs translation
-invalid-hash-algorithm: "&c{algorithm} is not a valid hashing algorithm.\nAvailable algorithms are: {algorithms}." #Needs translation
+player-account-already-exists: "&cDie Kennung {player} existiert bereits"
+file-not-yml: "&cDatei {file} ist keine YML."
+file-not-db: "&cDatei {file} ist keine DB"
+invalid-file: "&cDatei existiert nicht"
+invalid-directory: "&cVerzeichnis existiert nicht"
+invalid-database: "&cUngültige Datenbank.\nVerfügbare Datenbanken: {db}"
+invalid-auth: "&cDas Authentifizierungs-Plugin existiert nicht oder wird nicht vom Konverter unterstützt.\nUnterstützte Authentifizierungs-Plugins: {auth}"
+invalid-hash-algorithm: "&c{algorithm} ist kein gültiger Hash-Algorithmus.\nVerfügbare Hash-Algorithmen sind: {algorithms}."
 
 #Updater
-plugin-outdated: "&cA new version ({version}) of this plugin is out.\nNew features: {features}" #Needs translation
-plugin-up-to-date: "&aThe plugin is up to date." #Need translation
-plugin-auto-updated: "&aThe plugin has been updated to {version}.\nNew features: {features}" #Needs translation
-over-api-rate-limit: "&cYou have passed the api rate limit (60 requests an hour)." # Needs translation
+plugin-outdated: "&cEine neue Version ({version}) dieses Plugins ist draußen.\nNeue Features: {features}"
+plugin-up-to-date: "&aDas Plugin ist auf dem aktuellsten Stand."
+plugin-auto-updated: "&aDas Plugin wurde auf die Version {version} aktualisiert .\nNeue Features: {features}"
+over-api-rate-limit: "&cDu hast die API-Ratenbegrenzung überschritten (60 Anforderungen pro Stunde)."
 
 #General
 dont-say-password: "&cSchreib dein Kennwort nicht in den Chat!"
