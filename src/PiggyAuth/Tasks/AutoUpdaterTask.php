@@ -31,11 +31,11 @@ class AutoUpdaterTask extends AsyncTask
         $pluginversion = $plugin->getDescription()->getVersion();
         $pluginversionwithoutbuildnumber = explode(".", $pluginversion);
         unset($pluginversionwithoutbuildnumber[3]);
+        $pluginbuildnumber = explode(".", $pluginversion)[3];
         if (is_array(unserialize($this->result))) { //Over api rate-limit protection
             $release = str_replace("v", "", unserialize($this->result)[0]->tag_name);
             $releasewithoutbuildnumber = explode(".", $release);
             unset($releasewithoutbuildnumber[3]);
-            $pluginbuildnumber = explode(".", $pluginversion)[3];
             $releasebuildnumber = explode(".", $release)[3];
             $features = unserialize($this->result)[0]->body;
             if ($pluginversion < $release || ($pluginversionwithoutbuildnumber == $releasewithoutbuildnumber && ($pluginbuildnumber < $releasebuildnumber || $pluginbuildnumber !== "00" && $releasebuildnumber == "00"))) {
