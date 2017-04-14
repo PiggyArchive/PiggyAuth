@@ -132,9 +132,6 @@ class Main extends PluginBase
         $this->getServer()->getCommandMap()->register('unregister', new UnregisterCommand('unregister', $this));
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new AttributeTick($this), 20);
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new MessageTick($this), 20);
-        if($this->getConfig()->getNested("auto-updater.enabled")) {
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new AutoUpdaterTask($this->getConfig()->getNested("auto-updater.auto-install")));
-        }
         if ($this->getConfig()->getNested("key.enabled")) {
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new KeyTick($this), 20);
         }
@@ -166,6 +163,9 @@ class Main extends PluginBase
         $this->emailmanager = new EmailManager($this, $this->getConfig()->getNested("emails.mailgun.domain"), $this->getConfig()->getNested("emails.mailgun.api"), $this->getConfig()->getNested("emails.mailgun.public-api"), $this->getConfig()->getNested("emails.mailgun.from"));
         $this->simpleauthconverter = new SimpleAuthConverter($this);
         $this->serverauthconverter = new ServerAuthConverter($this);
+        if($this->getConfig()->getNested("auto-updater.enabled")) { //Should do after LanguageManager is initiated...
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new AutoUpdaterTask($this->getConfig()->getNested("auto-updater.auto-install")));
+        }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         foreach ($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
             $this->startSession($player);
