@@ -1,6 +1,6 @@
 name: PiggyAuth
 main: PiggyAuth\Main
-version: 3.0.0
+version: 3.0.0.04
 api: [2.0.0, 3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3, 3.0.0-ALPHA4, 3.0.0-APLHA5]
 load: POSTWORLD
 author: MCPEPIG
@@ -19,6 +19,9 @@ permissions:
         piggyauth.command.changepassword:
           default: true
           description: "Allow using /changepassword"
+        piggyauth.command.convert:
+          default: true
+          description: "Allow using /convert"
         piggyauth.command.forgotpassword:
           default: true
           description: "Allow using /forgotpassword"

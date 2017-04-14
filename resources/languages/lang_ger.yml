@@ -2,7 +2,7 @@
 
 #Join
 join-message: "&6Dieser Server verlangt eine Authentifizierung"
-new-player: "&eWelcome {player} to the server!" #Needs translation
+new-player: "&eWillkommen auf dem Server {player}!"
 
 #Login
 login-message: "&6Bitte melde dich an mit /login <Kennwort>\n&6Du hast dein Kennwort vergessen? Dann gib ein /forgotpassword <PIN> <neues Kennwort>"
@@ -89,6 +89,22 @@ key-expired: "&cDein Key ist abgelaufen."
 #Language
 invalid-language: "&cSprache nicht verfügbar.\nVerfügbare Sprachen: {languages}"
 language-changed: "&aSprache wurde geändert."
+
+#Converting
+player-account-already-exists: "&cAccount {player} already exists" #Needs translation
+file-not-yml: "&cFile {file} is not YML." #Needs translation
+file-not-db: "&cFile {file} is not DB" #Needs translation
+invalid-file: "&cFile does not exist" #Needs translation
+invalid-directory: "&cDirectory does not exist" #Needs translation
+invalid-database: "&cInvalid database.\nAvailable databases: {db}" #Needs translation
+invalid-auth: "&cThe auth plugin does not exist or is not supported by the converter.\nSupported auth plugins: {auth}" #Needs translation
+invalid-hash-algorithm: "&c{algorithm} is not a valid hashing algorithm.\nAvailable algorithms are: {algorithms}." #Needs translation
+
+#Updater
+plugin-outdated: "&cA new version ({version}) of this plugin is out.\nNew features: {features}" #Needs translation
+plugin-up-to-date: "&aThe plugin is up to date." #Need translation
+plugin-auto-updated: "&aThe plugin has been updated to {version}.\nNew features: {features}" #Needs translation
+over-api-rate-limit: "&cYou have passed the api rate limit (60 requests an hour)." # Needs translation
 
 #General
 dont-say-password: "&cSchreib dein Kennwort nicht in den Chat!"

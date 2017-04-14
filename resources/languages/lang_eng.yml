@@ -90,6 +90,22 @@ key-expired: "&cYour key is expired."
 invalid-language: "&cLanguage not available.\nAvailable languages: {languages}"
 language-changed: "&aLanguage has changed."
 
+#Converting
+player-account-already-exists: "&cAccount {player} already exists"
+file-not-yml: "&cFile {file} is not YML."
+file-not-db: "&cFile {file} is not DB"
+invalid-file: "&cFile does not exist"
+invalid-directory: "&cDirectory does not exist"
+invalid-database: "&cInvalid database.\nAvailable databases: {db}"
+invalid-auth: "&cThe auth plugin does not exist or is not supported by the converter.\nSupported auth plugins: {auth}"
+invalid-hash-algorithm: "&c{algorithm} is not a valid hashing algorithm.\nAvailable algorithms are: {algorithms}."
+
+#Updater
+plugin-outdated: "&cA new version ({version}) of this plugin is out.\nNew features: {features}"
+plugin-up-to-date: "&aThe plugin is up to date."
+plugin-auto-updated: "&aThe plugin has been updated to {version}.\nNew features: {features}"
+over-api-rate-limit: "&cYou have passed the api rate limit (60 requests an hour)."
+
 #General
 dont-say-password: "&cDo not say your password."
 account-blocked: "&cAccount is blocked."

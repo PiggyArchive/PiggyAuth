@@ -4,6 +4,7 @@ namespace PiggyAuth;
 
 use PiggyAuth\Commands\ChangePasswordCommand;
 use PiggyAuth\Commands\ChangeEmailCommand;
+use PiggyAuth\Commands\ConvertCommand;
 use PiggyAuth\Commands\ForgotPasswordCommand;
 use PiggyAuth\Commands\LoginCommand;
 use PiggyAuth\Commands\LogoutCommand;
@@ -15,6 +16,8 @@ use PiggyAuth\Commands\ResetPasswordCommand;
 use PiggyAuth\Commands\SendPinCommand;
 use PiggyAuth\Commands\SetLanguageCommand;
 use PiggyAuth\Commands\UnregisterCommand;
+use PiggyAuth\Converter\ServerAuthConverter;
+use PiggyAuth\Converter\SimpleAuthConverter;
 use PiggyAuth\Emails\EmailManager;
 use PiggyAuth\Events\PlayerChangePasswordEvent;
 use PiggyAuth\Events\PlayerFailEvent;
@@ -33,6 +36,7 @@ use PiggyAuth\Language\LanguageManager;
 use PiggyAuth\Packet\BossEventPacket;
 use PiggyAuth\Sessions\SessionManager;
 use PiggyAuth\Tasks\AttributeTick;
+use PiggyAuth\Tasks\AutoUpdaterTask;
 use PiggyAuth\Tasks\DelayedPinTask;
 use PiggyAuth\Tasks\KeyTick;
 use PiggyAuth\Tasks\MessageTick;
@@ -101,16 +105,20 @@ class Main extends PluginBase
     public $keytime = 299; //300 = Reset
     public $languagemanager;
     public $messagetick;
+    public $serverauthconverter;
     public $sessionmanager;
+    public $simpleauthconverter;
     public $timeouttick;
     public $tries;
     public $wither;
 
     public function onEnable()
     {
+        @mkdir($this->getDataFolder() . "convert");
         $this->saveDefaultConfig();
         $this->getServer()->getCommandMap()->register('changepassword', new ChangePasswordCommand('changepassword', $this));
         $this->getServer()->getCommandMap()->register('changeemail', new ChangeEmailCommand('changeemail', $this));
+        $this->getServer()->getCommandMap()->register("convert", new ConvertCommand("convert", $this));
         $this->getServer()->getCommandMap()->register('forgotpassword', new ForgotPasswordCommand('forgotpassword', $this));
         $this->getServer()->getCommandMap()->register('key', new KeyCommand('key', $this));
         $this->getServer()->getCommandMap()->register('login', new LoginCommand('login', $this));
@@ -124,6 +132,9 @@ class Main extends PluginBase
         $this->getServer()->getCommandMap()->register('unregister', new UnregisterCommand('unregister', $this));
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new AttributeTick($this), 20);
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new MessageTick($this), 20);
+        if($this->getConfig()->getNested("auto-updater.enabled")) {
+            $this->getServer()->getScheduler()->scheduleAsyncTask(new AutoUpdaterTask($this->getConfig()->getNested("auto-updater.auto-install")));
+        }
         if ($this->getConfig()->getNested("key.enabled")) {
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new KeyTick($this), 20);
         }
@@ -153,6 +164,8 @@ class Main extends PluginBase
         $this->sessionmanager = new SessionManager($this);
         $this->languagemanager = new LanguageManager($this);
         $this->emailmanager = new EmailManager($this, $this->getConfig()->getNested("emails.mailgun.domain"), $this->getConfig()->getNested("emails.mailgun.api"), $this->getConfig()->getNested("emails.mailgun.public-api"), $this->getConfig()->getNested("emails.mailgun.from"));
+        $this->simpleauthconverter = new SimpleAuthConverter($this);
+        $this->serverauthconverter = new ServerAuthConverter($this);
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         foreach ($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
             $this->startSession($player);
@@ -191,10 +204,30 @@ class Main extends PluginBase
 
     public function isCorrectPassword(Player $player, $password)
     {
-        if (password_verify($password, $this->sessionmanager->getSession($player)->getPassword())) {
-            return true;
+        if (strpos($this->sessionmanager->getSession($player)->getOriginAuth(), "ServerAuth") !== false) {
+            $auth = explode("_", $this->sessionmanager->getSession($player)->getOriginAuth());
+            if (isset($auth[0]) && isset($auth[1])) {
+                if (hash($auth[1], $password) == $this->sessionmanager->getSession($player)->getPassword()) {
+                    $this->sessionmanager->getSession($player)->updatePlayer("auth", "PiggyAuth");
+                    return true;
+                }
+                return false;
+            }
         }
-        return false;
+        switch ($this->sessionmanager->getSession($player)->getOriginAuth()) {
+            case "SimpleAuth":
+                if (hash_equals($this->sessionmanager->getSession($player)->getPassword(), $this->hashSimpleAuth(strtolower($player->getName()), $password))) {
+                    $this->sessionmanager->getSession($player)->updatePlayer("auth", "PiggyAuth");
+                    return true;
+                }
+                return false;
+            case "PiggyAuth":
+            default:
+                if (password_verify($password, $this->sessionmanager->getSession($player)->getPassword())) {
+                    return true;
+                }
+                return false;
+        }
     }
 
     public function isCorrectPin(Player $player, $pin)
@@ -503,7 +536,7 @@ class Main extends PluginBase
                 }
             };
             $args = array($player);
-            $this->database->insertDataWithoutPlayerObject($player, $password, $email, $pin, $callback, $args);
+            $this->database->insertDataWithoutPlayerObject($player, $password, $email, $pin, "PiggyAuth", $callback, $args);
             if ($this->getConfig()->getNested("progress-reports.enabled")) {
                 if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) {
                     $this->emailmanager->sendEmail($this->getConfig()->getNested("progress-reports.progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player, $this->languagemanager->getMessageFromLanguage($this->languagemanager->getDefaultLanguage(), "progress-reports.progress-report"))))));
@@ -883,4 +916,8 @@ class Main extends PluginBase
         return parent::getFile();
     }
 
+    public function hashSimpleAuth($salt, $password)
+    {
+        return bin2hex(hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true));
+    }
 }

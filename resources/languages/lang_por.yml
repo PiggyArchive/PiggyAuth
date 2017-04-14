@@ -2,7 +2,7 @@
 
 #Join
 join-message: "&6Este servidor requer autenticação!"
-new-player: "&eWelcome {player} to the server!" #Needs translation
+new-player: "&eBem-vindo {player} ao servidor!"
 
 #Login
 login-message: "&6Por favor inicia sessão escrevendo /login <password>\n&6Esqueceste-te da palavra-passe? Escreve /forgotpassword <pin> <nova palavra-passe>"
@@ -75,7 +75,7 @@ email-subject-attemptedlogin: "Aviso de inicio de sessão PiggyAuth"
 email-attemptedlogin: "Alguém tentou entrar na tua conta. Se não foste tu, escreve o seguinte comando: /sendpin. Receberás então um código PIN de quatro dígitos para alterar a tua password."
 email-subject-changedpassword: "Aviso de password alterada PiggyAuth"
 email-changedpassword: "A tua palavra-passe foi alterada. Se não foste tu, dá o comando /sendpin. Receberás então um código PIN de quatro dígitos para a alterares."
-email-subject-passwordreset: "Aviso de paassword alterada - PiggyAuth"
+email-subject-passwordreset: "Aviso de password alterada - PiggyAuth"
 email-passwordreset: "A tua palavra-passe foi alterada/removida por um membro da equipa administrativa/de moderadores. Por favor entra no jogo e regista-te para reclamares a tua conta."
 email-subject-login-from-new-ip: "Aviso de novo IP PiggyAuth"
 email-login-from-new-ip: "Alguém acabou de iniciar sessão na tua conta a partir doutro IP ({ip}). Se não foste tu, por favor altera a tua palavra-passe imediatamente."
@@ -87,8 +87,24 @@ your-pin: "&aO teu PIN: {pin}"
 key-expired: "&cA tua chave passou do prazo de validade!"
 
 #Language
-invalid-language: "&cLanguage not available.\nAvailable languages: {languages}" #Needs translation
-language-changed: "&aLanguage has changed." #Needs translation
+invalid-language: "&cIdioma não dísponível.\nIdiomas dísponíveis: {languages}" 
+language-changed: "&aIdioma alterado." 
+
+#Converting
+player-account-already-exists: "&cA conta de jogador '{player}' já existe." 
+file-not-yml: "&cO ficheiro {file} não é do formato YML." 
+file-not-db: "&cO ficheiro {file} não é do formato DB (base de dados)"
+invalid-file: "&cFicheiro inexistente!" 
+invalid-directory: "&cDiretório/pasta não existente!" 
+invalid-database: "&cBase de dados inválida.\nBases de dados suportadas: {db}" 
+invalid-auth: "&cO plugin de conversão não existe ou não é suportado pelo conversor.\nPlugins de autenticação suportados: {auth}"
+invalid-hash-algorithm: "&cO algoritmo de encriptação/criptografia {algorithm} não é válido. \nOs algoritmos disponiveis são: {algorithms}."
+
+#Updater
+plugin-outdated: "&cA new version ({version}) of this plugin is out.\nNew features: {features}" #Needs to be redone
+plugin-up-to-date: "&aO plugin está atualizado." 
+plugin-auto-updated: "&aThe plugin has been updated to {version}.\nNew features: {features}" #Needs to be redone
+over-api-rate-limit: "&cYou have passed the api rate limit (60 requests an hour)." # Needs translation
 
 #General
 dont-say-password: "&cNunca digas a tua palavra-passe a ninguém!"

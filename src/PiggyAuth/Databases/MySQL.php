@@ -17,7 +17,7 @@ class MySQL implements Database
         $this->plugin = $plugin;
         $credentials = $this->plugin->getConfig()->get("mysql");
         $this->db = new \mysqli($credentials["host"], $credentials["user"], $credentials["password"], $credentials["name"], $credentials["port"]);
-        $task = new MySQLTask($credentials, "CREATE TABLE IF NOT EXISTS players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(100), email VARCHAR(100), pin INT, ip VARCHAR(32), uuid VARCHAR(100), attempts INT, xbox BIT(1));");
+        $task = new MySQLTask($credentials, "CREATE TABLE IF NOT EXISTS players (name VARCHAR(100) PRIMARY KEY, password VARCHAR(200), email VARCHAR(100), pin INT, ip VARCHAR(32), uuid VARCHAR(100), attempts INT, xbox BIT(1), language VARCHAR(3), auth VARCHAR(100));");
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
         //Updater
         $result = $this->db->query("SELECT * FROM players");
@@ -27,6 +27,9 @@ class MySQL implements Database
         }
         if (!isset($data["language"])) {
             $this->db->query("ALTER TABLE players ADD language VARCHAR(3) NOT NULL");
+        }
+        if (!isset($data["auth"])) {
+            $this->db->query("ALTER TABLE players ADD auth VARCHAR(10) NOT NULL");
         }
     }
 
@@ -59,9 +62,9 @@ class MySQL implements Database
 
     public function updatePlayer($player, $column, $arg, $type = SQLITE3_TEXT, $callback = null, $args = null)
     {
-        if($type == 0){
+        if ($type == 0) {
             $arg = $this->db->escape_string($arg);
-        }else{
+        } else {
             $arg = intval($arg);
         }
         $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "UPDATE players SET " . $column . " = '" . $arg . "' WHERE name = '" . $this->db->escape_string(strtolower($player)) . "'", $callback, $args);
@@ -70,13 +73,13 @@ class MySQL implements Database
 
     public function insertData(Player $player, $password, $email, $pin, $xbox, $callback = null, $args = null)
     {
-        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', '" . $player->getUniqueId()->toString() . "', '0', '" . $xbox . "', '" . $this->db->escape_string($this->plugin->languagemanager->getDefaultLanguage())  . "')", $callback, $args);
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language, auth) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', '" . $player->getUniqueId()->toString() . "', '0', '" . $xbox . "', '" . $this->db->escape_string($this->plugin->languagemanager->getDefaultLanguage()) . "', 'PiggyAuth')", $callback, $args);
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
-    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $callback = null, $args = null)
+    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $auth = "PiggyAuth", $callback = null, $args = null)
     {
-        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language) VALUES ('" . $this->db->escape_string(strtolower($player)) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', 'uuid', '0', 'false', '" . $this->db->escape_string($this->plugin->languagemanager->getDefaultLanguage()) . "')");
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language, auth) VALUES ('" . $this->db->escape_string(strtolower($player)) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', 'uuid', '0', 'false', '" . $this->db->escape_string($this->plugin->languagemanager->getDefaultLanguage()) . "', '" . $this->db->escape_string($auth) . "')");
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
