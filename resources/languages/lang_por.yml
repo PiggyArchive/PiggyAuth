@@ -101,9 +101,9 @@ invalid-auth: "&cO plugin de conversão não existe ou não é suportado pelo co
 invalid-hash-algorithm: "&cO algoritmo de encriptação/criptografia {algorithm} não é válido. \nOs algoritmos disponiveis são: {algorithms}."
 
 #Updater
-plugin-outdated: "&cUma nova versão deste plugin já foi dísponibilizada."
+plugin-outdated: "&cA new version ({version}) of this plugin is out.\nNew features: {features}" #Needs to be redone
 plugin-up-to-date: "&aO plugin está atualizado." 
-plugin-auto-updated: "&aO plugin acabou de ser atualizado para a versão {version}." 
+plugin-auto-updated: "&aThe plugin has been updated to {version}.\nNew features: {features}" #Needs to be redone
 
 #General
 dont-say-password: "&cNunca digas a tua palavra-passe a ninguém!"

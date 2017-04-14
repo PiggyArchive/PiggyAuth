@@ -101,9 +101,9 @@ invalid-auth: "&cThe auth plugin does not exist or is not supported by the conve
 invalid-hash-algorithm: "&c{algorithm} is not a valid hashing algorithm.\nAvailable algorithms are: {algorithms}."
 
 #Updater
-plugin-outdated: "&cA new version of this plugin is out."
-plugin-up-to-date: "&aThe plugin is up to date"
-plugin-auto-updated: "&athe plugin has been updated to {version}"
+plugin-outdated: "&cA new version ({version}) of this plugin is out.\nNew features: {features}"
+plugin-up-to-date: "&aThe plugin is up to date."
+plugin-auto-updated: "&aThe plugin has been updated to {version}.\nNew features: {features}"
 
 #General
 dont-say-password: "&cDo not say your password."
