@@ -101,10 +101,10 @@ invalid-auth: "&cO plugin de conversão não existe ou não é suportado pelo co
 invalid-hash-algorithm: "&cO algoritmo de encriptação/criptografia {algorithm} não é válido. \nOs algoritmos disponiveis são: {algorithms}."
 
 #Updater
-plugin-outdated: "&cA new version ({version}) of this plugin is out.\nNew features: {features}" #Needs to be redone
+plugin-outdated: "&cUma nova versão ({version}) deste plugin saíu.\nNovas funcionalidades: {features}"
 plugin-up-to-date: "&aO plugin está atualizado." 
-plugin-auto-updated: "&aThe plugin has been updated to {version}.\nNew features: {features}" #Needs to be redone
-over-api-rate-limit: "&cYou have passed the api rate limit (60 requests an hour)." # Needs translation
+plugin-auto-updated: "&aO plugin foi atualizado para a nova versão {version}.\nNovas funcionalidades: {features}" 
+over-api-rate-limit: "&cAntingiste o limite de pedidos da API (60 pedidos/hora)." 
 
 #General
 dont-say-password: "&cNunca digas a tua palavra-passe a ninguém!"
