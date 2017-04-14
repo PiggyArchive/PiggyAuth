@@ -1,7 +1,7 @@
 #PiggyAuth
 
-#Contribution Guidelines
-###Issues
+## Contribution Guidelines
+### Issues
 If you are reporting issues, you must:
 * Be using PMMP
 * Make sure the issue hasn't already been reported
@@ -9,14 +9,14 @@ If you are reporting issues, you must:
 * Have a detailed title like "Players are being kicked randomly"
 * Provide any crash dumps or errors
 
-###Pull Requests
+### Pull Requests
 If you are making a pull request, you must:
 * Use same formatting
 * Must test on PMMP
 * ***PLEASE*** don't use the GitHub Web Editor
 * Have a detailed title like "Fix players are being kicked randomly"
 
-###Translation
+### Translation
 If you are translating, you must:
 * File must be named lang_iso. ISO Codes for languages can be found [here.](https://www.loc.gov/standards/iso639-2/php/code_list.php)
 * ***PLEASE*** don't use Google Translate (or any other translators...)
