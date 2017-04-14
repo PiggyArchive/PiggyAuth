@@ -43,6 +43,8 @@ class AutoUpdaterTask extends AsyncTask
                 file_put_contents("plugins/PiggyAuth.phar", $file);
                 fclose($file);
                 $plugin->getLogger()->info(str_replace("{features}", $features, str_replace("{version}", $release, $plugin->languagemanager->getMessageFromLanguage($plugin->languagemanager->getDefaultLanguage(), "plugin-auto-updated"))));
+                $server->getPluginManager()->disablePlugin($plugin);
+                $server->getPluginManager()->enablePlugin($server->getPluginManager()->loadPlugin($server->getDataPath() . "/plugins/PiggyAuth.phar"));
                 return true;
             }
             $plugin->getLogger()->info(str_replace("{features}", $features, str_replace("{version}", $release, $plugin->languagemanager->getMessageFromLanguage($plugin->languagemanager->getDefaultLanguage(), "plugin-outdated"))));
