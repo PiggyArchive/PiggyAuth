@@ -31,26 +31,30 @@ class AutoUpdaterTask extends AsyncTask
         $pluginversion = $plugin->getDescription()->getVersion();
         $pluginversionwithoutbuildnumber = explode(".", $pluginversion);
         unset($pluginversionwithoutbuildnumber[3]);
-        $release = str_replace("v", "", unserialize($this->result)[0]->tag_name);
-        $releasewithoutbuildnumber = explode(".", $release);
-        unset($releasewithoutbuildnumber[3]);
-        $pluginbuildnumber = explode(".", $pluginversion)[3];
-        $releasebuildnumber = explode(".", $release)[3];
-        $features = unserialize($this->result)[0]->body;
-        if ($pluginversion < $release || ($pluginversionwithoutbuildnumber == $releasewithoutbuildnumber && ($pluginbuildnumber < $releasebuildnumber || $pluginbuildnumber !== "00" && $releasebuildnumber == "00"))) {
-            if ($this->autoinstall) {
-                $file = fopen("https://github.com/MCPEPIG/PiggyAuth/releases/download/v" . $release . "/PiggyAuth.phar", "r");
-                file_put_contents("plugins/PiggyAuth.phar", $file);
-                fclose($file);
-                $plugin->getLogger()->info(str_replace("{features}", $features, str_replace("{version}", $release, $plugin->languagemanager->getMessageFromLanguage($plugin->languagemanager->getDefaultLanguage(), "plugin-auto-updated"))));
-                $server->getPluginManager()->disablePlugin($plugin);
-                $server->getPluginManager()->enablePlugin($server->getPluginManager()->loadPlugin($server->getDataPath() . "/plugins/PiggyAuth.phar"));
+        if (is_array(unserialize($this->result))) { //Over api rate-limit protection
+            $release = str_replace("v", "", unserialize($this->result)[0]->tag_name);
+            $releasewithoutbuildnumber = explode(".", $release);
+            unset($releasewithoutbuildnumber[3]);
+            $pluginbuildnumber = explode(".", $pluginversion)[3];
+            $releasebuildnumber = explode(".", $release)[3];
+            $features = unserialize($this->result)[0]->body;
+            if ($pluginversion < $release || ($pluginversionwithoutbuildnumber == $releasewithoutbuildnumber && ($pluginbuildnumber < $releasebuildnumber || $pluginbuildnumber !== "00" && $releasebuildnumber == "00"))) {
+                if ($this->autoinstall) {
+                    $file = fopen("https://github.com/MCPEPIG/PiggyAuth/releases/download/v" . $release . "/PiggyAuth.phar", "r");
+                    file_put_contents("plugins/PiggyAuth.phar", $file);
+                    fclose($file);
+                    $plugin->getLogger()->info(str_replace("{features}", $features, str_replace("{version}", $release, $plugin->languagemanager->getMessageFromLanguage($plugin->languagemanager->getDefaultLanguage(), "plugin-auto-updated"))));
+                    $server->getPluginManager()->disablePlugin($plugin);
+                    $server->getPluginManager()->enablePlugin($server->getPluginManager()->loadPlugin($server->getDataPath() . "/plugins/PiggyAuth.phar"));
+                    return true;
+                }
+                $plugin->getLogger()->info(str_replace("{features}", $features, str_replace("{version}", $release, $plugin->languagemanager->getMessageFromLanguage($plugin->languagemanager->getDefaultLanguage(), "plugin-outdated"))));
                 return true;
             }
-            $plugin->getLogger()->info(str_replace("{features}", $features, str_replace("{version}", $release, $plugin->languagemanager->getMessageFromLanguage($plugin->languagemanager->getDefaultLanguage(), "plugin-outdated"))));
+            $plugin->getLogger()->info($plugin->languagemanager->getMessageFromLanguage($plugin->languagemanager->getDefaultLanguage(), "plugin-up-to-date"));
             return true;
         }
-        $plugin->getLogger()->info($plugin->languagemanager->getMessageFromLanguage($plugin->languagemanager->getDefaultLanguage(), "plugin-up-to-date"));
-        return true;
+        $plugin->getLogger()->info($plugin->languagemanager->getMessageFromLanguage($plugin->languagemanager->getDefaultLanguage(), "over-api-rate-limit"));
+        return false;
     }
 }

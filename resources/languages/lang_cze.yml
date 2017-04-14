@@ -104,6 +104,7 @@ invalid-hash-algorithm: "&c{algorithm} není platný hashovací algoritmus.\nDos
 plugin-outdated: "&cA new version ({version}) of this plugin is out.\nNew features: {features}" #Needs to be redone
 plugin-up-to-date: "&aPlugin je aktuální."
 plugin-auto-updated: "&aThe plugin has been updated to {version}.\nNew features: {features}" #Needs to be redone
+over-api-rate-limit: "&cYou have passed the api rate limit (60 requests an hour)." # Needs translation
 
 #General
 dont-say-password: "&cNesděluj své heslo!"

@@ -104,6 +104,7 @@ invalid-hash-algorithm: "&c{algorithm} is not a valid hashing algorithm.\nAvaila
 plugin-outdated: "&cA new version ({version}) of this plugin is out.\nNew features: {features}" #Needs translation
 plugin-up-to-date: "&aThe plugin is up to date." #Need translation
 plugin-auto-updated: "&aThe plugin has been updated to {version}.\nNew features: {features}" #Needs translation
+over-api-rate-limit: "&cYou have passed the api rate limit (60 requests an hour)." # Needs translation
 
 #General
 dont-say-password: "&cSchreib dein Kennwort nicht in den Chat!"
