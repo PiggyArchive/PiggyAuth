@@ -21,15 +21,17 @@ class MySQL implements Database
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
         //Updater
         $result = $this->db->query("SELECT * FROM players");
-        $data = $result->fetch_assoc();
-        if (!isset($data["ip"])) {
-            $this->db->query("ALTER TABLE players ADD ip VARCHAR(32) NOT NULL");
-        }
-        if (!isset($data["language"])) {
-            $this->db->query("ALTER TABLE players ADD language VARCHAR(3) NOT NULL");
-        }
-        if (!isset($data["auth"])) {
-            $this->db->query("ALTER TABLE players ADD auth VARCHAR(10) NOT NULL");
+        if($result instanceof \mysqli_result) {
+            $data = $result->fetch_assoc();
+            if (!isset($data["ip"])) {
+                $this->db->query("ALTER TABLE players ADD ip VARCHAR(32) NOT NULL");
+            }
+            if (!isset($data["language"])) {
+                $this->db->query("ALTER TABLE players ADD language VARCHAR(3) NOT NULL");
+            }
+            if (!isset($data["auth"])) {
+                $this->db->query("ALTER TABLE players ADD auth VARCHAR(10) NOT NULL");
+            }
         }
     }
 
