@@ -330,7 +330,7 @@ class EventListener implements Listener
     public function onQuit(PlayerQuitEvent $event)
     {
         $player = $event->getPlayer();
-        if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated() && $this->plugin->getConfig()->getNested("message.hold-join-message")) {
+        if (($this->plugin->sessionmanager->getSession($player) == null || !$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) && $this->plugin->getConfig()->getNested("message.hold-join-message")) {
             $event->setQuitMessage(null);
         }
         $this->plugin->logout($player);
