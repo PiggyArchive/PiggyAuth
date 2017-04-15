@@ -1,0 +1,108 @@
+# Chinese Simplifyed Translation
+# Not Fully Checked
+# Authors:
+# Thunder33345
+
+#Join
+join-message: "&6此服务器需要密码认真."
+new-player: "&e欢迎 {player} 来到此服务器"
+
+#Login
+login-message: "&6请登入通过 /login <密码>\n&忘记您的密码? 用 /forgotpassword <pin> <新密码>"
+login-popup: "&6请登入."
+login-tip: "&6请登入."
+login-title: "&6请登入."
+login-subtitle: "&6请登入."
+login-actionbar: "&6请登入."
+login-boss-bar: "&6请登入."
+authentication-success: "&a登入成功."
+authentication-success-uuid: "&a自动登入(UUID)." #need help for better translation
+authentication-success-xbox: "&a自动登入(Xbox Live)." #need help for better translation
+attempted-logins: "&6您账户已有 {attempts} 登入尝试." #need help for better translation
+already-authenticated: "&c您已经登入."
+incorrect-password: "&c密码不对. 剩下 {tries} 尝试."
+not-registered: "&c您还没注册."
+too-many-tries: "&c太多登入尝试"
+timeout-message: "&c登入超时"
+too-many-on-ip: "&c太多用户有同样IP地址."
+
+#Register
+register-message: "&6请注册通过 /register <密码> <确认密码> [电邮]"
+register-popup: "&6请注册."
+register-tip: "&6请注册."
+register-title: "&6请注册."
+register-subtitle: "&6请注册."
+register-actionbar: "&6请注册."
+register-boss-bar: "&6请注册."
+register-success: "&a成功注册. 您的 pin 是 {pin}."
+register-success-xbox: "&a您已成功登记使用 Xbox Live. 您的 pin 是 {pin}. 您的密码是 {password}. 更改与 /changepassword."
+already-registered: "&c您已经注册."
+password-too-short: "&c您密码太短."
+password-blocked: "&c密码已被阻止." #This seems like incorrect to me for the blocking part, i dont think raw translating will work
+password-username: "&c您用户名不能当密码."
+password-not-match: "&c您密码不对."
+confirm-password: "&a请确认您的密码."
+
+#Unregister
+unregister-success: "&a您成功注销."
+
+#Preregister
+preregister-success: "&a账户成功注册."
+already-registered-two: "&c账号已被注册."
+
+#Change password
+change-password-success: "&a您密码宜被更换. 您的新 pin 是 {pin}."
+incorrect-password-other: "&c密码不对."
+
+#Forget password
+forgot-password-success: "&a您的密码已被更换. 您的 pin 是 {pin}."
+incorrect-pin: "&cpin 不对, {tries} 尝试剩下."
+cant-use-pin: "Pin 已被禁用在此用户."
+
+#Reset password
+password-reset-success: "&a此用户密码已被重设."
+not-registered-two: "&c此用户没被登记."
+
+#Email
+email: "&6现在输入您的电邮, 输入'none' 与跳过."
+email-set: "&a电邮成功输入."
+email-change-success:  "&a电邮成功更换."
+email-success: "&a邮件已发送."
+email-fail: "&c邮件不能发送."
+invalid-email: "&c不合规电邮."
+no-email: "&c没有电邮链接到此账户."
+
+email-subject-sendpin: "PiggyAuth Pin 要求"
+email-sendpin: "您的 pin 是 {pin}. 如果您没有要求 pin, 请忽略此电邮."
+email-subject-attemptedlogin: "PiggyAuth 尝试登入通知"
+email-attemptedlogin: "有人已经尝试登入您的账号. 如果那不是您, 请用 /sendpin. 您将受到一个四数字 pin 用来重设您的密码."
+email-subject-changedpassword: "PiggyAuth 密码更改通知"
+email-changedpassword: "您的密码已被更改. 如果那不是您, 请用 /sendpin. 您将受到一个四数字 pin 用来重设您的密码."
+email-subject-passwordreset: "PiggyAuth 密码重设通知"
+email-passwordreset: "您的密码已被重设由工作人员. 请登入和注册之至收回您的账号."
+email-subject-login-from-new-ip: "PiggyAuth 新IP地址通知"
+email-login-from-new-ip: "您的账户已被登录在 {ip} (IP地址). 如果那不是您,请马上更换您的密码."
+
+#Pin
+your-pin: "&a您的 pin: {pin}" #Need help to translate PIN into chinese
+
+#Key
+key-expired: "&c您的密钥已过期."
+
+#Language
+invalid-language: "&cLanguage not available.\nAvailable languages: {languages}"
+language-changed: "&aLanguage has changed."
+
+#Converting
+player-account-already-exists: "&cAccount {player} already exists"
+file-not-yml: "&cFile {file} is not YML."
+file-not-db: "&cFile {file} is not DB"
+invalid-file: "&cFile does not exist"
+invalid-directory: "&cDirectory does not exist"
+invalid-database: "&cInvalid database.\nAvailable databases: {db}"
+invalid-auth: "&cThe auth plugin does not exist or is not supported by the converter.\nSupported auth plugins: {auth}"
+invalid-hash-algorithm: "&c{algorithm} is not a valid hashing algorithm.\nAvailable algorithms are: {algorithms}."
+
+#General
+dont-say-password: "&c请别分享您的密码."
+account-blocked: "&c此账户已受阻." #This seems like incorrect to me for the blocking part, i dont think raw translating will work
