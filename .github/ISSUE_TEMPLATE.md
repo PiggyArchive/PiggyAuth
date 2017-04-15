@@ -1,12 +1,10 @@
-<!--
-DO NOT REMOVE THIS AND PLEASE TICK THEM OFF.
+# DO NOT REMOVE THIS
 Please make sure your issue complies with these guidelines:
 - * [ ] Be using PMMP
 - * [ ] Make sure the issue hasn't already been reported
 - * [ ] Make sure you are on the latest version of PMMP & PiggyAuth
 - * [ ] Have a detailed title like "Players are being kicked randomly"
 - * [ ] Provide any crash dumps or errors
--->
 
 #### **General**
 <!-- Briefly describe what is wrong. -->
@@ -21,7 +19,6 @@ Please make sure your issue complies with these guidelines:
 <!-- What are you currently using to save data? -->
 - [ ] MySQL
 - [ ] SQLite
-- [ ] JSON
 
 #### **Steps to Reproduce the Issue**
 <!-- How do you reproduce the issue? -->
