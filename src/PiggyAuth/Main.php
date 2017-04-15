@@ -710,7 +710,7 @@ class Main extends PluginBase
     {
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerLogoutEvent($this, $player));
         if (!$event->isCancelled()) {
-            if ($this->sessionmanager->getSession($player)->isAuthenticated()) {
+            if ($this->sessionmanager->getSession($player) !== null && $this->sessionmanager->getSession($player)->isAuthenticated()) {
                 $this->sessionmanager->getSession($player)->setAuthenticated(false);
             } else {
                 if ($this->getConfig()->getNested("login.adventure-mode")) {
