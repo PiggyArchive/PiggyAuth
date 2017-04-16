@@ -8,14 +8,25 @@ use pocketmine\scheduler\PluginTask;
 
 use PiggyAuth\FakeAttribute;
 
+/**
+ * Class OtherMessageTypeTick
+ * @package PiggyAuth\Tasks
+ */
 class OtherMessageTypeTick extends PluginTask
 {
+    /**
+     * OtherMessageTypeTick constructor.
+     * @param \pocketmine\plugin\Plugin $plugin
+     */
     public function __construct($plugin)
     {
         parent::__construct($plugin);
         $this->plugin = $plugin;
     }
 
+    /**
+     * @param $currentTick
+     */
     public function onRun($currentTick)
     {
         foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {

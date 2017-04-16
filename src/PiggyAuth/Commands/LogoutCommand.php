@@ -2,12 +2,22 @@
 
 namespace PiggyAuth\Commands;
 
+use PiggyAuth\Main;
 use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
+/**
+ * Class LogoutCommand
+ * @package PiggyAuth\Commands
+ */
 class LogoutCommand extends VanillaCommand
 {
+    /**
+     * LogoutCommand constructor.
+     * @param string $name
+     * @param Main $plugin
+     */
     public function __construct($name, $plugin)
     {
         parent::__construct($name, "Logout your account", "/logout");
@@ -15,6 +25,12 @@ class LogoutCommand extends VanillaCommand
         $this->plugin = $plugin;
     }
 
+    /**
+     * @param CommandSender $sender
+     * @param string $currentAlias
+     * @param array $args
+     * @return bool
+     */
     public function execute(CommandSender $sender, $currentAlias, array $args)
     {
         if (!$this->testPermission($sender)) {

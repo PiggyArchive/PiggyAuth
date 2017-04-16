@@ -4,16 +4,28 @@ namespace PiggyAuth\Sessions;
 
 use pocketmine\Player;
 
+/**
+ * Class SessionManager
+ * @package PiggyAuth\Sessions
+ */
 class SessionManager
 {
     private $plugin;
     private $sessions;
 
+    /**
+     * SessionManager constructor.
+     * @param $plugin
+     */
     public function __construct($plugin)
     {
         $this->plugin = $plugin;
     }
 
+    /**
+     * @param Player $player
+     * @return null
+     */
     public function getSession(Player $player)
     {
         if (isset($this->sessions[strtolower($player->getName())])) {
@@ -22,6 +34,10 @@ class SessionManager
         return null;
     }
 
+    /**
+     * @param Player $player
+     * @param bool $authenticated
+     */
     public function loadSession(Player $player, $authenticated = false)
     {
         $callback = function ($result, $args, $plugin) {
@@ -35,11 +51,18 @@ class SessionManager
         $this->plugin->database->getPlayer($player->getName(), $callback, $args);
     }
 
+    /**
+     * @param Player $player
+     * @param $data
+     */
     public function createSession(Player $player, $data)
     {
         $this->sessions[strtolower($player->getName())] = new PiggyAuthSession($player, $this->plugin, $data);
     }
 
+    /**
+     * @param Player $player
+     */
     public function unloadSession(Player $player)
     {
         if ($this->getSession($player) !== null) {

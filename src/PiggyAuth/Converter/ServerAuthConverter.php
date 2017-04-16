@@ -4,19 +4,43 @@ namespace PiggyAuth\Converter;
 
 use pocketmine\utils\Config;
 
+/**
+ * Class ServerAuthConverter
+ * @package PiggyAuth\Converter
+ */
 class ServerAuthConverter implements Converter
 {
 
+    /**
+     * ServerAuthConverter constructor.
+     * @param $plugin
+     */
     public function __construct($plugin)
     {
         $this->plugin = $plugin;
     }
 
+    /**
+     * @param $file
+     * @param $algorithm
+     * @param $table
+     * @return bool
+     */
     public function convertFromSQLite3($file, $algorithm, $table)
     {
         return false;
     }
 
+    /**
+     * @param $host
+     * @param $user
+     * @param $password
+     * @param $name
+     * @param $port
+     * @param $table
+     * @param $algorithm
+     * @return bool
+     */
     public function convertFromMySQL($host, $user, $password, $name, $port, $table, $algorithm)
     {
         $credentials = $this->plugin->getConfig()->get("mysql");
@@ -46,6 +70,11 @@ class ServerAuthConverter implements Converter
         }
     }
 
+    /**
+     * @param $directoryname
+     * @param $algorithm
+     * @return bool
+     */
     public function convertFromYML($directoryname, $algorithm)
     {
         $algorithms = hash_algos();

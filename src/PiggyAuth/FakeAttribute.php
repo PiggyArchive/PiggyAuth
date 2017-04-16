@@ -2,10 +2,21 @@
 
 //Credits to @thebigsmileXD
 namespace PiggyAuth;
+/**
+ * Class FakeAttribute
+ * @package PiggyAuth
+ */
 class FakeAttribute
 {
     public $min, $max, $value, $name;
 
+    /**
+     * FakeAttribute constructor.
+     * @param $min
+     * @param $max
+     * @param $value
+     * @param $name
+     */
     public function __construct($min, $max, $value, $name)
     {
         $this->min = $min;

@@ -4,6 +4,10 @@ namespace PiggyAuth\Packet;
 
 use pocketmine\network\protocol\DataPacket;
 
+/**
+ * Class BossEventPacket
+ * @package PiggyAuth\Packet
+ */
 class BossEventPacket extends DataPacket
 {
     const NETWORK_ID = 0x4c;

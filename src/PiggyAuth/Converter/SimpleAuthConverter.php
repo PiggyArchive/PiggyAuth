@@ -4,14 +4,28 @@ namespace PiggyAuth\Converter;
 
 use pocketmine\utils\Config;
 
+/**
+ * Class SimpleAuthConverter
+ * @package PiggyAuth\Converter
+ */
 class SimpleAuthConverter implements Converter
 {
 
+    /**
+     * SimpleAuthConverter constructor.
+     * @param $plugin
+     */
     public function __construct($plugin)
     {
         $this->plugin = $plugin;
     }
 
+    /**
+     * @param $file
+     * @param $table
+     * @param null $otherinfo
+     * @return bool
+     */
     public function convertFromSQLite3($file, $table, $otherinfo = null)
     {
         if (file_exists($this->plugin->getDataFolder() . "convert/" . $file)) {
@@ -36,6 +50,16 @@ class SimpleAuthConverter implements Converter
         return true;
     }
 
+    /**
+     * @param $host
+     * @param $user
+     * @param $password
+     * @param $name
+     * @param $port
+     * @param $table
+     * @param null $otherinfo
+     * @return bool
+     */
     public function convertFromMySQL($host, $user, $password, $name, $port, $table, $otherinfo = null)
     {
         $credentials = $this->plugin->getConfig()->get("mysql");
@@ -59,7 +83,12 @@ class SimpleAuthConverter implements Converter
         }
     }
 
-    public function convertFromYML($directoryname,  $otherinfo = null)
+    /**
+     * @param $directoryname
+     * @param null $otherinfo
+     * @return bool
+     */
+    public function convertFromYML($directoryname, $otherinfo = null)
     {
         if (is_dir($this->plugin->getDataFolder() . "convert/" . $directoryname . "/")) {
             $directories = scandir($this->plugin->getDataFolder() . "convert/" . $directoryname . "/");

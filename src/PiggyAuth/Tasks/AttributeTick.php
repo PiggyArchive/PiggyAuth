@@ -7,14 +7,25 @@ use pocketmine\scheduler\PluginTask;
 
 use PiggyAuth\FakeAttribute;
 
+/**
+ * Class AttributeTick
+ * @package PiggyAuth\Tasks
+ */
 class AttributeTick extends PluginTask
 {
+    /**
+     * AttributeTick constructor.
+     * @param \pocketmine\plugin\Plugin $plugin
+     */
     public function __construct($plugin)
     {
         parent::__construct($plugin);
         $this->plugin = $plugin;
     }
 
+    /**
+     * @param $currentTick
+     */
     public function onRun($currentTick)
     {
         foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {

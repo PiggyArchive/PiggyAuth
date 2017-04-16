@@ -2,6 +2,10 @@
 
 namespace PiggyAuth\Sessions;
 
+/**
+ * Interface Session
+ * @package PiggyAuth\Sessions
+ */
 interface Session
 {
     public function getPlayer();
@@ -22,8 +26,24 @@ interface Session
 
     public function clearPassword();
 
+    /**
+     * @param $column
+     * @param $arg
+     * @param $callback
+     * @param $args
+     * @return mixed
+     */
     public function updatePlayer($column, $arg, $callback, $args);
 
+    /**
+     * @param $password
+     * @param $email
+     * @param $pin
+     * @param $xbox
+     * @param null $callback
+     * @param null $args
+     * @return mixed
+     */
     public function insertData($password, $email, $pin, $xbox, $callback = null, $args = null);
 
 }

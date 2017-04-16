@@ -5,6 +5,10 @@ namespace PiggyAuth\Tasks;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 
+/**
+ * Class MySQLTask
+ * @package PiggyAuth\Tasks
+ */
 class MySQLTask extends AsyncTask
 {
     private $credentials;
@@ -13,6 +17,13 @@ class MySQLTask extends AsyncTask
     private $args;
     public $result;
 
+    /**
+     * MySQLTask constructor.
+     * @param mixed|null $credentials
+     * @param $query
+     * @param null $callback
+     * @param null $args
+     */
     public function __construct($credentials, $query, $callback = null, $args = null)
     {
         $this->credentials = serialize($credentials);
@@ -38,6 +49,9 @@ class MySQLTask extends AsyncTask
         $this->result = serialize($data);
     }
 
+    /**
+     * @param Server $server
+     */
     public function onCompletion(Server $server)
     {
         $plugin = $server->getPluginManager()->getPlugin("PiggyAuth");

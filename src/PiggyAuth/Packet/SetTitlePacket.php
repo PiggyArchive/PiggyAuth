@@ -4,6 +4,10 @@ namespace PiggyAuth\Packet;
 
 use pocketmine\network\protocol\DataPacket;
 
+/**
+ * Class SetTitlePacket
+ * @package PiggyAuth\Packet
+ */
 class SetTitlePacket extends DataPacket
 {
     const NETWORK_ID = 0x58;

@@ -4,14 +4,25 @@ namespace PiggyAuth\Tasks;
 
 use pocketmine\scheduler\PluginTask;
 
+/**
+ * Class MessageTick
+ * @package PiggyAuth\Tasks
+ */
 class MessageTick extends PluginTask
 {
+    /**
+     * MessageTick constructor.
+     * @param \pocketmine\plugin\Plugin $plugin
+     */
     public function __construct($plugin)
     {
         parent::__construct($plugin);
         $this->plugin = $plugin;
     }
 
+    /**
+     * @param $currentTick
+     */
     public function onRun($currentTick)
     {
         foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {

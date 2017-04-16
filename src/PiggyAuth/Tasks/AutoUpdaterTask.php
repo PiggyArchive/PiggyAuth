@@ -5,11 +5,19 @@ namespace PiggyAuth\Tasks;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 
+/**
+ * Class AutoUpdaterTask
+ * @package PiggyAuth\Tasks
+ */
 class AutoUpdaterTask extends AsyncTask
 {
     public $autoinstall;
     public $result;
 
+    /**
+     * AutoUpdaterTask constructor.
+     * @param mixed|null $autoinstall
+     */
     public function __construct($autoinstall)
     {
         $this->autoinstall = $autoinstall;
@@ -25,6 +33,10 @@ class AutoUpdaterTask extends AsyncTask
 
     }
 
+    /**
+     * @param Server $server
+     * @return bool
+     */
     public function onCompletion(Server $server)
     {
         $plugin = $server->getPluginManager()->getPlugin("PiggyAuth");

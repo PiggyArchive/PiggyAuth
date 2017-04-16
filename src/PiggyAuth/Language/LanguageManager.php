@@ -5,12 +5,20 @@ namespace PiggyAuth\Language;
 use pocketmine\Player;
 use pocketmine\utils\Config;
 
+/**
+ * Class LanguageManager
+ * @package PiggyAuth\Language
+ */
 class LanguageManager
 {
     private $languages;
     private $languagefiles;
     private $defaultlanguage;
 
+    /**
+     * LanguageManager constructor.
+     * @param $plugin
+     */
     public function __construct($plugin)
     {
         $this->plugin = $plugin;
@@ -22,6 +30,10 @@ class LanguageManager
         return $this->defaultlanguage;
     }
 
+    /**
+     * @param $language
+     * @return bool
+     */
     public function setDefaultLanguage($language)
     {
         if ($this->isLanguage($language)) {
@@ -31,6 +43,11 @@ class LanguageManager
         return false;
     }
 
+    /**
+     * @param $player
+     * @param $message
+     * @return mixed
+     */
     public function getMessage($player, $message)
     {
         if ($player instanceof Player) {
@@ -41,11 +58,20 @@ class LanguageManager
         return str_replace("&", "§", $this->languagefiles[$language]->getNested($message));
     }
 
+    /**
+     * @param $language
+     * @param $message
+     * @return mixed
+     */
     public function getMessageFromLanguage($language, $message)
     {
         return str_replace("&", "§", $this->languagefiles[$language]->getNested($message));
     }
 
+    /**
+     * @param $language
+     * @return mixed
+     */
     public function getLanguage($language)
     {
         return $this->languagefiles[$language];
@@ -56,6 +82,10 @@ class LanguageManager
         return $this->languages;
     }
 
+    /**
+     * @param $language
+     * @return bool
+     */
     public function isLanguage($language)
     {
         return in_array($language, $this->languages);

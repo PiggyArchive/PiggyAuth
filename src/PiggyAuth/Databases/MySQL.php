@@ -7,11 +7,19 @@ use PiggyAuth\Main;
 
 use pocketmine\Player;
 
+/**
+ * Class MySQL
+ * @package PiggyAuth\Databases
+ */
 class MySQL implements Database
 {
     private $plugin;
     public $db;
 
+    /**
+     * MySQL constructor.
+     * @param Main $plugin
+     */
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
@@ -35,6 +43,9 @@ class MySQL implements Database
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function getRegisteredCount()
     {
         $result = $this->db->query("SELECT count(1) FROM players");
@@ -43,6 +54,10 @@ class MySQL implements Database
         return $data["count(1)"];
     }
 
+    /**
+     * @param $player
+     * @return array|null
+     */
     public function getOfflinePlayer($player)
     { //@S0F3, don't turn me into bacon for this
         $player = strtolower($player);
@@ -55,6 +70,11 @@ class MySQL implements Database
         return null;
     }
 
+    /**
+     * @param $player
+     * @param $callback
+     * @param $args
+     */
     public function getPlayer($player, $callback, $args)
     {
         $player = strtolower($player);
@@ -62,6 +82,14 @@ class MySQL implements Database
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
+    /**
+     * @param $player
+     * @param $column
+     * @param $arg
+     * @param int $type
+     * @param null $callback
+     * @param null $args
+     */
     public function updatePlayer($player, $column, $arg, $type = SQLITE3_TEXT, $callback = null, $args = null)
     {
         if ($type == 0) {
@@ -73,18 +101,41 @@ class MySQL implements Database
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
+    /**
+     * @param Player $player
+     * @param $password
+     * @param $email
+     * @param $pin
+     * @param $xbox
+     * @param null $callback
+     * @param null $args
+     */
     public function insertData(Player $player, $password, $email, $pin, $xbox, $callback = null, $args = null)
     {
         $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language, auth) VALUES ('" . $this->db->escape_string(strtolower($player->getName())) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', '" . $player->getUniqueId()->toString() . "', '0', '" . $xbox . "', '" . $this->db->escape_string($this->plugin->languagemanager->getDefaultLanguage()) . "', 'PiggyAuth')", $callback, $args);
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
+    /**
+     * @param $player
+     * @param $password
+     * @param $email
+     * @param $pin
+     * @param string $auth
+     * @param null $callback
+     * @param null $args
+     */
     public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $auth = "PiggyAuth", $callback = null, $args = null)
     {
         $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language, auth) VALUES ('" . $this->db->escape_string(strtolower($player)) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', 'uuid', '0', 'false', '" . $this->db->escape_string($this->plugin->languagemanager->getDefaultLanguage()) . "', '" . $this->db->escape_string($auth) . "')");
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
+    /**
+     * @param $player
+     * @param null $callback
+     * @param null $args
+     */
     public function clearPassword($player, $callback = null, $args = null)
     {
         $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "DELETE FROM players WHERE name = '" . $this->db->escape_string(strtolower($player)) . "'", $callback, $args);

@@ -44,6 +44,7 @@ use PiggyAuth\Tasks\PingTask;
 use PiggyAuth\Tasks\OtherMessageTypeTick;
 use PiggyAuth\Tasks\TimeoutTask;
 
+use pocketmine\command\CommandSender;
 use pocketmine\entity\Attribute;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
@@ -56,6 +57,10 @@ use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Player;
 
+/**
+ * Class Main
+ * @package PiggyAuth
+ */
 class Main extends PluginBase
 {
     //ACTIONS
@@ -173,26 +178,43 @@ class Main extends PluginBase
         $this->getLogger()->info("§aEnabled.");
     }
 
+    /**
+     * @return MySQL|SQLite3
+     */
     public function getDatabase()
     {
         return $this->database;
     }
 
+    /**
+     * @return SessionManager
+     */
     public function getSessionManager()
     {
         return $this->sessionmanager;
+
     }
 
+    /**
+     * @return LanguageManager
+     */
     public function getLanguageManager()
     {
         return $this->languagemanager;
     }
 
+    /**
+     * @return EmailManager
+     */
     public function getEmailManager()
     {
         return $this->emailmanager;
     }
 
+    /**
+     * @param Player $player
+     * @return int
+     */
     public function generatePin(Player $player)
     {
         $newpin = mt_rand(1000, 9999);
@@ -202,6 +224,11 @@ class Main extends PluginBase
         return $newpin;
     }
 
+    /**
+     * @param Player $player
+     * @param $password
+     * @return bool
+     */
     public function isCorrectPassword(Player $player, $password)
     {
         if (strpos($this->sessionmanager->getSession($player)->getOriginAuth(), "ServerAuth") !== false) {
@@ -230,6 +257,11 @@ class Main extends PluginBase
         }
     }
 
+    /**
+     * @param Player $player
+     * @param $pin
+     * @return bool
+     */
     public function isCorrectPin(Player $player, $pin)
     {
         if ($pin == $this->sessionmanager->getSession($player)->getPin()) {
@@ -238,16 +270,30 @@ class Main extends PluginBase
         return false;
     }
 
+    /**
+     * @param $player
+     * @return bool
+     */
     public function isBlocked($player)
     {
         return in_array(strtolower($player), $this->getConfig()->getNested("register.blocked-accounts"));
     }
 
+    /**
+     * @param $password
+     * @return bool
+     */
     public function isPasswordBlocked($password)
     {
         return in_array(strtolower($password), $this->getConfig()->getNested("register.blocked-passwords"));
     }
 
+    /**
+     * @param Player $player
+     * @param $password
+     * @param int $mode
+     * @return bool
+     */
     public function login(Player $player, $password, $mode = 0)
     {
         if ($this->isBlocked($player->getName())) {
@@ -310,6 +356,13 @@ class Main extends PluginBase
         return true;
     }
 
+    /**
+     * @param Player $player
+     * @param bool $login
+     * @param int $mode
+     * @param null $rehashedpassword
+     * @return bool
+     */
     public function force(Player $player, $login = true, $mode = 0, $rehashedpassword = null)
     {
         if ($login) {
@@ -426,6 +479,14 @@ class Main extends PluginBase
         return true;
     }
 
+    /**
+     * @param Player $player
+     * @param $password
+     * @param $confirmpassword
+     * @param string $email
+     * @param bool $xbox
+     * @return bool
+     */
     public function register(Player $player, $password, $confirmpassword, $email = "none", $xbox = false)
     {
         if (isset($this->confirmPassword[strtolower($player->getName())])) {
@@ -489,6 +550,14 @@ class Main extends PluginBase
         return true;
     }
 
+    /**
+     * @param CommandSender $sender
+     * @param $player
+     * @param $password
+     * @param $confirmpassword
+     * @param string $email
+     * @return bool
+     */
     public function preregister($sender, $player, $password, $confirmpassword, $email = "none")
     {
         if (isset($this->confirmPassword[strtolower($player)])) {
@@ -547,6 +616,11 @@ class Main extends PluginBase
         return true;
     }
 
+    /**
+     * @param Player $player
+     * @param $password
+     * @return bool
+     */
     public function unregister(Player $player, $password)
     {
         if (!$this->sessionmanager->getSession($player)->isRegistered()) {
@@ -574,6 +648,12 @@ class Main extends PluginBase
         return true;
     }
 
+    /**
+     * @param Player $player
+     * @param $oldpassword
+     * @param $newpassword
+     * @return bool
+     */
     public function changepassword(Player $player, $oldpassword, $newpassword)
     {
         if (!$this->sessionmanager->getSession($player)->isRegistered()) {
@@ -612,6 +692,12 @@ class Main extends PluginBase
         return true;
     }
 
+    /**
+     * @param Player $player
+     * @param $pin
+     * @param $newpassword
+     * @return bool
+     */
     public function forgotpassword(Player $player, $pin, $newpassword)
     {
         if (!$this->sessionmanager->getSession($player)->isRegistered()) {
@@ -678,6 +764,11 @@ class Main extends PluginBase
         }
     }
 
+    /**
+     * @param $player
+     * @param $sender
+     * @return bool
+     */
     public function resetpassword($player, $sender)
     {
         $data = $this->database->getOfflinePlayer($player);
@@ -706,6 +797,10 @@ class Main extends PluginBase
         return false;
     }
 
+    /**
+     * @param Player $player
+     * @param bool $quit
+     */
     public function logout(Player $player, $quit = true)
     {
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerLogoutEvent($this, $player));
@@ -753,11 +848,20 @@ class Main extends PluginBase
         }
     }
 
+    /**
+     * @param $player
+     * @param $message
+     * @return mixed
+     */
     public function getMessage($player, $message)
     {
         return $this->languagemanager->getMessage($player, $message);
     }
 
+    /**
+     * @param Player $player
+     * @return bool
+     */
     public function startSession(Player $player)
     {
         if (in_array(strtolower($player->getName()), $this->getConfig()->getNested("login.accounts-bypassed"))) {
@@ -854,6 +958,10 @@ class Main extends PluginBase
         }
     }
 
+    /**
+     * @param Player $player
+     * @return bool
+     */
     public function isTooManyIPOnline(Player $player)
     {
         $players = 0;
@@ -869,12 +977,21 @@ class Main extends PluginBase
         return $players > ($this->getConfig()->getNested("login.ip-limit") - 1);
     }
 
+    /**
+     * @param $password
+     * @return bool|string
+     */
     public function hashPassword($password)
     {
         $options = ['cost' => $this->getConfig()->getNested("hash.cost")];
         return password_hash($password, PASSWORD_BCRYPT, $options);
     }
 
+    /**
+     * @param $password
+     * @param $plainpassword
+     * @return bool|null|string
+     */
     public function needsRehashPassword($password, $plainpassword)
     {
         $options = ['cost' => $this->getConfig()->getNested("hash.cost")];
@@ -884,6 +1001,10 @@ class Main extends PluginBase
         return null;
     }
 
+    /**
+     * @param $password
+     * @return bool|string
+     */
     public function getKey($password)
     {
         if (password_verify($password, $this->database->getOfflinePlayer($this->getConfig()->getNested("key.owner"))["password"])) {
@@ -892,6 +1013,9 @@ class Main extends PluginBase
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function changeKey()
     {
         array_push($this->expiredkeys, $this->key);
@@ -911,11 +1035,19 @@ class Main extends PluginBase
         return true;
     }
 
+    /**
+     * @return mixed
+     */
     public function getFile()
     {
         return parent::getFile();
     }
 
+    /**
+     * @param $salt
+     * @param $password
+     * @return string
+     */
     public function hashSimpleAuth($salt, $password)
     {
         return bin2hex(hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true));

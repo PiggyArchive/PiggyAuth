@@ -34,13 +34,24 @@ use pocketmine\network\protocol\ContainerSetSlotPacket;
 use pocketmine\network\protocol\MobEffectPacket;
 use pocketmine\Player;
 
+/**
+ * Class EventListener
+ * @package PiggyAuth
+ */
 class EventListener implements Listener
 {
+    /**
+     * EventListener constructor.
+     * @param Main $plugin
+     */
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
     }
 
+    /**
+     * @param BlockBreakEvent $event
+     */
     public function onBreak(BlockBreakEvent $event)
     {
         $player = $event->getPlayer();
@@ -51,6 +62,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param BlockPlaceEvent $event
+     */
     public function onPlace(BlockPlaceEvent $event)
     {
         $player = $event->getPlayer();
@@ -61,6 +75,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param EntityDamageEvent $event
+     */
     public function onDamage(EntityDamageEvent $event)
     {
         $entity = $event->getEntity();
@@ -79,6 +96,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param EntityRegainHealthEvent $event
+     */
     public function onHeal(EntityRegainHealthEvent $event)
     {
         $entity = $event->getEntity();
@@ -89,6 +109,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param InventoryPickupArrowEvent $event
+     */
     public function onPickupArrow(InventoryPickupArrowEvent $event)
     {
         $player = $event->getInventory()->getHolder();
@@ -99,6 +122,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param InventoryPickupItemEvent $event
+     */
     public function onPickupItem(InventoryPickupItemEvent $event)
     {
         $player = $event->getInventory()->getHolder();
@@ -109,6 +135,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param PlayerChatEvent $event
+     */
     public function onChat(PlayerChatEvent $event)
     {
         $player = $event->getPlayer();
@@ -176,6 +205,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param PlayerCommandPreprocessEvent $event
+     */
     public function onCommandPreprocess(PlayerCommandPreprocessEvent $event)
     {
         $player = $event->getPlayer();
@@ -201,6 +233,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param PlayerDropItemEvent $event
+     */
     public function onDrop(PlayerDropItemEvent $event)
     {
         $player = $event->getPlayer();
@@ -211,6 +246,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param PlayerExhaustEvent $event
+     */
     public function onExhaust(PlayerExhaustEvent $event)
     {
         $player = $event->getPlayer();
@@ -221,6 +259,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param PlayerInteractEvent $event
+     */
     public function onInteract(PlayerInteractEvent $event)
     {
         $player = $event->getPlayer();
@@ -231,6 +272,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param PlayerItemConsumeEvent $event
+     */
     public function onConsume(PlayerItemConsumeEvent $event)
     {
         $player = $event->getPlayer();
@@ -241,6 +285,10 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param PlayerJoinEvent $event
+     * @return bool
+     */
     public function onJoin(PlayerJoinEvent $event)
     {
         $player = $event->getPlayer();
@@ -287,6 +335,9 @@ class EventListener implements Listener
         $this->plugin->startSession($player);
     }
 
+    /**
+     * @param PlayerKickEvent $event
+     */
     public function onKick(PlayerKickEvent $event)
     {
         $player = $event->getPlayer();
@@ -299,6 +350,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param PlayerMoveEvent $event
+     */
     public function onMove(PlayerMoveEvent $event)
     {
         $player = $event->getPlayer();
@@ -309,6 +363,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param PlayerPreLoginEvent $event
+     */
     public function onPrelogin(PlayerPreLoginEvent $event)
     {
         $player = $event->getPlayer();
@@ -327,6 +384,9 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param PlayerQuitEvent $event
+     */
     public function onQuit(PlayerQuitEvent $event)
     {
         $player = $event->getPlayer();
@@ -336,6 +396,9 @@ class EventListener implements Listener
         $this->plugin->logout($player);
     }
 
+    /**
+     * @param DataPacketReceiveEvent $event
+     */
     public function onReceive(DataPacketReceiveEvent $event)
     {
         $player = $event->getPlayer();
@@ -360,6 +423,10 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param DataPacketSendEvent $event
+     * @return bool
+     */
     public function onSend(DataPacketSendEvent $event)
     {
         $player = $event->getPlayer();

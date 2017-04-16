@@ -6,6 +6,10 @@ use pocketmine\scheduler\AsyncTask;
 use pocketmine\Player;
 use pocketmine\Server;
 
+/**
+ * Class SendEmailTask
+ * @package PiggyAuth\Tasks
+ */
 class SendEmailTask extends AsyncTask
 {
     private $api;
@@ -18,6 +22,16 @@ class SendEmailTask extends AsyncTask
     private $player;
 
 
+    /**
+     * SendEmailTask constructor.
+     * @param mixed|null $api
+     * @param $domain
+     * @param $to
+     * @param $from
+     * @param $subject
+     * @param $message
+     * @param null $player
+     */
     public function __construct($api, $domain, $to, $from, $subject, $message, $player = null)
     {
         $this->api = serialize($api);
@@ -54,6 +68,9 @@ class SendEmailTask extends AsyncTask
         curl_close($ch);
     }
 
+    /**
+     * @param Server $server
+     */
     public function onCompletion(Server $server)
     {
         $player = $server->getPlayerExact($this->player);

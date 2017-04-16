@@ -6,6 +6,10 @@ use PiggyAuth\Tasks\SendEmailTask;
 use PiggyAuth\Tasks\ValidateEmailTask;
 use pocketmine\Player;
 
+/**
+ * Class EmailManager
+ * @package PiggyAuth\Emails
+ */
 class EmailManager
 {
     const SUCCESS = 0;
@@ -19,6 +23,14 @@ class EmailManager
     private $canSendEmail = false;
     private $canValidateEmail = false;
 
+    /**
+     * EmailManager constructor.
+     * @param $plugin
+     * @param $domain
+     * @param $api
+     * @param $pubapi
+     * @param $from
+     */
     public function __construct($plugin, $domain, $api, $pubapi, $from)
     {
         $this->plugin = $plugin;
@@ -34,6 +46,9 @@ class EmailManager
         return $this->domain;
     }
 
+    /**
+     * @param $domain
+     */
     public function setDomain($domain)
     {
         $this->domain = $domain;
@@ -45,6 +60,9 @@ class EmailManager
         return $this->api;
     }
 
+    /**
+     * @param $api
+     */
     public function setAPIKey($api)
     {
         $this->api = $api;
@@ -56,6 +74,9 @@ class EmailManager
         return $this->pubapi;
     }
 
+    /**
+     * @param $pubapi
+     */
     public function setPublicAPIKey($pubapi)
     {
         $this->pubapi = $pubapi;
@@ -67,6 +88,9 @@ class EmailManager
         return $this->from;
     }
 
+    /**
+     * @param $from
+     */
     public function setFrom($from)
     {
         $this->from = $from;
@@ -121,6 +145,13 @@ class EmailManager
         }
     }
 
+    /**
+     * @param $email
+     * @param $subject
+     * @param $message
+     * @param null $player
+     * @return int
+     */
     public function sendEmail($email, $subject, $message, $player = null) //Provide player if you want them to receive fail messages.
     {
         if ($this->canSendEmail !== true) {
@@ -141,6 +172,12 @@ class EmailManager
 
     }
 
+    /**
+     * @param $email
+     * @param null $callback
+     * @param null $args
+     * @return bool|int
+     */
     public function validateEmail($email, $callback = null, $args = null)
     {
         if ($email == "none") {

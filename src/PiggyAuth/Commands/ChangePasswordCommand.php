@@ -2,12 +2,22 @@
 
 namespace PiggyAuth\Commands;
 
+use PiggyAuth\Main;
 use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
+/**
+ * Class ChangePasswordCommand
+ * @package PiggyAuth\Commands
+ */
 class ChangePasswordCommand extends VanillaCommand
 {
+    /**
+     * ChangePasswordCommand constructor.
+     * @param string $name
+     * @param Main $plugin
+     */
     public function __construct($name, $plugin)
     {
         parent::__construct($name, "Change your password", "/changepassword <old password> <new password>", ["changepw", "changepwd", "cpw", "cpwd"]);
@@ -15,6 +25,12 @@ class ChangePasswordCommand extends VanillaCommand
         $this->plugin = $plugin;
     }
 
+    /**
+     * @param CommandSender $sender
+     * @param string $currentAlias
+     * @param array $args
+     * @return bool
+     */
     public function execute(CommandSender $sender, $currentAlias, array $args)
     {
         if (!$this->testPermission($sender)) {

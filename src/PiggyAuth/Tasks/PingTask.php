@@ -4,8 +4,17 @@ namespace PiggyAuth\Tasks;
 
 use pocketmine\scheduler\PluginTask;
 
+/**
+ * Class PingTask
+ * @package PiggyAuth\Tasks
+ */
 class PingTask extends PluginTask
 {
+    /**
+     * PingTask constructor.
+     * @param \pocketmine\plugin\Plugin $plugin
+     * @param $db
+     */
     public function __construct($plugin, $db)
     {
         parent::__construct($plugin);
@@ -13,6 +22,9 @@ class PingTask extends PluginTask
         $this->db = $db;
     }
 
+    /**
+     * @param $currentTick
+     */
     public function onRun($currentTick)
     {
         $this->db->db->ping();

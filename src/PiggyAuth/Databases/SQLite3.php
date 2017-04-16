@@ -5,11 +5,19 @@ namespace PiggyAuth\Databases;
 use PiggyAuth\Main;
 use pocketmine\Player;
 
+/**
+ * Class SQLite3
+ * @package PiggyAuth\Databases
+ */
 class SQLite3 implements Database
 {
     private $plugin;
     public $db;
 
+    /**
+     * SQLite3 constructor.
+     * @param Main $plugin
+     */
     public function __construct(Main $plugin)
     {
         $this->plugin = $plugin;
@@ -46,11 +54,19 @@ class SQLite3 implements Database
     }
 
 
+    /**
+     * @return mixed
+     */
     public function getRegisteredCount()
     {
         return $this->db->querySingle("SELECT COUNT(*) as count FROM players");
     }
 
+    /**
+     * @param $player
+     * @param $callback
+     * @param $args
+     */
     public function getPlayer($player, $callback, $args)
     {
         $player = strtolower($player);
@@ -72,6 +88,10 @@ class SQLite3 implements Database
         }
     }
 
+    /**
+     * @param $player
+     * @return array|null
+     */
     public function getOfflinePlayer($player)
     {
         $player = strtolower($player);
@@ -90,6 +110,14 @@ class SQLite3 implements Database
         return null;
     }
 
+    /**
+     * @param $player
+     * @param $column
+     * @param $arg
+     * @param int $type
+     * @param null $callback
+     * @param null $args
+     */
     public function updatePlayer($player, $column, $arg, $type = 0, $callback = null, $args = null)
     {
         $statement = $this->db->prepare("UPDATE players SET " . $column . " = :" . $column . " WHERE name = :name");
@@ -101,6 +129,15 @@ class SQLite3 implements Database
         }
     }
 
+    /**
+     * @param Player $player
+     * @param $password
+     * @param $email
+     * @param $pin
+     * @param $xbox
+     * @param null $callback
+     * @param null $args
+     */
     public function insertData(Player $player, $password, $email, $pin, $xbox, $callback = null, $args = null)
     {
         $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language, auth) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox, :language, :auth)");
@@ -119,6 +156,15 @@ class SQLite3 implements Database
         }
     }
 
+    /**
+     * @param $player
+     * @param $password
+     * @param $email
+     * @param $pin
+     * @param string $auth
+     * @param null $callback
+     * @param null $args
+     */
     public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $auth = "PiggyAuth", $callback = null, $args = null)
     {
         $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language, auth) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox, :language, :auth)");
@@ -137,6 +183,11 @@ class SQLite3 implements Database
         }
     }
 
+    /**
+     * @param $player
+     * @param null $callback
+     * @param null $args
+     */
     public function clearPassword($player, $callback = null, $args = null)
     {
         $statement = $this->db->prepare("DELETE FROM players WHERE name = :name");

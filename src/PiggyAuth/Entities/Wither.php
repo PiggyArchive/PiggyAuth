@@ -7,10 +7,17 @@ use pocketmine\entity\Entity;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
+/**
+ * Class Wither
+ * @package PiggyAuth\Entities
+ */
 class Wither extends Entity
 {
     const NETWORK_ID = 52;
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return "Wither";
@@ -22,6 +29,9 @@ class Wither extends Entity
         parent::initEntity();
     }
 
+    /**
+     * @param Player $player
+     */
     public function spawnTo(Player $player)
     {
         $pk = new AddEntityPacket();

@@ -5,14 +5,25 @@ namespace PiggyAuth\Tasks;
 use PiggyAuth\Events\PlayerTimeoutEvent;
 use pocketmine\scheduler\PluginTask;
 
+/**
+ * Class TimeoutTask
+ * @package PiggyAuth\Tasks
+ */
 class TimeoutTask extends PluginTask
 {
+    /**
+     * TimeoutTask constructor.
+     * @param \pocketmine\plugin\Plugin $plugin
+     */
     public function __construct($plugin)
     {
         parent::__construct($plugin);
         $this->plugin = $plugin;
     }
 
+    /**
+     * @param $currentTick
+     */
     public function onRun($currentTick)
     {
         foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {
