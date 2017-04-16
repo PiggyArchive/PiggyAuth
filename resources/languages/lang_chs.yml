@@ -1,7 +1,7 @@
-#By @Thunder33345
+#By @Thunder33345 & mo3jlna
 
 #Join
-join-message: "&6此服务器需要密码认真."
+join-message: "&6此服务器需要密码登录才可以进行游玩."
 new-player: "&e欢迎 {player} 来到此服务器"
 
 #Login
@@ -13,9 +13,9 @@ login-subtitle: "&6请登入."
 login-actionbar: "&6请登入."
 login-boss-bar: "&6请登入."
 authentication-success: "&a登入成功."
-authentication-success-uuid: "&a自动登入(UUID)." #need help for better translation
-authentication-success-xbox: "&a自动登入(Xbox Live)." #need help for better translation
-attempted-logins: "&6您账户已有 {attempts} 登入尝试." #need help for better translation
+authentication-success-uuid: "&a自动登入(UUID)."
+authentication-success-xbox: "&a自动登入(Xbox Live)."
+attempted-logins: "&6您账户已有 {attempts} 登入尝试."
 already-authenticated: "&c您已经登入."
 incorrect-password: "&c密码不对. 剩下 {tries} 尝试."
 not-registered: "&c您还没注册."
@@ -35,7 +35,7 @@ register-success: "&a成功注册. 您的 pin 是 {pin}."
 register-success-xbox: "&a您已成功登记使用 Xbox Live. 您的 pin 是 {pin}. 您的密码是 {password}. 更改与 /changepassword."
 already-registered: "&c您已经注册."
 password-too-short: "&c您密码太短."
-password-blocked: "&c密码已被阻止." #This seems like incorrect to me for the blocking part, i dont think raw translating will work
+password-blocked: "&c密码已被阻止."
 password-username: "&c您用户名不能当密码."
 password-not-match: "&c您密码不对."
 confirm-password: "&a请确认您的密码."
@@ -48,12 +48,12 @@ preregister-success: "&a账户成功注册."
 already-registered-two: "&c账号已被注册."
 
 #Change password
-change-password-success: "&a您密码宜被更换. 您的新 pin 是 {pin}."
+change-password-success: "&a您密码宜被更换. 您的新交换码是 {pin}."
 incorrect-password-other: "&c密码不对."
 
 #Forget password
-forgot-password-success: "&a您的密码已被更换. 您的 pin 是 {pin}."
-incorrect-pin: "&cpin 不对, {tries} 尝试剩下."
+forgot-password-success: "&a您的密码已被更换. 您的交换码是 {pin}."
+incorrect-pin: "&c您改密码时的交换码不对, {tries} 请继续尝试其他."
 cant-use-pin: "Pin 已被禁用在此用户."
 
 #Reset password
@@ -69,8 +69,8 @@ email-fail: "&c邮件不能发送."
 invalid-email: "&c不合规电邮."
 no-email: "&c没有电邮链接到此账户."
 
-email-subject-sendpin: "PiggyAuth Pin 要求"
-email-sendpin: "您的 pin 是 {pin}. 如果您没有要求 pin, 请忽略此电邮."
+email-subject-sendpin: "PiggyAuth 交换码要求"
+email-sendpin: "您的交换码是 {pin}. 如果您没有要求交换码, 请忽略此电邮. 交换码可以用来重新启动你的账号."
 email-subject-attemptedlogin: "PiggyAuth 尝试登入通知"
 email-attemptedlogin: "有人已经尝试登入您的账号. 如果那不是您, 请用 /sendpin. 您将受到一个四数字 pin 用来重设您的密码."
 email-subject-changedpassword: "PiggyAuth 密码更改通知"
@@ -81,31 +81,31 @@ email-subject-login-from-new-ip: "PiggyAuth 新IP地址通知"
 email-login-from-new-ip: "您的账户已被登录在 {ip} (IP地址). 如果那不是您,请马上更换您的密码."
 
 #Pin
-your-pin: "&a您的 pin: {pin}" #Need help to translate PIN into chinese
+your-pin: "&a您的交换码: {pin}"
 
 #Key
 key-expired: "&c您的密钥已过期."
 
 #Language
-invalid-language: "&cLanguage not available.\nAvailable languages: {languages}"
-language-changed: "&aLanguage has changed."
+invalid-language: "&c不存在的语言.\n可用的语言: {languages}"
+language-changed: "&a语言已经更改了."
 
 #Converting
-player-account-already-exists: "&cAccount {player} already exists"
-file-not-yml: "&cFile {file} is not YML."
-file-not-db: "&cFile {file} is not DB"
-invalid-file: "&cFile does not exist"
-invalid-directory: "&cDirectory does not exist"
-invalid-database: "&cInvalid database.\nAvailable databases: {db}"
-invalid-auth: "&cThe auth plugin does not exist or is not supported by the converter.\nSupported auth plugins: {auth}"
-invalid-hash-algorithm: "&c{algorithm} is not a valid hashing algorithm.\nAvailable algorithms are: {algorithms}."
+player-account-already-exists: "&c账号 {player}已经存在"
+file-not-yml: "&c存档 {file} 不是YML."
+file-not-db: "&c存档{file}不是DB"
+invalid-file: "&c存档没有发现"
+invalid-directory: "&c资料库里不存在"
+invalid-database: "&c错误的数据库\n数据库存在并可使用: {db}"
+invalid-auth: "&cAUTH 插件不存在或者他们不支持现在的变流器.\n插件已经支持现有的AUTH插件: {auth}"
+invalid-hash-algorithm: "&c{algorithm} 不是一个可以使用的散列计算.\n可以使用的计算是: {algorithms}."
 
 #Updater
-plugin-outdated: "&cA new version ({version}) of this plugin is out.\nNew features: {features}" #Needs translation
-plugin-up-to-date: "&aThe plugin is up to date." #Needs translation
-plugin-auto-updated: "&aThe plugin has been updated to {version}.\nNew features: {features}" #Needs translation
-over-api-rate-limit: "&cYou have passed the api rate limit (60 requests an hour)." #Needs translation
+plugin-outdated: "&c这个插件已经有一个新的版本出来了 ({version}).\n新的功能: {features}"
+plugin-up-to-date: "&a插件已经更新到最新了."
+plugin-auto-updated: "&a插件已经更新到｛version｝.\n新的功能: {features}"
+over-api-rate-limit: "&c你已经超过API率的极限了（60 请求1小时)"
 
 #General
 dont-say-password: "&c请别分享您的密码."
-account-blocked: "&c此账户已受阻." #This seems like incorrect to me for the blocking part, i dont think raw translating will work
+account-blocked: "&c此账户已受阻."
