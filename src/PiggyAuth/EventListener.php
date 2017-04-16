@@ -148,26 +148,29 @@ class EventListener implements Listener
                 if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
                     $this->plugin->login($player, $message, 0);
                 } else {
-                    if (!isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
-                        if (!isset($this->plugin->confirmedPassword[strtolower($player->getName())])) {
-                            $this->plugin->confirmPassword[strtolower($player->getName())] = $message;
+                    if (!$this->plugin->sessionmanager->getSession($player)->isConfirmingPassword()) {
+                        if ($this->plugin->sessionmanager->getSession($player)->getSecondPassword() == null) {
+                            $this->plugin->sessionmanager->getSession($player)->setConfirmingPassword();
+                            $this->plugin->sessionmanager->getSession($player)->setFirstPassword($message);
                             $player->sendMessage($this->plugin->languagemanager->getMessage($player, "confirm-password"));
                         }
                     } else {
-                        if ($this->plugin->confirmPassword[strtolower($player->getName())] == $message) {
-                            unset($this->plugin->confirmPassword[strtolower($player->getName())]);
-                            $this->plugin->confirmedPassword[strtolower($player->getName())] = $message;
-                            $this->plugin->giveEmail[strtolower($player->getName())] = true;
+                        if ($this->plugin->sessionmanager->getSession($player)->getFirstPassword() == $message) {
+                            $this->plugin->sessionmanager->getSession($player)->setConfirmingPassword(false);
+                            $this->plugin->sessionmanager->getSession($player)->setFirstPassword(null);
+                            $this->plugin->sessionmanager->getSession($player)->setSecondPassword($message);
+                            $this->plugin->sessionmanager->getSession($player)->setGivingEmail();
                             $player->sendMessage($this->plugin->languagemanager->getMessage($player, "email"));
                             $event->setCancelled();
                             return true; //Stop the Invalid email message
                         } else {
                             $player->sendMessage($this->plugin->languagemanager->getMessage($player, "password-not-match"));
-                            unset($this->plugin->confirmPassword[strtolower($player->getName())]);
+                            $this->plugin->sessionmanager->getSession($player)->setConfirmingPassword(false);
+                            $this->plugin->sessionmanager->getSession($player)->setFirstPassword(null);
                             $this->plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this->plugin, $player, Main::LOGIN, Main::PASSWORDS_NOT_MATCHED));
                         }
                     }
-                    if (isset($this->plugin->giveEmail[strtolower($player->getName())])) {
+                    if ($this->plugin->sessionmanager->getSession($player)->isGivingEmail()) {
                         $function = function ($result, $args, $plugin) {
                             $player = $plugin->getServer()->getPlayerExact($args[0]);
                             $message = $args[1];
@@ -176,11 +179,11 @@ class EventListener implements Listener
                                     $player->sendMessage($plugin->languagemanager->getMessage($player, "invalid-email"));
                                     $plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
                                 } else {
-                                    $plugin->register($player, $plugin->confirmedPassword[strtolower($player->getName())], $plugin->confirmedPassword[strtolower($player->getName())], $message);
-                                    unset($plugin->confirmedPassword[strtolower($player->getName())]);
+                                    $plugin->register($player, $plugin->sessionmanager->getSession($player)->getSecondPassword(), $plugin->sessionmanager->getSession($player)->getSecondPassword(), $message);
+                                    $this->plugin->sessionmanager->getSession($player)->setSecondPassword(null);
+                                    $this->plugin->sessionmanager->getSession($player)->setGivingEmail(false);
                                 }
                             }
-                            unset($plugin->giveEmail[strtolower($args[0])]);
                         };
                         $arguements = array($player->getName(), $message);
                         $this->plugin->emailmanager->validateEmail($message, $function, $arguements);
@@ -300,7 +303,7 @@ class EventListener implements Listener
             $event->setJoinMessage(str_replace("{player}", $player->getName(), $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "new-player")));
         }
         if ($this->plugin->getConfig()->getNested("message.hold-join-message")) {
-            $this->plugin->joinMessage[strtolower($player->getName())] = $event->getJoinMessage();
+            $this->plugin->sessionmanager->getSession($player)->setStartMessage($event->getJoinMessage());
             $event->setJoinMessage(null);
         }
         if ($this->plugin->getConfig()->getNested("login.auto-authentication") && !is_null($data) && $player->getUniqueId()->toString() == $data["uuid"]) {
@@ -332,7 +335,7 @@ class EventListener implements Listener
             }
             return true;
         }
-        $this->plugin->startSession($player);
+        $this->plugin->sessionmanager->getSession($player)->startSession();
     }
 
     /**

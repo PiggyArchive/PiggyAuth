@@ -2,6 +2,13 @@
 
 namespace PiggyAuth\Sessions;
 
+use PiggyAuth\Packet\BossEventPacket;
+use pocketmine\entity\Effect;
+use pocketmine\entity\Entity;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\DoubleTag;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\network\protocol\MobEffectPacket;
 use pocketmine\Player;
 
 /**
@@ -15,6 +22,17 @@ class PiggyAuthSession implements Session
     private $data;
     private $authenticated = false;
     private $registered = false;
+    private $isConfirmingPassword = false;
+    private $firstPassword = null;
+    private $secondPassword = null;
+    private $isGivingEmail = false;
+    private $messagetick = 0;
+    private $cape = null;
+    private $gamemode = null;
+    private $timeouttick = 0;
+    private $wither = null;
+    private $tries = 0;
+    private $joinmessage = null;
 
     /**
      * PiggyAuthSession constructor.
@@ -167,6 +185,189 @@ class PiggyAuthSession implements Session
         $this->plugin->database->clearPassword($this->getName(), $callback, $args);
     }
 
+    /**
+     * @return bool
+     */
+    public function isComfirmingPassword()
+    {
+        return $this->isConfirmingPassword;
+    }
+
+    /**
+     * @param null $arg
+     */
+    public function setComfirmingPassword($arg = null)
+    {
+        $this->isConfirmingPassword = $arg;
+    }
+
+    /**
+     * @return null
+     */
+    public function getFirstPassword()
+    {
+        return $this->firstPassword;
+    }
+
+    /**
+     * @param $password
+     */
+    public function setFirstPassword($password)
+    {
+        $this->firstPassword = $password;
+    }
+
+    /**
+     * @return null
+     */
+    public function getSecondPassword()
+    {
+        return $this->secondPassword;
+    }
+
+    /**
+     * @param $password
+     */
+    public function setSecondPassword($password)
+    {
+        $this->secondPassword = $password;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGivingEmail()
+    {
+        return $this->isGivingEmail;
+    }
+
+    /**
+     * @param bool $arg
+     */
+    public function setGivingEmail($arg = true)
+    {
+        $this->isGivingEmail = $arg;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMessageTick()
+    {
+        return $this->messagetick;
+    }
+
+    /**
+     * @param $arg
+     */
+    public function setMessageTick($arg)
+    {
+        $this->messagetick = $arg;
+    }
+
+    public function addMessageTick()
+    {
+        $this->messagetick++;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCape()
+    {
+        return $this->cape;
+    }
+
+    /**
+     * @param $cape
+     */
+    public function setCape($cape)
+    {
+        $this->cape = $cape;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGamemode()
+    {
+        return $this->gamemode;
+    }
+
+    /**
+     * @param $gamemode
+     */
+    public function setGamemode($gamemode)
+    {
+        $this->gamemode = $gamemode;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTimeoutTick()
+    {
+        return $this->timeouttick;
+    }
+
+    /**
+     * @param $arg
+     */
+    public function setTimeoutTick($arg)
+    {
+        $this->timeouttick = $arg;
+    }
+
+    public function addTimeoutTick()
+    {
+        $this->timeouttick++;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWither()
+    {
+        return $this->wither;
+    }
+
+    /**
+     * @param $wither
+     */
+    public function setWither($wither)
+    {
+        $this->wither = $wither;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTries()
+    {
+        return $this->tries;
+    }
+
+    /**
+     * @param $tries
+     */
+    public function setTries($tries)
+    {
+        $this->tries = $tries;
+    }
+
+    public function addTry()
+    {
+        $this->tries++;
+    }
+
+    public function getJoinMessage()
+    {
+        return $this->joinmessage;
+    }
+
+    public function setJoinMessage($message){
+        $this->joinmessage = $message;
+    }
 
     /**
      * @param $column
@@ -194,4 +395,98 @@ class PiggyAuthSession implements Session
         $this->plugin->sessionmanager->loadSession($this->player, true); //Reload
     }
 
+    /**
+     * @return bool
+     * @internal param Player $player
+     */
+    public function startSession()
+    {
+        if (in_array(strtolower($this->player->getName()), $this->plugin->getConfig()->getNested("login.accounts-bypassed"))) {
+            $this->authenticated = true;
+            return true;
+        }
+        $this->player->sendMessage($this->plugin->languagemanager->getMessage($this->player, "join-message"));
+        if ($this->plugin->getConfig()->getNested("register.cape-for-registration")) {
+            $stevecapes = array(
+                "Minecon_MineconSteveCape2016",
+                "Minecon_MineconSteveCape2015",
+                "Minecon_MineconSteveCape2013",
+                "Minecon_MineconSteveCape2012",
+                "Minecon_MineconSteveCape2011");
+            if (in_array($this->player->getSkinId(), $stevecapes)) {
+                $this->setCape($this->player->getSkinId());
+                $this->player->setSkin($this->player->getSkinData(), "Standard_Custom");
+            } else {
+                $alexcapes = array(
+                    "Minecon_MineconAlexCape2016",
+                    "Minecon_MineconAlexCape2015",
+                    "Minecon_MineconAlexCape2013",
+                    "Minecon_MineconAlexCape2012",
+                    "Minecon_MineconAlexCape2011");
+                if (in_array($this->player->getSkinId(), $alexcapes)) {
+                    $this->setCape($this->player->getSkinId());
+                    $this->player->setSkin($this->player->getSkinData(), "Standard_CustomSlim");
+                }
+            }
+        }
+        if ($this->isRegistered()) {
+            $this->player->sendMessage($this->plugin->languagemanager->getMessage($this->player, "login-message"));
+        } else {
+            $this->player->sendMessage($this->plugin->languagemanager->getMessage($this->player, "register-message"));
+        }
+        if ($this->plugin->getConfig()->getNested("effects.invisible")) {
+            $this->player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
+            $this->player->setNameTagVisible(false);
+        }
+        if ($this->plugin->getConfig()->getNested("effects.blindness")) {
+            $effect = Effect::getEffect(15);
+            $effect->setAmplifier(99);
+            $effect->setDuration(999999);
+            $effect->setVisible(false);
+            $this->player->addEffect($effect);
+            $effect = Effect::getEffect(16);
+            $effect->setAmplifier(99);
+            $effect->setDuration(999999);
+            $effect->setVisible(false);
+            $this->player->addEffect($effect);
+        }
+        if ($this->plugin->getConfig()->getNested("effects.hide-players")) {
+            foreach ($this->plugin->getServer()->getOnlinePlayers() as $p) {
+                $this->player->hidePlayer($p);
+                if (!$this->plugin->sessionmanager->getSession($p)->isAuthenticated($p)) {
+                    $p->hidePlayer($this->player);
+                }
+            }
+        }
+        if ($this->plugin->getConfig()->getNested("effects.hide-effects")) {
+            foreach ($this->player->getEffects() as $effect) {
+                if ($this->plugin->getConfig()->getNested("blindness") && ($effect->getId() == 15 || $effect->getId() == 16)) {
+                    continue;
+                }
+                $pk = new MobEffectPacket();
+                $pk->eid = $this->player->getId();
+                $pk->eventId = MobEffectPacket::EVENT_REMOVE;
+                $pk->effectId = $effect->getId();
+                $this->player->dataPacket($pk);
+            }
+        }
+        if ($this->plugin->getConfig()->getNested("login.adventure-mode")) {
+            $this->setGamemode($this->player->getGamemode());
+            $this->player->setGamemode(2);
+        }
+        if ($this->plugin->getConfig()->getNested("message.boss-bar")) {
+            $wither = Entity::createEntity("Wither", $this->player->getLevel(), new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $this->player->x + 0.5), new DoubleTag("", $this->player->y - 25), new DoubleTag("", $this->player->z + 0.5)]), "Motion" => new ListTag("Motion", [new DoubleTag("", 0), new DoubleTag("", 0), new DoubleTag("", 0)]), "Rotation" => new ListTag("Rotation", [new FloatTag("", 0), new FloatTag("", 0)])]));
+            $wither->spawnTo($this->player);
+            $wither->setNameTag($this->isRegistered() == false ? $this->plugin->languagemanager->getMessage($this->player, "register-boss-bar") : $this->plugin->languagemanager->getMessage($this->player, "login-boss-bar"));
+            $this->setWither($wither);
+            $wither->setMaxHealth($this->plugin->getConfig()->getNested("timeout.timeout-time"));
+            $wither->setHealth($this->plugin->getConfig()->getNested("timeout.timeout-time"));
+            $pk = new BossEventPacket();
+            $pk->eid = $wither->getId();
+            $pk->state = 0;
+            $this->player->dataPacket($pk);
+        }
+    }
+
 }
+

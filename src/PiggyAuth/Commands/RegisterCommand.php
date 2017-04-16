@@ -3,7 +3,7 @@
 namespace PiggyAuth\Commands;
 
 use PiggyAuth\Main;
-use PiggyAuth\Tasks\ValidateEmailTask;
+
 
 use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;

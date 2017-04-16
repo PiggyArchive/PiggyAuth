@@ -46,13 +46,10 @@ use PiggyAuth\Tasks\TimeoutTask;
 
 use pocketmine\command\CommandSender;
 use pocketmine\entity\Attribute;
-use pocketmine\entity\Effect;
+
 use pocketmine\entity\Entity;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\DoubleTag;
-use pocketmine\nbt\tag\FloatTag;
-use pocketmine\nbt\tag\ListTag;
-use pocketmine\network\protocol\MobEffectPacket;
+
+
 use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Player;
@@ -96,26 +93,16 @@ class Main extends PluginBase
     const CANT_USE_PIN = 25;
     const OTHER = 100;
 
-    public $confirmPassword;
-    public $confirmedPassword;
     public $database;
     public $emailmanager;
     public $expiredkeys = [];
-    public $gamemode;
-    public $giveEmail;
-    public $hasJoined;
-    public $joinMessage;
-    public $keepCape;
     private $key = "PiggyAuthKey";
     public $keytime = 299; //300 = Reset
     public $languagemanager;
-    public $messagetick;
     public $serverauthconverter;
     public $sessionmanager;
     public $simpleauthconverter;
-    public $timeouttick;
     public $tries;
-    public $wither;
 
     public function onEnable()
     {
@@ -168,12 +155,12 @@ class Main extends PluginBase
         $this->emailmanager = new EmailManager($this, $this->getConfig()->getNested("emails.mailgun.domain"), $this->getConfig()->getNested("emails.mailgun.api"), $this->getConfig()->getNested("emails.mailgun.public-api"), $this->getConfig()->getNested("emails.mailgun.from"));
         $this->simpleauthconverter = new SimpleAuthConverter($this);
         $this->serverauthconverter = new ServerAuthConverter($this);
-        if($this->getConfig()->getNested("auto-updater.enabled")) { //Should do after LanguageManager is initiated...
+        if ($this->getConfig()->getNested("auto-updater.enabled")) { //Should do after LanguageManager is initiated...
             $this->getServer()->getScheduler()->scheduleAsyncTask(new AutoUpdaterTask($this->getConfig()->getNested("auto-updater.auto-install")));
         }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         foreach ($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
-            $this->startSession($player);
+            $this->sessionmanager->getSession($player)->startSession();
         }
         $this->getLogger()->info("§aEnabled.");
     }
@@ -325,20 +312,17 @@ class Main extends PluginBase
                     return true;
                 }
             }
-            if (isset($this->tries[strtolower($player->getName())])) {
-                $this->tries[strtolower($player->getName())]++;
-                if ($this->tries[strtolower($player->getName())] >= $this->getConfig()->getNested("login.tries")) {
-                    $this->sessionmanager->getSession($player)->updatePlayer("attempts", $this->sessionmanager->getSession($player)->getAttempts() + 1, 1);
-                    if ($this->getConfig()->getNested("emails.send-email-on-attemptedlogin")) {
-                        $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->languagemanager->getMessage($player, "email-subject-attemptedlogin"), $this->languagemanager->getMessage($player, "email-attemptedlogin"));
-                    }
-                    $player->kick($this->languagemanager->getMessage($player, "too-many-tries"));
-                    return false;
+
+            $this->sessionmanager->getSession($player)->addTry();
+            if ($this->sessionmanager->getSession($player)->getTries() >= $this->getConfig()->getNested("login.tries")) {
+                $this->sessionmanager->getSession($player)->updatePlayer("attempts", $this->sessionmanager->getSession($player)->getAttempts() + 1, 1);
+                if ($this->getConfig()->getNested("emails.send-email-on-attemptedlogin")) {
+                    $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->languagemanager->getMessage($player, "email-subject-attemptedlogin"), $this->languagemanager->getMessage($player, "email-attemptedlogin"));
                 }
-            } else {
-                $this->tries[strtolower($player->getName())] = 1;
+                $player->kick($this->languagemanager->getMessage($player, "too-many-tries"));
+                return false;
             }
-            $tries = $this->getConfig()->getNested("login.tries") - $this->tries[strtolower($player->getName())];
+            $tries = $this->getConfig()->getNested("login.tries") - $this->sessionmanager->getSession($player)->getTries();
             $player->sendMessage(str_replace("{tries}", $tries, $this->languagemanager->getMessage($player, "incorrect-password")));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::WRONG_PASSWORD));
             return false;
@@ -388,18 +372,12 @@ class Main extends PluginBase
                 $this->sessionmanager->getSession($player)->updatePlayer("attempts", 0);
             }
         }
-        if (isset($this->messagetick[strtolower($player->getName())])) {
-            unset($this->messagetick[strtolower($player->getName())]);
-        }
-        if (isset($this->timeouttick[strtolower($player->getName())])) {
-            unset($this->timeouttick[strtolower($player->getName())]);
-        }
-        if (isset($this->tries[strtolower($player->getName())])) {
-            unset($this->tries[strtolower($player->getName())]);
-        }
-        if (isset($this->joinMessage[strtolower($player->getName())]) && $this->getConfig()->getNested("message.hold-join-message")) {
-            $this->getServer()->broadcastMessage($this->joinMessage[strtolower($player->getName())]);
-            unset($this->joinMessage[strtolower($player->getName())]);
+        $this->sessionmanager->getSession($player)->setMessageTick(0);
+        $this->sessionmanager->getSession($player)->setTimeoutTick(0);
+        $this->sessionmanager->getSession($player)->setTries(0);
+        if ($this->getConfig()->getNested("message.hold-join-message")) {
+            $this->getServer()->broadcastMessage($this->sessionmanager->getSession($player)->getJoinMessage());
+            $this->sessionmanager->getSession($player)->setJoinMessage(null);
         }
         $this->sessionmanager->getSession($player)->setAuthenticated();
         if ($this->getConfig()->getNested("effects.invisible")) {
@@ -441,9 +419,9 @@ class Main extends PluginBase
         }
         if ($this->getConfig()->getNested("register.cape-for-registration")) {
             $cape = "Minecon_MineconSteveCape2016";
-            if (isset($this->keepCape[strtolower($player->getName())])) {
-                $cape = $this->keepCape[strtolower($player->getName())];
-                unset($this->keepCape[strtolower($player->getName())]);
+            if ($this->sessionmanager->getSession($player)->getCape() !== null) {
+                $cape = $this->sessionmanager->getSession($player)->getCape();
+                $this->sessionmanager->getSession($player)->setCape(null);
             } else {
                 $capes = array(
                     "Minecon_MineconSteveCape2016",
@@ -460,16 +438,12 @@ class Main extends PluginBase
             $player->getInventory()->sendContents($player);
         }
         if ($this->getConfig()->getNested("login.adventure-mode")) {
-            if (isset($this->gamemode[strtolower($player->getName())])) {
-                $player->setGamemode($this->gamemode[strtolower($player->getName())]);
-                unset($this->gamemode[strtolower($player->getName())]);
-            }
+            $player->setGamemode($this->sessionmanager->getSession($player)->getGamemode());
+            $this->sessionmanager->getSession($player)->setGamemode(null);
         }
         if ($this->getConfig()->getNested("message.boss-bar")) {
-            if (isset($this->wither[strtolower($player->getName())])) {
-                $this->wither[strtolower($player->getName())]->kill();
-                unset($this->wither[strtolower($player->getName())]);
-            }
+            $this->sessionmanager->getSession($player)->getWither()->kill();
+            $this->sessionmanager->getSession($player)->setWither(null);
         }
         if ($rehashedpassword !== null) {
             $this->sessionmanager->getSession($player)->updatePlayer("password", $rehashedpassword);
@@ -489,9 +463,7 @@ class Main extends PluginBase
      */
     public function register(Player $player, $password, $confirmpassword, $email = "none", $xbox = false)
     {
-        if (isset($this->confirmPassword[strtolower($player->getName())])) {
-            unset($this->confirmPassword[strtolower($player->getName())]);
-        }
+        $this->sessionmanager->getSession($player)->setSecondPassword(null);
         if ($this->isBlocked($player->getName())) {
             $player->sendMessage($this->languagemanager->getMessage($player, "account-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::ACCOUNT_BLOCKED));
@@ -560,9 +532,6 @@ class Main extends PluginBase
      */
     public function preregister($sender, $player, $password, $confirmpassword, $email = "none")
     {
-        if (isset($this->confirmPassword[strtolower($player)])) {
-            unset($this->confirmPassword[strtolower($player)]);
-        }
         if ($this->isBlocked($player)) {
             $sender->sendMessage($this->languagemanager->getMessage($sender, "account-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::ACCOUNT_BLOCKED));
@@ -711,20 +680,16 @@ class Main extends PluginBase
             return false;
         }
         if (!$this->isCorrectPin($player, $pin)) {
-            if (isset($this->tries[strtolower($player->getName())])) {
-                $this->tries[strtolower($player->getName())]++;
-                if ($this->tries[strtolower($player->getName())] >= $this->getConfig()->getNested("login.tries")) {
-                    $this->sessionmanager->getSession($player)->updatePlayer("attempts", $this->sessionmanager->getSession($player)->getAttempts() + 1, 1);
-                    if ($this->getConfig()->getNested("emails.send-email-on-attemptedlogin")) {
-                        $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->languagemanager->getMessage($player, "email-subject-attemptedlogin"), $this->languagemanager->getMessage($player, "email-attemptedlogin"));
-                    }
-                    $player->kick($this->languagemanager->getMessage($player, "too-many-tries"));
-                    return false;
+            $this->sessionmanager->getSession($player)->addTry();
+            if ($this->sessionmanager->getSession($player)->getTries() >= $this->getConfig()->getNested("login.tries")) {
+                $this->sessionmanager->getSession($player)->updatePlayer("attempts", $this->sessionmanager->getSession($player)->getAttempts() + 1, 1);
+                if ($this->getConfig()->getNested("emails.send-email-on-attemptedlogin")) {
+                    $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->languagemanager->getMessage($player, "email-subject-attemptedlogin"), $this->languagemanager->getMessage($player, "email-attemptedlogin"));
                 }
-            } else {
-                $this->tries[strtolower($player->getName())] = 1;
+                $player->kick($this->languagemanager->getMessage($player, "too-many-tries"));
+                return false;
             }
-            $tries = $this->getConfig()->getNested("login.tries") - $this->tries[strtolower($player->getName())];
+            $tries = $this->getConfig()->getNested("login.tries") - $this->sessionmanager->getSession($player)->getTries();
             $player->sendMessage(str_replace("{tries}", $tries, $this->languagemanager->getMessage($player, "incorrect-pin")));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::WRONG_PIN));
             return false;
@@ -809,39 +774,20 @@ class Main extends PluginBase
                 $this->sessionmanager->getSession($player)->setAuthenticated(false);
             } else {
                 if ($this->getConfig()->getNested("login.adventure-mode")) {
-                    if (isset($this->gamemode[strtolower($player->getName())])) {
-                        $player->setGamemode($this->gamemode[strtolower($player->getName())]);
-                        unset($this->gamemode[strtolower($player->getName())]);
-                    }
+                    $player->setGamemode($this->sessionmanager->getSession($player)->getGamemode());
+                    $this->sessionmanager->getSession($player)->setGamemode(null);
                 }
-                if (isset($this->confirmPassword[strtolower($player->getName())])) {
-                    unset($this->confirmPassword[strtolower($player->getName())]);
-                }
-                if (isset($this->confirmedPassword[strtolower($player->getName())])) {
-                    unset($this->confirmedPassword[strtolower($player->getName())]);
-                }
-                if (isset($this->giveEmail[strtolower($player->getName())])) {
-                    unset($this->giveEmail[strtolower($player->getName())]);
-                }
-                if (isset($this->messagetick[strtolower($player->getName())])) {
-                    unset($this->messagetick[strtolower($player->getName())]);
-                }
-                if (isset($this->timeouttick[strtolower($player->getName())])) {
-                    unset($this->timeouttick[strtolower($player->getName())]);
-                }
-                if (isset($this->tries[strtolower($player->getName())])) {
-                    unset($this->tries[strtolower($player->getName())]);
-                }
+                $this->sessionmanager->getSession($player)->setMessageTick(0);
+                $this->sessionmanager->getSession($player)->setTimeoutTick(0);
+                $this->sessionmanager->getSession($player)->setTries(0);
                 if ($this->getConfig()->getNested("message.boss-bar")) {
-                    if (isset($this->wither[strtolower($player->getName())])) {
-                        $this->wither[strtolower($player->getName())]->kill();
-                        unset($this->wither[strtolower($player->getName())]);
-                    }
+                    $this->sessionmanager->getSession($player)->getWither()->kill();
+                    $this->sessionmanager->getSession($player)->setWither(null);
                 }
             }
             if ($quit !== true) {
-                $this->startSession($player);
                 $this->sessionmanager->loadSession($player); //Reload
+                $this->sessionmanager->getSession($player)->startSession();
             } else {
                 $this->sessionmanager->unloadSession($player);
             }
@@ -856,106 +802,6 @@ class Main extends PluginBase
     public function getMessage($player, $message)
     {
         return $this->languagemanager->getMessage($player, $message);
-    }
-
-    /**
-     * @param Player $player
-     * @return bool
-     */
-    public function startSession(Player $player)
-    {
-        if (in_array(strtolower($player->getName()), $this->getConfig()->getNested("login.accounts-bypassed"))) {
-            $this->authenticated[strtolower($player->getName())] = true;
-            return true;
-        }
-        $player->sendMessage($this->languagemanager->getMessage($player, "join-message"));
-        $this->messagetick[strtolower($player->getName())] = 0;
-        if ($this->getConfig()->getNested("register.cape-for-registration")) {
-            $stevecapes = array(
-                "Minecon_MineconSteveCape2016",
-                "Minecon_MineconSteveCape2015",
-                "Minecon_MineconSteveCape2013",
-                "Minecon_MineconSteveCape2012",
-                "Minecon_MineconSteveCape2011");
-            if (in_array($player->getSkinId(), $stevecapes)) {
-                $this->keepCape[strtolower($player->getName())] = $player->getSkinId();
-                $player->setSkin($player->getSkinData(), "Standard_Custom");
-            } else {
-                $alexcapes = array(
-                    "Minecon_MineconAlexCape2016",
-                    "Minecon_MineconAlexCape2015",
-                    "Minecon_MineconAlexCape2013",
-                    "Minecon_MineconAlexCape2012",
-                    "Minecon_MineconAlexCape2011");
-                if (in_array($player->getSkinId(), $alexcapes)) {
-                    $this->keepCape[strtolower($player->getName())] = $player->getSkinId();
-                    $player->setSkin($player->getSkinData(), "Standard_CustomSlim");
-                }
-            }
-        }
-        if ($this->sessionmanager->getSession($player)->isRegistered()) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "login-message"));
-        } else {
-            $player->sendMessage($this->languagemanager->getMessage($player, "register-message"));
-        }
-        if ($this->getConfig()->getNested("effects.invisible")) {
-            $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
-            $player->setNameTagVisible(false);
-        }
-        if ($this->getConfig()->getNested("effects.blindness")) {
-            $effect = Effect::getEffect(15);
-            $effect->setAmplifier(99);
-            $effect->setDuration(999999);
-            $effect->setVisible(false);
-            $player->addEffect($effect);
-            $effect = Effect::getEffect(16);
-            $effect->setAmplifier(99);
-            $effect->setDuration(999999);
-            $effect->setVisible(false);
-            $player->addEffect($effect);
-        }
-        if ($this->getConfig()->getNested("effects.hide-items")) {
-            $player->getInventory()->sendContents($player);
-        }
-        if ($this->getConfig()->getNested("effects.hide-players")) {
-            foreach ($this->getServer()->getOnlinePlayers() as $p) {
-                $player->hidePlayer($p);
-                if (!$this->sessionmanager->getSession($p)->isAuthenticated($p)) {
-                    $p->hidePlayer($player);
-                }
-            }
-        }
-        if ($this->getConfig()->getNested("effects.hide-effects")) {
-            foreach ($player->getEffects() as $effect) {
-                if ($this->getConfig()->getNested("blindness") && ($effect->getId() == 15 || $effect->getId() == 16)) {
-                    continue;
-                }
-                $pk = new MobEffectPacket();
-                $pk->eid = $player->getId();
-                $pk->eventId = MobEffectPacket::EVENT_REMOVE;
-                $pk->effectId = $effect->getId();
-                $player->dataPacket($pk);
-            }
-        }
-        if ($this->getConfig()->getNested("login.adventure-mode")) {
-            $this->gamemode[strtolower($player->getName())] = $player->getGamemode();
-            $player->setGamemode(2);
-        }
-        if ($this->getConfig()->getNested("timeout.enabled")) {
-            $this->timeouttick[strtolower($player->getName())] = 0;
-        }
-        if ($this->getConfig()->getNested("message.boss-bar")) {
-            $wither = Entity::createEntity("Wither", $player->getLevel(), new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $player->x + 0.5), new DoubleTag("", $player->y - 25), new DoubleTag("", $player->z + 0.5)]), "Motion" => new ListTag("Motion", [new DoubleTag("", 0), new DoubleTag("", 0), new DoubleTag("", 0)]), "Rotation" => new ListTag("Rotation", [new FloatTag("", 0), new FloatTag("", 0)])]));
-            $wither->spawnTo($player);
-            $wither->setNameTag($this->sessionmanager->getSession($player)->isRegistered() == false ? $this->languagemanager->getMessage($player, "register-boss-bar") : $this->languagemanager->getMessage($player, "login-boss-bar"));
-            $this->wither[strtolower($player->getName())] = $wither;
-            $wither->setMaxHealth($this->getConfig()->getNested("timeout.timeout-time"));
-            $wither->setHealth($this->getConfig()->getNested("timeout.timeout-time"));
-            $pk = new BossEventPacket();
-            $pk->eid = $wither->getId();
-            $pk->state = 0;
-            $player->dataPacket($pk);
-        }
     }
 
     /**

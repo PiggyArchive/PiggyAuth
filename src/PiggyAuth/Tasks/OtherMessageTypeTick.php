@@ -30,7 +30,7 @@ class OtherMessageTypeTick extends PluginTask
     public function onRun($currentTick)
     {
         foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {
-            if ($this->plugin->sessionmanager->getSession($player) !== null && !$this->plugin->sessionmanager->getSession($player)->isAuthenticated() && !isset($this->plugin->confirmPassword[strtolower($player->getName())])) {
+            if ($this->plugin->sessionmanager->getSession($player) !== null && !$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
                 if ($this->plugin->getConfig()->getNested("message.popup")) {
                     if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
                         $player->sendPopup($this->plugin->languagemanager->getMessage($player, "login-popup"));
@@ -82,12 +82,10 @@ class OtherMessageTypeTick extends PluginTask
                     $player->dataPacket($pk);
                 }
                 if ($this->plugin->getConfig()->getNested("message.boss-bar")) {
-                    if (isset($this->plugin->wither[strtolower($player->getName())])) {
-                        $pk = new UpdateAttributesPacket();
-                        $pk->entries[] = new FakeAttribute(0.00, $this->plugin->getConfig()->getNested("timeout.timeout-time"), ($this->plugin->getConfig()->getNested("timeout.timeout-time") - $this->plugin->timeouttick[strtolower($player->getName())]) - 1, "minecraft:health");
-                        $pk->entityId = $this->plugin->wither[strtolower($player->getName())]->getId();
-                        $player->dataPacket($pk);
-                    }
+                    $pk = new UpdateAttributesPacket();
+                    $pk->entries[] = new FakeAttribute(0.00, $this->plugin->getConfig()->getNested("timeout.timeout-time"), ($this->plugin->getConfig()->getNested("timeout.timeout-time") - $this->plugin->sessionmanager->getSession($player)->getTimeoutTick() - 1), "minecraft:health");
+                    $pk->entityId = $this->plugin->sessionmanager->getSession($player)->getWither()->getId();
+                    $player->dataPacket($pk);
                 }
                 $pk = new SetTitlePacket();
                 $pk->type = SetTitlePacket::TYPE_SET_ANIMATION_TIMES;

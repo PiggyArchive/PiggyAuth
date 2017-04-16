@@ -28,13 +28,11 @@ class TimeoutTask extends PluginTask
     {
         foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {
             if ($this->plugin->sessionmanager->getSession($player) !== null && !$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
-                if (isset($this->plugin->timeouttick[strtolower($player->getName())])) {
-                    $this->plugin->timeouttick[strtolower($player->getName())]++;
-                    if ($this->plugin->timeouttick[strtolower($player->getName())] == $this->plugin->getConfig()->getNested("timeout.timeout-time")) {
-                        $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerTimeoutEvent($this->plugin, $player));
-                        if (!$event->isCancelled()) {
-                            $player->kick($this->plugin->languagemanager->getMessage($player, "timeout-message"));
-                        }
+                $this->plugin->sessionmanager->getSession($player)->addTimeoutTick();
+                if ($this->plugin->sessionmanager->getSession($player)->getTimeoutTick() == $this->plugin->getConfig()->getNested("timeout.timeout-time")) {
+                    $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerTimeoutEvent($this->plugin, $player));
+                    if (!$event->isCancelled()) {
+                        $player->kick($this->plugin->languagemanager->getMessage($player, "timeout-message"));
                     }
                 }
             }
