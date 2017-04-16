@@ -303,7 +303,7 @@ class EventListener implements Listener
             $event->setJoinMessage(str_replace("{player}", $player->getName(), $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "new-player")));
         }
         if ($this->plugin->getConfig()->getNested("message.hold-join-message")) {
-            $this->plugin->sessionmanager->getSession($player)->setStartMessage($event->getJoinMessage());
+            $this->plugin->sessionmanager->getSession($player)->setJoinMessage($event->getJoinMessage());
             $event->setJoinMessage(null);
         }
         if ($this->plugin->getConfig()->getNested("login.auto-authentication") && !is_null($data) && $player->getUniqueId()->toString() == $data["uuid"]) {

@@ -82,10 +82,12 @@ class OtherMessageTypeTick extends PluginTask
                     $player->dataPacket($pk);
                 }
                 if ($this->plugin->getConfig()->getNested("message.boss-bar")) {
-                    $pk = new UpdateAttributesPacket();
-                    $pk->entries[] = new FakeAttribute(0.00, $this->plugin->getConfig()->getNested("timeout.timeout-time"), ($this->plugin->getConfig()->getNested("timeout.timeout-time") - $this->plugin->sessionmanager->getSession($player)->getTimeoutTick() - 1), "minecraft:health");
-                    $pk->entityId = $this->plugin->sessionmanager->getSession($player)->getWither()->getId();
-                    $player->dataPacket($pk);
+                    if ($this->plugin->sessionmanager->getSession($player)->getWither() !== null) {
+                        $pk = new UpdateAttributesPacket();
+                        $pk->entries[] = new FakeAttribute(0.00, $this->plugin->getConfig()->getNested("timeout.timeout-time"), ($this->plugin->getConfig()->getNested("timeout.timeout-time") - $this->plugin->sessionmanager->getSession($player)->getTimeoutTick() - 1), "minecraft:health");
+                        $pk->entityId = $this->plugin->sessionmanager->getSession($player)->getWither()->getId();
+                        $player->dataPacket($pk);
+                    }
                 }
                 $pk = new SetTitlePacket();
                 $pk->type = SetTitlePacket::TYPE_SET_ANIMATION_TIMES;

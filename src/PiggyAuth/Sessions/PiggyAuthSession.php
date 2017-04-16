@@ -7,6 +7,7 @@ use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
+use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\network\protocol\MobEffectPacket;
 use pocketmine\Player;
@@ -401,6 +402,7 @@ class PiggyAuthSession implements Session
      */
     public function startSession()
     {
+        echo 1;
         if (in_array(strtolower($this->player->getName()), $this->plugin->getConfig()->getNested("login.accounts-bypassed"))) {
             $this->authenticated = true;
             return true;
@@ -479,6 +481,7 @@ class PiggyAuthSession implements Session
             $wither->spawnTo($this->player);
             $wither->setNameTag($this->isRegistered() == false ? $this->plugin->languagemanager->getMessage($this->player, "register-boss-bar") : $this->plugin->languagemanager->getMessage($this->player, "login-boss-bar"));
             $this->setWither($wither);
+            echo "h";
             $wither->setMaxHealth($this->plugin->getConfig()->getNested("timeout.timeout-time"));
             $wither->setHealth($this->plugin->getConfig()->getNested("timeout.timeout-time"));
             $pk = new BossEventPacket();
