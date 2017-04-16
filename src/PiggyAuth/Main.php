@@ -438,8 +438,10 @@ class Main extends PluginBase
             $player->getInventory()->sendContents($player);
         }
         if ($this->getConfig()->getNested("login.adventure-mode")) {
-            $player->setGamemode($this->sessionmanager->getSession($player)->getGamemode());
-            $this->sessionmanager->getSession($player)->setGamemode(null);
+            if($this->sessionmanager->getSession($player)->getGamemode() !== null) {
+                $player->setGamemode($this->sessionmanager->getSession($player)->getGamemode());
+                $this->sessionmanager->getSession($player)->setGamemode(null);
+            }
         }
         if ($this->getConfig()->getNested("message.boss-bar")) {
             $this->sessionmanager->getSession($player)->getWither()->kill();
@@ -774,8 +776,10 @@ class Main extends PluginBase
                 $this->sessionmanager->getSession($player)->setAuthenticated(false);
             } else {
                 if ($this->getConfig()->getNested("login.adventure-mode")) {
-                    $player->setGamemode($this->sessionmanager->getSession($player)->getGamemode());
-                    $this->sessionmanager->getSession($player)->setGamemode(null);
+                    if($this->sessionmanager->getSession($player)->getGamemode() !== null) {
+                        $player->setGamemode($this->sessionmanager->getSession($player)->getGamemode());
+                        $this->sessionmanager->getSession($player)->setGamemode(null);
+                    }
                 }
                 $this->sessionmanager->getSession($player)->setMessageTick(0);
                 $this->sessionmanager->getSession($player)->setTimeoutTick(0);
