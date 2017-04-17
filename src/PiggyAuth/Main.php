@@ -775,18 +775,20 @@ class Main extends PluginBase
             if ($this->sessionmanager->getSession($player) !== null && $this->sessionmanager->getSession($player)->isAuthenticated()) {
                 $this->sessionmanager->getSession($player)->setAuthenticated(false);
             } else {
-                if ($this->getConfig()->getNested("login.adventure-mode")) {
-                    if($this->sessionmanager->getSession($player)->getGamemode() !== null) {
-                        $player->setGamemode($this->sessionmanager->getSession($player)->getGamemode());
-                        $this->sessionmanager->getSession($player)->setGamemode(null);
+                if($this->sessionmanager->getSession($player) !== null) {
+                    if ($this->getConfig()->getNested("login.adventure-mode")) {
+                        if ($this->sessionmanager->getSession($player)->getGamemode() !== null) {
+                            $player->setGamemode($this->sessionmanager->getSession($player)->getGamemode());
+                            $this->sessionmanager->getSession($player)->setGamemode(null);
+                        }
                     }
-                }
-                $this->sessionmanager->getSession($player)->setMessageTick(0);
-                $this->sessionmanager->getSession($player)->setTimeoutTick(0);
-                $this->sessionmanager->getSession($player)->setTries(0);
-                if ($this->getConfig()->getNested("message.boss-bar")) {
-                    $this->sessionmanager->getSession($player)->getWither()->kill();
-                    $this->sessionmanager->getSession($player)->setWither(null);
+                    $this->sessionmanager->getSession($player)->setMessageTick(0);
+                    $this->sessionmanager->getSession($player)->setTimeoutTick(0);
+                    $this->sessionmanager->getSession($player)->setTries(0);
+                    if ($this->getConfig()->getNested("message.boss-bar")) {
+                        $this->sessionmanager->getSession($player)->getWither()->kill();
+                        $this->sessionmanager->getSession($player)->setWither(null);
+                    }
                 }
             }
             if ($quit !== true) {
