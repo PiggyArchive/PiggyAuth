@@ -18,7 +18,7 @@ use PiggyAuth\Commands\SetLanguageCommand;
 use PiggyAuth\Commands\UnregisterCommand;
 use PiggyAuth\Converter\ServerAuthConverter;
 use PiggyAuth\Converter\SimpleAuthConverter;
-use PiggyAuth\Databases\YAML;
+use PiggyAuth\Databases\IndividualFiles;
 use PiggyAuth\Emails\EmailManager;
 use PiggyAuth\Events\PlayerChangePasswordEvent;
 use PiggyAuth\Events\PlayerFailEvent;
@@ -148,7 +148,10 @@ class Main extends PluginBase
                 break;
             case "yml":
             case "yaml":
-                $this->database = new YAML($this);
+                $this->database = new IndividualFiles($this, "yml");
+                break;
+            case "json":
+                $this->database = new IndividualFiles($this, "json");
                 break;
             default:
                 $this->database = new SQLite3($this);
@@ -171,7 +174,7 @@ class Main extends PluginBase
     }
 
     /**
-     * @return MySQL|SQLite3|YAML
+     * @return MySQL|SQLite3|IndividualFiles
      */
     public function getDatabase()
     {
@@ -443,14 +446,16 @@ class Main extends PluginBase
             $player->getInventory()->sendContents($player);
         }
         if ($this->getConfig()->getNested("login.adventure-mode")) {
-            if($this->sessionmanager->getSession($player)->getGamemode() !== null) {
+            if ($this->sessionmanager->getSession($player)->getGamemode() !== null) {
                 $player->setGamemode($this->sessionmanager->getSession($player)->getGamemode());
                 $this->sessionmanager->getSession($player)->setGamemode(null);
             }
         }
         if ($this->getConfig()->getNested("message.boss-bar")) {
-            $this->sessionmanager->getSession($player)->getWither()->kill();
-            $this->sessionmanager->getSession($player)->setWither(null);
+            if ($this->sessionmanager->getSession($player)->getWither() !== null) {
+                $this->sessionmanager->getSession($player)->getWither()->kill();
+                $this->sessionmanager->getSession($player)->setWither(null);
+            }
         }
         if ($rehashedpassword !== null) {
             $this->sessionmanager->getSession($player)->updatePlayer("password", $rehashedpassword);
@@ -780,7 +785,7 @@ class Main extends PluginBase
             if ($this->sessionmanager->getSession($player) !== null && $this->sessionmanager->getSession($player)->isAuthenticated()) {
                 $this->sessionmanager->getSession($player)->setAuthenticated(false);
             } else {
-                if($this->sessionmanager->getSession($player) !== null) {
+                if ($this->sessionmanager->getSession($player) !== null) {
                     if ($this->getConfig()->getNested("login.adventure-mode")) {
                         if ($this->sessionmanager->getSession($player)->getGamemode() !== null) {
                             $player->setGamemode($this->sessionmanager->getSession($player)->getGamemode());
@@ -791,8 +796,10 @@ class Main extends PluginBase
                     $this->sessionmanager->getSession($player)->setTimeoutTick(0);
                     $this->sessionmanager->getSession($player)->setTries(0);
                     if ($this->getConfig()->getNested("message.boss-bar")) {
-                        $this->sessionmanager->getSession($player)->getWither()->kill();
-                        $this->sessionmanager->getSession($player)->setWither(null);
+                        if ($this->sessionmanager->getSession($player)->getWither() !== null) {
+                            $this->sessionmanager->getSession($player)->getWither()->kill();
+                            $this->sessionmanager->getSession($player)->setWither(null);
+                        }
                     }
                 }
             }

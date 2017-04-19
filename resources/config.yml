@@ -153,7 +153,7 @@ key:
   enabled: true
   #Username of owner, for key
   owner: TheOwnerLovesPig
-#Database (sqlite3, mysql, yaml)
+#Database (sqlite3, mysql, yaml, json)
 database: sqlite3
 #MySQL login
 mysql:

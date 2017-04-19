@@ -3,8 +3,6 @@
 namespace PiggyAuth;
 
 use PiggyAuth\Databases\MySQL;
-use PiggyAuth\Databases\SQLite3;
-use PiggyAuth\Databases\YAML;
 use PiggyAuth\Events\PlayerFailEvent;
 use PiggyAuth\Events\PlayerLoginEvent;
 
@@ -296,7 +294,7 @@ class EventListener implements Listener
     public function onJoin(PlayerJoinEvent $event)
     {
         $player = $event->getPlayer();
-        if ($this->plugin->database instanceof SQLite3 || $this->plugin->database instanceof YAML) {
+        if (!$this->plugin->database instanceof MySQL) {
             $this->plugin->sessionmanager->loadSession($player);
         }
         $data = $this->plugin->sessionmanager->getSession($player)->getData();
