@@ -18,6 +18,7 @@ use PiggyAuth\Commands\SetLanguageCommand;
 use PiggyAuth\Commands\UnregisterCommand;
 use PiggyAuth\Converter\ServerAuthConverter;
 use PiggyAuth\Converter\SimpleAuthConverter;
+use PiggyAuth\Databases\YAML;
 use PiggyAuth\Emails\EmailManager;
 use PiggyAuth\Events\PlayerChangePasswordEvent;
 use PiggyAuth\Events\PlayerFailEvent;
@@ -145,6 +146,10 @@ class Main extends PluginBase
             case "sqlite3":
                 $this->database = new SQLite3($this);
                 break;
+            case "yml":
+            case "yaml":
+                $this->database = new YAML($this);
+                break;
             default:
                 $this->database = new SQLite3($this);
                 $this->getLogger()->error("§cDatabase not found, using default.");
@@ -166,7 +171,7 @@ class Main extends PluginBase
     }
 
     /**
-     * @return MySQL|SQLite3
+     * @return MySQL|SQLite3|YAML
      */
     public function getDatabase()
     {

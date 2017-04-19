@@ -36,3 +36,4 @@ PiggyAuth is a safe and feature-rich auth plugin for PMMP.
 * @lolmanz0 for czech translations
 * @SleepSpace9 for german translations
 * @miguel456 for portuguese translations.
+* @Thunder33345 & mojlna for chinese translations.

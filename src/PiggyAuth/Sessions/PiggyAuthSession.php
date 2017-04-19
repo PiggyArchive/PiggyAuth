@@ -189,15 +189,15 @@ class PiggyAuthSession implements Session
     /**
      * @return bool
      */
-    public function isComfirmingPassword()
+    public function isConfirmingPassword()
     {
         return $this->isConfirmingPassword;
     }
 
     /**
-     * @param null $arg
+     * @param bool|null $arg
      */
-    public function setComfirmingPassword($arg = null)
+    public function setConfirmingPassword($arg = true)
     {
         $this->isConfirmingPassword = $arg;
     }
@@ -361,11 +361,17 @@ class PiggyAuthSession implements Session
         $this->tries++;
     }
 
+    /**
+     * @return null
+     */
     public function getJoinMessage()
     {
         return $this->joinmessage;
     }
 
+    /**
+     * @param $message
+     */
     public function setJoinMessage($message){
         $this->joinmessage = $message;
     }
