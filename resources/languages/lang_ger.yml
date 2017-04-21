@@ -85,6 +85,7 @@ your-pin: "&aDeine PIN: {pin}"
 
 #Key
 key-expired: "&cDein Key ist abgelaufen."
+key-disabled: "&cKeys aren't enabled on this server." #Needs translation
 
 #Language
 invalid-language: "&cSprache nicht verfügbar.\nVerfügbare Sprachen: {languages}"
@@ -109,3 +110,5 @@ over-api-rate-limit: "&cDu hast die API-Ratenbegrenzung überschritten (60 Anfor
 #General
 dont-say-password: "&cSchreib dein Kennwort nicht in den Chat!"
 account-blocked: "&cDie Kennung ist gesperrt."
+use-in-game: "&cYou must use the command in-game." #Needs translation
+use-on-console: "&cYou must use the command on console." #Needs translation

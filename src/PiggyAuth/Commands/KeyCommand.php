@@ -37,14 +37,18 @@ class KeyCommand extends VanillaCommand
             return true;
         }
         if ($sender instanceof Player) {
-            $sender->sendMessage("§cThis is for the console only.");
+            $sender->sendMessage($this->plugin->languagemanager->getMessage($sender, "use-on-console"));
             return false;
         }
         if (!isset($args[0])) {
             $sender->sendMessage("/key <password>");
             return false;
         }
-        $sender->sendMessage($this->plugin->getKey($args[0]) == false ? "Incorrect password." : $this->plugin->getKey($args[0]));
+        if(!$this->plugin->getConfig()->getNested("key.enabled")) {
+            $sender->sendMessage($this->plugin->languagemanager->getMessage($sender, "key-disabled"));
+            return false;
+        }
+        $sender->sendMessage($this->plugin->getKey($args[0]) == false ? $this->plugin->languagemanager->getMessage($sender, "incorrect-password-other") : $this->plugin->getKey($args[0]));
         return true;
     }
 

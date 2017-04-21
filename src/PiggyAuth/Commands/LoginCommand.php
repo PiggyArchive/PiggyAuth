@@ -37,7 +37,7 @@ class LoginCommand extends VanillaCommand
             return true;
         }
         if (!$sender instanceof Player) {
-            $sender->sendMessage("§cYou must use the command in-game.");
+            $sender->sendMessage($this->plugin->languagemanager->getMessage($sender, "use-in-game"));
             return false;
         }
         if (!isset($args[0])) {

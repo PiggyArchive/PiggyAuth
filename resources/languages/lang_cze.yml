@@ -85,6 +85,7 @@ your-pin: "&aTvů pin je {pin}."
 
 #Key
 key-expired: "&cTvůj klíč expiroval."
+key-disabled: "&cKeys aren't enabled on this server." #Needs translation
 
 #Language
 invalid-language: "&cJazyk není dostupný.\nDostupné jazyky: {languages}"
@@ -109,3 +110,5 @@ over-api-rate-limit: "&cProšli jste api limit (60 žádostí za hodinu)."
 #General
 dont-say-password: "&cNesděluj své heslo!"
 account-blocked: "&cÚčet je zablokovaný!"
+use-in-game: "&cYou must use the command in-game." #Needs translation
+use-on-console: "&cYou must use the command on console." #Needs translation

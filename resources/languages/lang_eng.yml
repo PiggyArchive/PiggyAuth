@@ -85,6 +85,7 @@ your-pin: "&aYour pin: {pin}"
 
 #Key
 key-expired: "&cYour key is expired."
+key-disabled: "&cKeys aren't enabled on this server."
 
 #Language
 invalid-language: "&cLanguage not available.\nAvailable languages: {languages}"
@@ -109,3 +110,5 @@ over-api-rate-limit: "&cYou have passed the api rate limit (60 requests an hour)
 #General
 dont-say-password: "&cDo not say your password."
 account-blocked: "&cAccount is blocked."
+use-in-game: "&cYou must use the command in-game."
+use-on-console: "&cYou must use the command on console."

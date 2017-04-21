@@ -7,12 +7,21 @@ use pocketmine\Player;
 use pocketmine\utils\Config;
 
 
+/**
+ * Class IndividualFiles
+ * @package PiggyAuth\Databases
+ */
 class IndividualFiles implements Database
 {
     private $plugin;
     private $extension;
 
 
+    /**
+     * IndividualFiles constructor.
+     * @param Main $plugin
+     * @param $extension
+     */
     public function __construct(Main $plugin, $extension)
     {
         $this->plugin = $plugin;

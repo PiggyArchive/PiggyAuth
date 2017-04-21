@@ -37,7 +37,7 @@ class PinCommand extends VanillaCommand
             return true;
         }
         if (!$sender instanceof Player) {
-            $sender->sendMessage("§cYou must use the command in-game.");
+            $sender->sendMessage($this->plugin->languagemanager->getMessage($sender, "use-in-game"));
             return false;
         }
         $sender->sendMessage(str_replace("{pin}", $this->plugin->sessionmanager->getSession($sender)->getPin(), $this->plugin->languagemanager->getMessage($sender, "your-pin")));

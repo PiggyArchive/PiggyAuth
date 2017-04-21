@@ -85,6 +85,7 @@ your-pin: "&aO teu PIN: {pin}"
 
 #Key
 key-expired: "&cA tua chave passou do prazo de validade!"
+key-disabled: "&cKeys aren't enabled on this server." #Needs translation
 
 #Language
 invalid-language: "&cIdioma não dísponível.\nIdiomas dísponíveis: {languages}" 
@@ -109,3 +110,5 @@ over-api-rate-limit: "&cAntingiste o limite de pedidos da API (60 pedidos/hora).
 #General
 dont-say-password: "&cNunca digas a tua palavra-passe a ninguém!"
 account-blocked: "&cA tua conta está bloqueada."
+use-in-game: "&cYou must use the command in-game." #Needs translation
+use-on-console: "&cYou must use the command on console." #Needs translation

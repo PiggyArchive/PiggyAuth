@@ -85,6 +85,7 @@ your-pin: "&a您的交换码: {pin}"
 
 #Key
 key-expired: "&c您的密钥已过期."
+key-disabled: "&cKeys aren't enabled on this server." #Needs translation
 
 #Language
 invalid-language: "&c不存在的语言.\n可用的语言: {languages}"
@@ -109,3 +110,5 @@ over-api-rate-limit: "&c你已经超过API率的极限了（60 请求1小时)"
 #General
 dont-say-password: "&c请别分享您的密码."
 account-blocked: "&c此账户已受阻."
+use-in-game: "&cYou must use the command in-game." #Needs translation
+use-on-console: "&cYou must use the command on console." #Needs translation
