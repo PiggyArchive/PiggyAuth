@@ -168,7 +168,7 @@ class Main extends PluginBase
         }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         foreach ($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
-            $this->sessionmanager->getSession($player)->startSession();
+            $this->sessionmanager->loadSession($player);
         }
         $this->getLogger()->info("§aEnabled.");
     }
@@ -384,8 +384,10 @@ class Main extends PluginBase
         $this->sessionmanager->getSession($player)->setTimeoutTick(0);
         $this->sessionmanager->getSession($player)->setTries(0);
         if ($this->getConfig()->getNested("message.hold-join-message")) {
-            $this->getServer()->broadcastMessage($this->sessionmanager->getSession($player)->getJoinMessage());
-            $this->sessionmanager->getSession($player)->setJoinMessage(null);
+            if ($this->sessionmanager->getSession($player)->getJoinMessage() !== null) {
+                $this->getServer()->broadcastMessage($this->sessionmanager->getSession($player)->getJoinMessage());
+                $this->sessionmanager->getSession($player)->setJoinMessage(null);
+            }
         }
         $this->sessionmanager->getSession($player)->setAuthenticated();
         if ($this->getConfig()->getNested("effects.invisible")) {
@@ -782,10 +784,8 @@ class Main extends PluginBase
     {
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerLogoutEvent($this, $player));
         if (!$event->isCancelled()) {
-            if ($this->sessionmanager->getSession($player) !== null && $this->sessionmanager->getSession($player)->isAuthenticated()) {
-                $this->sessionmanager->getSession($player)->setAuthenticated(false);
-            } else {
-                if ($this->sessionmanager->getSession($player) !== null) {
+            if ($this->sessionmanager->getSession($player) !== null && !$this->sessionmanager->getSession($player)->isAuthenticated()) {
+                {
                     if ($this->getConfig()->getNested("login.adventure-mode")) {
                         if ($this->sessionmanager->getSession($player)->getGamemode() !== null) {
                             $player->setGamemode($this->sessionmanager->getSession($player)->getGamemode());
@@ -805,7 +805,6 @@ class Main extends PluginBase
             }
             if ($quit !== true) {
                 $this->sessionmanager->loadSession($player); //Reload
-                $this->sessionmanager->getSession($player)->startSession();
             } else {
                 $this->sessionmanager->unloadSession($player);
             }

@@ -44,6 +44,9 @@ class SessionManager
             $player = $plugin->getServer()->getPlayerExact($args[0]);
             if ($player instanceof Player) {
                 $plugin->sessionmanager->createSession($player, $result);
+                if (!$args[1]) {
+                    $plugin->sessionmanager->getSession($player)->startSession();
+                }
                 $plugin->sessionmanager->getSession($player)->setAuthenticated($args[1]);
             }
         };

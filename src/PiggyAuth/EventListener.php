@@ -334,7 +334,6 @@ class EventListener implements Listener
             }
             return true;
         }
-        $this->plugin->sessionmanager->getSession($player)->startSession();
     }
 
     /**
