@@ -101,7 +101,6 @@ class LanguageManager
         }
         $files = scandir($this->plugin->getDataFolder() . "languages/");
         $languages = array();
-        $languagefiles = array();
         foreach ($files as $file) { //Read all files (not in first foreach so we can load language files by other people)
             if (strpos($file, "lang_") !== false && strpos($file, ".yml") !== false) {
                 $language = str_replace("lang_", "", str_replace(".yml", "", $file));
