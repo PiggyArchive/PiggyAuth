@@ -72,7 +72,7 @@ class ConvertCommand extends VanillaCommand
                             break;
                         case "mysql":
                             if (!isset($args[2]) || !isset($args[3]) || !isset($args[4]) || !isset($args[5]) || !isset($args[6]) || !isset($args[7])) {
-                                $sender->sendMessage("/convert " . $args[0] . " " . $args[1] . " <db> <host> <user> <password> <name> <port> <table>");
+                                $sender->sendMessage("/convert " . $args[0] . " " . $args[1] . " <host> <user> <password> <name> <port> <table>");
                                 return false;
                             }
                             $this->plugin->simpleauthconverter->convertFromMySQL($args[2], $args[3], $args[4], $args[5], $args[6], $args[7]);
@@ -102,7 +102,7 @@ class ConvertCommand extends VanillaCommand
                             break;
                         case "mysql":
                             if (!isset($args[2]) || !isset($args[3]) || !isset($args[4]) || !isset($args[5]) || !isset($args[6]) || !isset($args[7]) || !isset($args[8])) {
-                                $sender->sendMessage("/convert " . $args[0] . " " . $args[1] . " <db> <host> <user> <password> <name> <port> <table> <algorithm>");
+                                $sender->sendMessage("/convert " . $args[0] . " " . $args[1] . " <host> <user> <password> <name> <port> <table> <algorithm>");
                                 return false;
                             }
                             $this->plugin->serverauthconverter->convertFromMySQL($args[2], $args[3], $args[4], $args[5], $args[6], $args[7], $args[8]);
