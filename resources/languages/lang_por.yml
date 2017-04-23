@@ -110,5 +110,5 @@ over-api-rate-limit: "&cAntingiste o limite de pedidos da API (60 pedidos/hora).
 #General
 dont-say-password: "&cNunca digas a tua palavra-passe a ninguém!"
 account-blocked: "&cA tua conta está bloqueada."
-use-in-game: "&cYou must use the command in-game." #Needs translation
-use-on-console: "&cYou must use the command on console." #Needs translation
+use-in-game: "&cEste comando só pode ser utilizado dentro do jogo." 
+use-on-console: "&cEste comando só pode ser utilizado na consola." 
