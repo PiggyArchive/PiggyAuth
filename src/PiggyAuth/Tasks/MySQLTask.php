@@ -13,7 +13,7 @@ class MySQLTask extends AsyncTask
 {
     private $credentials;
     private $query;
-    private $callback;
+    private $callback = false;
     private $args;
     public $result;
 
@@ -26,9 +26,12 @@ class MySQLTask extends AsyncTask
      */
     public function __construct($credentials, $query, $callback = null, $args = null)
     {
+        if ($callback !== null) {
+            parent::__construct($callback);
+        }
         $this->credentials = serialize($credentials);
         $this->query = serialize($query);
-        $this->callback = $callback;
+        $this->callback = $callback !== null;
         $this->args = $args;
     }
 
@@ -55,9 +58,9 @@ class MySQLTask extends AsyncTask
     public function onCompletion(Server $server)
     {
         $plugin = $server->getPluginManager()->getPlugin("PiggyAuth");
-        if ($this->callback !== null && $this->args !== null) {
+        if ($this->callback && $this->args !== null) {
             if ($plugin->isEnabled()) {
-                $callback = $this->callback;
+                $callback = $this->fetchLocal($server);
                 $result = unserialize($this->result);
                 $callback($result, $this->args, $plugin);
             }

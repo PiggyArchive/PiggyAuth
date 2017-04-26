@@ -15,7 +15,7 @@ class ValidateEmailTask extends AsyncTask
     private $email;
     private $result;
     private $error;
-    private $callback;
+    private $callback = false;
     private $args;
 
 
@@ -28,9 +28,12 @@ class ValidateEmailTask extends AsyncTask
      */
     public function __construct($api, $email, $callback, $args)
     {
+        if ($callback !== null) {
+            parent::__construct($callback);
+        }
         $this->api = serialize($api);
         $this->email = serialize($email);
-        $this->callback = $callback;
+        $this->callback = $callback !== null;
         $this->args = $args;
     }
 
@@ -74,8 +77,8 @@ class ValidateEmailTask extends AsyncTask
                 if ($this->result == null) {
                     $this->result = filter_var(unserialize($this->email), FILTER_VALIDATE_EMAIL);
                 }
-                if ($this->callback !== null && $this->args !== null) {
-                    $callback = $this->callback;
+                if ($this->callback && $this->args !== null) {
+                    $callback = $this->fetchLocal();
                     $callback($this->result, $this->args, $server->getPluginManager()->getPlugin("PiggyAuth"));
                 }
             }
