@@ -174,6 +174,13 @@ class Main extends PluginBase
         $this->getLogger()->info("§aEnabled.");
     }
 
+    public function onDisable()
+    {
+        foreach ($this->getServer()->getOnlinePlayers() as $player) {
+            $this->logout($player);
+        }
+    }
+
     /**
      * @return MySQL|SQLite3|IndividualFiles
      */

@@ -26,12 +26,94 @@ interface Session
 
     public function clearPassword();
 
+    public function isConfirmingPassword();
+
+    /**
+     * @param bool $arg
+     */
+    public function setConfirmingPassword($arg = true);
+
+    public function getFirstPassword();
+
+    /**
+     * @param $password
+     */
+    public function setFirstPassword($password);
+
+    public function getSecondPassword();
+
+    /**
+     * @param $password
+     */
+    public function setSecondPassword($password);
+
+    public function isGivingEmail();
+
+    /**
+     * @param bool $arg
+     */
+    public function setGivingEmail($arg = true);
+
+    public function getMessageTick();
+
+    /**
+     * @param $arg
+     */
+    public function setMessageTick($arg);
+
+    public function addMessageTick();
+
+    public function getCape();
+
+    /**
+     * @param $cape
+     */
+    public function setCape($cape);
+
+    public function getGamemode();
+
+    /**
+     * @param $gamemode
+     */
+    public function setGamemode($gamemode);
+
+    public function getTimeoutTick();
+
+    /**
+     * @param $arg
+     */
+    public function setTimeoutTick($arg);
+
+    public function addTimeoutTick();
+
+    public function getWither();
+
+    /**
+     * @param $wither
+     */
+    public function setWither($wither);
+
+    public function getTries();
+
+    /**
+     * @param $tries
+     */
+    public function setTries($tries);
+
+    public function addTry();
+
+    public function getJoinMessage();
+
+    /**
+     * @param $message
+     */
+    public function setJoinMessage($message);
+
     /**
      * @param $column
      * @param $arg
      * @param $callback
      * @param $args
-     * @return mixed
      */
     public function updatePlayer($column, $arg, $callback, $args);
 
@@ -42,7 +124,6 @@ interface Session
      * @param $xbox
      * @param null $callback
      * @param null $args
-     * @return mixed
      */
     public function insertData($password, $email, $pin, $xbox, $callback = null, $args = null);
 
