@@ -149,7 +149,7 @@ class SQLite3 implements Database
         $statement->bindValue(":attempts", 0, SQLITE3_INTEGER);
         $statement->bindValue(":xbox", $xbox, SQLITE3_TEXT);
         $statement->bindValue(":language", $this->plugin->languagemanager->getDefaultLanguage(), SQLITE3_TEXT);
-        $statement->bindValue("::auth", "PiggyAuth", SQLITE3_TEXT);
+        $statement->bindValue(":auth", "PiggyAuth", SQLITE3_TEXT);
         $result = $statement->execute();
         if ($callback !== null) {
             $callback($result, $args, $this->plugin);
