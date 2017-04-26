@@ -49,21 +49,4 @@ class LoginCommand extends PluginCommand
         $this->getPlugin()->login($sender, $args[0], 0);
         return true;
     }
-
-    /**
-     * @param Player $player
-     * @return array
-     */
-    public function generateCustomCommandData(Player $player)
-    {
-        $commandData = parent::generateCustomCommandData($player);
-        $commandData["overloads"]["default"]["input"]["parameters"] = [
-            0 => [
-                "type" => "rawtext",
-                "name" => "password",
-                "optional" => false
-            ]
-        ];
-        return $commandData;
-    }
 }
