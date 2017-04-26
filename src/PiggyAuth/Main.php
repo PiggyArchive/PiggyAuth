@@ -164,7 +164,8 @@ class Main extends PluginBase
         $this->simpleauthconverter = new SimpleAuthConverter($this);
         $this->serverauthconverter = new ServerAuthConverter($this);
         if ($this->getConfig()->getNested("auto-updater.enabled")) { //Should do after LanguageManager is initiated...
-            $this->getServer()->getScheduler()->scheduleAsyncTask(new AutoUpdaterTask($this->getConfig()->getNested("auto-updater.auto-install")));
+            $this->getLogger()->error("Sorry, we have temporarily disabled Auto Updater due to requests from @SOF3.");
+            //$this->getServer()->getScheduler()->scheduleAsyncTask(new AutoUpdaterTask($this->getConfig()->getNested("auto-updater.auto-install")));
         }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         foreach ($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
