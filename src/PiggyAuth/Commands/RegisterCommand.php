@@ -5,15 +5,15 @@ namespace PiggyAuth\Commands;
 use PiggyAuth\Main;
 
 
-use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class RegisterCommand
  * @package PiggyAuth\Commands
  */
-class RegisterCommand extends VanillaCommand
+class RegisterCommand extends PluginCommand
 {
     /**
      * RegisterCommand constructor.
@@ -22,9 +22,10 @@ class RegisterCommand extends VanillaCommand
      */
     public function __construct($name, $plugin)
     {
-        parent::__construct($name, "Register an account", "/register <password> <confirm password> [email]");
+        parent::__construct($name, $plugin);
+        $this->setDescription("Register an account");
+        $this->setUsage("/register <password> <confirm password> [email]");
         $this->setPermission("piggyauth.command.register");
-        $this->plugin = $plugin;
     }
 
     /**
@@ -35,11 +36,12 @@ class RegisterCommand extends VanillaCommand
      */
     public function execute(CommandSender $sender, $currentAlias, array $args)
     {
+        var_dump($args);
         if (!$this->testPermission($sender)) {
             return true;
         }
         if (!$sender instanceof Player) {
-            $sender->sendMessage($this->plugin->languagemanager->getMessage($sender, "use-in-game"));
+            $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "use-in-game"));
             return false;
         }
         if (!isset($args[0]) || !isset($args[1])) {
@@ -65,10 +67,36 @@ class RegisterCommand extends VanillaCommand
                 $args[0],
                 $args[1],
                 $args[2]);
-            $this->plugin->emailmanager->validateEmail($args[2], $function, $arguements);
+            $this->getPlugin()->emailmanager->validateEmail($args[2], $function, $arguements);
             return true;
         }
         return true;
     }
 
+    /**
+     * @param Player $player
+     * @return array
+     */
+    public function generateCustomCommandData(Player $player)
+    {
+        $commandData = parent::generateCustomCommandData($player);
+        $commandData["overloads"]["default"]["input"]["parameters"] = [
+            0 => [
+                "type" => "rawtext",
+                "name" => "password",
+                "optional" => false
+            ],
+            1 => [
+                "type" => "rawtext",
+                "name" => "confirm_password",
+                "optional" => false
+            ],
+            2 => [
+                "type" => "rawtext",
+                "name" => "email",
+                "optional" => true
+            ]
+        ];
+        return $commandData;
+    }
 }

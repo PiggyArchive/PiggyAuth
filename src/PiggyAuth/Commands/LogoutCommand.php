@@ -3,15 +3,16 @@
 namespace PiggyAuth\Commands;
 
 use PiggyAuth\Main;
-use pocketmine\command\defaults\VanillaCommand;
+
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class LogoutCommand
  * @package PiggyAuth\Commands
  */
-class LogoutCommand extends VanillaCommand
+class LogoutCommand extends PluginCommand
 {
     /**
      * LogoutCommand constructor.
@@ -20,9 +21,10 @@ class LogoutCommand extends VanillaCommand
      */
     public function __construct($name, $plugin)
     {
-        parent::__construct($name, "Logout your account", "/logout");
+        parent::__construct($name, $plugin);
+        $this->setDescription("Logout your account");
+        $this->setUsage("/logout");
         $this->setPermission("piggyauth.command.logout");
-        $this->plugin = $plugin;
     }
 
     /**
@@ -37,11 +39,10 @@ class LogoutCommand extends VanillaCommand
             return true;
         }
         if (!$sender instanceof Player) {
-            $sender->sendMessage($this->plugin->languagemanager->getMessage($sender, "use-in-game"));
+            $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "use-in-game"));
             return false;
         }
-        $this->plugin->logout($sender, false);
+        $this->getPlugin()->logout($sender, false);
         return true;
     }
-
 }

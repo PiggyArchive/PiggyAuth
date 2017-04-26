@@ -3,15 +3,15 @@
 namespace PiggyAuth\Commands;
 
 use PiggyAuth\Main;
-use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class ChangeEmailCommand
  * @package PiggyAuth\Commands
  */
-class ChangeEmailCommand extends VanillaCommand
+class ChangeEmailCommand extends PluginCommand
 {
     /**
      * ChangeEmailCommand constructor.
@@ -20,9 +20,10 @@ class ChangeEmailCommand extends VanillaCommand
      */
     public function __construct($name, $plugin)
     {
-        parent::__construct($name, "Change your email", "/changeemail <email>");
+        parent::__construct($name, $plugin);
+        $this->setDescription("Change your email");
+        $this->setUsage("/changeemail <email>");
         $this->setPermission("piggyauth.command.changeemail");
-        $this->plugin = $plugin;
     }
 
     /**
@@ -37,7 +38,7 @@ class ChangeEmailCommand extends VanillaCommand
             return true;
         }
         if (!$sender instanceof Player) {
-            $sender->sendMessage($this->plugin->languagemanager->getMessage($sender, "use-in-game"));
+            $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "use-in-game"));
             return false;
         }
         if (!isset($args[0])) {
@@ -56,9 +57,8 @@ class ChangeEmailCommand extends VanillaCommand
                 }
             };
             $arguements = array($sender->getName(), $args[0]);
-            $this->plugin->emailmanager->validateEmail($args[0], $function, $arguements);
+            $this->getPlugin()->emailmanager->validateEmail($args[0], $function, $arguements);
             return true;
         }
     }
-
 }

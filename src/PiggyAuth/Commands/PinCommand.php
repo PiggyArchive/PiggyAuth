@@ -3,15 +3,16 @@
 namespace PiggyAuth\Commands;
 
 use PiggyAuth\Main;
-use pocketmine\command\defaults\VanillaCommand;
+
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class PinCommand
  * @package PiggyAuth\Commands
  */
-class PinCommand extends VanillaCommand
+class PinCommand extends PluginCommand
 {
     /**
      * PinCommand constructor.
@@ -20,9 +21,10 @@ class PinCommand extends VanillaCommand
      */
     public function __construct($name, $plugin)
     {
-        parent::__construct($name, "Get your pin", "/pin");
+        parent::__construct($name, $plugin);
+        $this->setDescription("Get your pin");
+        $this->setUsage("/pin");
         $this->setPermission("piggyauth.command.pin");
-        $this->plugin = $plugin;
     }
 
     /**
@@ -37,11 +39,10 @@ class PinCommand extends VanillaCommand
             return true;
         }
         if (!$sender instanceof Player) {
-            $sender->sendMessage($this->plugin->languagemanager->getMessage($sender, "use-in-game"));
+            $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "use-in-game"));
             return false;
         }
-        $sender->sendMessage(str_replace("{pin}", $this->plugin->sessionmanager->getSession($sender)->getPin(), $this->plugin->languagemanager->getMessage($sender, "your-pin")));
+        $sender->sendMessage(str_replace("{pin}", $this->getPlugin()->sessionmanager->getSession($sender)->getPin(), $this->getPlugin()->languagemanager->getMessage($sender, "your-pin")));
         return true;
     }
-
 }

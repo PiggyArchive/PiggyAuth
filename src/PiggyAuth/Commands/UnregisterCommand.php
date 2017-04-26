@@ -3,15 +3,16 @@
 namespace PiggyAuth\Commands;
 
 use PiggyAuth\Main;
-use pocketmine\command\defaults\VanillaCommand;
+
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class UnregisterCommand
  * @package PiggyAuth\Commands
  */
-class UnregisterCommand extends VanillaCommand
+class UnregisterCommand extends PluginCommand
 {
     /**
      * UnregisterCommand constructor.
@@ -20,9 +21,10 @@ class UnregisterCommand extends VanillaCommand
      */
     public function __construct($name, $plugin)
     {
-        parent::__construct($name, "Unregister", "/unregister <password>");
+        parent::__construct($name, $plugin);
+        $this->setDescription("Unregister");
+        $this->setUsage("/unregister <password>");
         $this->setPermission("piggyauth.command.unregister");
-        $this->plugin = $plugin;
     }
 
     /**
@@ -37,15 +39,14 @@ class UnregisterCommand extends VanillaCommand
             return true;
         }
         if (!$sender instanceof Player) {
-            $sender->sendMessage("�cYou must use the command in-game.");
+            $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "use-in-game"));
             return false;
         }
         if (!isset($args[0])) {
             $sender->sendMessage("/unregister <password>");
             return false;
         }
-        $this->plugin->unregister($sender, $args[0]);
+        $this->getPlugin()->unregister($sender, $args[0]);
         return true;
     }
-
 }

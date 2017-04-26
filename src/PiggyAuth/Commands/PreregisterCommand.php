@@ -5,16 +5,16 @@ namespace PiggyAuth\Commands;
 use PiggyAuth\Main;
 
 
-use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
+use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class PreregisterCommand
  * @package PiggyAuth\Commands
  */
-class PreregisterCommand extends VanillaCommand
+class PreregisterCommand extends PluginCommand
 {
     /**
      * PreregisterCommand constructor.
@@ -23,9 +23,10 @@ class PreregisterCommand extends VanillaCommand
      */
     public function __construct($name, $plugin)
     {
-        parent::__construct($name, "Register an account", "/preregister <player> <password> <confirm password> [email]");
+        parent::__construct($name, $plugin);
+        $this->setDescription("Register an account");
+        $this->setUsage("/preregister <player> <password> <confirm password> [email]");
         $this->setPermission("piggyauth.command.preregister");
-        $this->plugin = $plugin;
     }
 
     /**
@@ -63,7 +64,7 @@ class PreregisterCommand extends VanillaCommand
                 $args[1],
                 $args[2],
                 $args[3]);
-            $this->plugin->emailmanager->validateEmail($args[3], $function, $arguements);
+            $this->getPlugin()->emailmanager->validateEmail($args[3], $function, $arguements);
             return true;
         }
         return true;

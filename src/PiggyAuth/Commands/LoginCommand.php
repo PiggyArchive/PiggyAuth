@@ -3,15 +3,16 @@
 namespace PiggyAuth\Commands;
 
 use PiggyAuth\Main;
-use pocketmine\command\defaults\VanillaCommand;
+
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class LoginCommand
  * @package PiggyAuth\Commands
  */
-class LoginCommand extends VanillaCommand
+class LoginCommand extends PluginCommand
 {
     /**
      * LoginCommand constructor.
@@ -20,9 +21,10 @@ class LoginCommand extends VanillaCommand
      */
     public function __construct($name, $plugin)
     {
-        parent::__construct($name, "Login to your account", "/login <password>");
+        parent::__construct($name, $plugin);
+        $this->setDescription("Login to your account");
+        $this->setUsage("/login <password>");
         $this->setPermission("piggyauth.command.login");
-        $this->plugin = $plugin;
     }
 
     /**
@@ -37,15 +39,31 @@ class LoginCommand extends VanillaCommand
             return true;
         }
         if (!$sender instanceof Player) {
-            $sender->sendMessage($this->plugin->languagemanager->getMessage($sender, "use-in-game"));
+            $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "use-in-game"));
             return false;
         }
         if (!isset($args[0])) {
             $sender->sendMessage("/login <password>");
             return false;
         }
-        $this->plugin->login($sender, $args[0], 0);
+        $this->getPlugin()->login($sender, $args[0], 0);
         return true;
     }
 
+    /**
+     * @param Player $player
+     * @return array
+     */
+    public function generateCustomCommandData(Player $player)
+    {
+        $commandData = parent::generateCustomCommandData($player);
+        $commandData["overloads"]["default"]["input"]["parameters"] = [
+            0 => [
+                "type" => "rawtext",
+                "name" => "password",
+                "optional" => false
+            ]
+        ];
+        return $commandData;
+    }
 }

@@ -3,14 +3,16 @@
 namespace PiggyAuth\Commands;
 
 use PiggyAuth\Main;
-use pocketmine\command\defaults\VanillaCommand;
+
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginCommand;
+use pocketmine\Player;
 
 /**
  * Class ResetPasswordCommand
  * @package PiggyAuth\Commands
  */
-class ResetPasswordCommand extends VanillaCommand
+class ResetPasswordCommand extends PluginCommand
 {
     /**
      * ResetPasswordCommand constructor.
@@ -19,9 +21,11 @@ class ResetPasswordCommand extends VanillaCommand
      */
     public function __construct($name, $plugin)
     {
-        parent::__construct($name, "Reset a player's password", "/resetpassword <player>", ["resetpw", "resetpwd", "rpw", "rpwd"]);
+        parent::__construct($name, $plugin);
+       $this->setDescription("Reset a player's password");
+       $this->setUsage("/resetpassword <player>");
+       $this->setAliases(["resetpw", "resetpwd", "rpw", "rpwd"]);
         $this->setPermission("piggyauth.command.resetpassword");
-        $this->plugin = $plugin;
     }
 
     /**
@@ -39,7 +43,7 @@ class ResetPasswordCommand extends VanillaCommand
             $sender->sendMessage("/resetpassword <player>");
             return false;
         }
-        $this->plugin->resetpassword($args[0], $sender);
+        $this->getPlugin()->resetpassword($args[0], $sender);
         return true;
     }
 
