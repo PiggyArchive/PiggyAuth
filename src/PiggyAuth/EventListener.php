@@ -179,8 +179,8 @@ class EventListener implements Listener
                                     $plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
                                 } else {
                                     $plugin->register($player, $plugin->sessionmanager->getSession($player)->getSecondPassword(), $plugin->sessionmanager->getSession($player)->getSecondPassword(), $message);
-                                    $this->plugin->sessionmanager->getSession($player)->setSecondPassword(null);
-                                    $this->plugin->sessionmanager->getSession($player)->setGivingEmail(false);
+                                    $plugin->sessionmanager->getSession($player)->setSecondPassword(null);
+                                    $plugin->sessionmanager->getSession($player)->setGivingEmail(false);
                                 }
                             }
                         };
