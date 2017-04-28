@@ -73,30 +73,4 @@ class RegisterCommand extends PluginCommand
         return true;
     }
 
-    /**
-     * @param Player $player
-     * @return array
-     */
-    public function generateCustomCommandData(Player $player)
-    {
-        $commandData = parent::generateCustomCommandData($player);
-        $commandData["overloads"]["default"]["input"]["parameters"] = [
-            0 => [
-                "type" => "rawtext",
-                "name" => "password",
-                "optional" => false
-            ],
-            1 => [
-                "type" => "rawtext",
-                "name" => "confirm_password",
-                "optional" => false
-            ],
-            2 => [
-                "type" => "rawtext",
-                "name" => "email",
-                "optional" => true
-            ]
-        ];
-        return $commandData;
-    }
 }
