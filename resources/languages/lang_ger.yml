@@ -107,6 +107,9 @@ plugin-up-to-date: "&aDas Plugin ist auf dem aktuellsten Stand."
 plugin-auto-updated: "&aDas Plugin wurde auf die Version {version} aktualisiert .\nNeue Features: {features}"
 over-api-rate-limit: "&cDu hast die API-Ratenbegrenzung überschritten (60 Anforderungen pro Stunde)."
 
+#Database
+connection-lost: "&cConnection to MySQL Database lost." #Needs translation
+
 #General
 dont-say-password: "&cSchreib dein Kennwort nicht in den Chat!"
 account-blocked: "&cDie Kennung ist gesperrt."

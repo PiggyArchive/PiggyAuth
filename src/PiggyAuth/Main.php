@@ -536,9 +536,7 @@ class Main extends PluginBase
             $args = array($player->getName(), $xbox);
             $this->sessionmanager->getSession($player)->insertData($password, $email, $pin, $xbox, $callback, $args);
             if ($this->getConfig()->getNested("progress-reports.enabled")) {
-                if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) {
-                    $this->emailmanager->sendEmail($this->getConfig()->getNested("progress-reports.progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player->getName(), $this->languagemanager->getMessageFromLanguage($this->languagemanager->getDefaultLanguage(), "progress-reports.progress-report"))))));
-                }
+                $this->progressReport($player->getName());
             }
         }
         return true;
@@ -598,9 +596,7 @@ class Main extends PluginBase
             $args = array($player);
             $this->database->insertDataWithoutPlayerObject($player, $password, $email, $pin, "PiggyAuth", $callback, $args);
             if ($this->getConfig()->getNested("progress-reports.enabled")) {
-                if ($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number") >= 0 && floor($this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) == $this->database->getRegisteredCount() / $this->getConfig()->getNested("progress-reports.progress-report-number")) {
-                    $this->emailmanager->sendEmail($this->getConfig()->getNested("progress-reports.progress-report-email"), "Server Progress Report", str_replace("{port}", $this->getServer()->getPort(), str_replace("{ip}", $this->getServer()->getIP(), str_replace("{players}", $this->database->getRegisteredCount(), str_replace("{player}", $player, $this->languagemanager->getMessageFromLanguage($this->languagemanager->getDefaultLanguage(), "progress-reports.progress-report"))))));
-                }
+                $this->progressReport($player);
             }
             $sender->sendMessage($this->languagemanager->getMessage($sender, "preregister-success"));
         }
@@ -922,5 +918,18 @@ class Main extends PluginBase
     public function hashSimpleAuth($salt, $password)
     {
         return bin2hex(hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true));
+    }
+
+    public function progressReport($name)
+    {
+        $callback = function ($result, $args, $plugin) {
+            $name = $args[0];
+            $result = intval($result);
+            if ($result / $plugin->getConfig()->getNested("progress-reports.progress-report-number") >= 0 && floor($result / $plugin->getConfig()->getNested("progress-reports.progress-report-number")) == $result / $plugin->getConfig()->getNested("progress-reports.progress-report-number")) {
+                $plugin->emailmanager->sendEmail($plugin->getConfig()->getNested("progress-reports.progress-report-email"), "Server Progress Report", str_replace("{port}", $plugin->getServer()->getPort(), str_replace("{ip}", $plugin->getServer()->getIP(), str_replace("{players}", $result, str_replace("{player}", $name, $plugin->getConfig()->getNested("progress-reports.progress-report"))))));
+            }
+        };
+        $args = array($name);
+        $this->database->getRegisteredCount($callback, $args);
     }
 }

@@ -29,7 +29,7 @@ class MySQL implements Database
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
         //Updater
         $result = $this->db->query("SELECT * FROM players");
-        if($result instanceof \mysqli_result) {
+        if ($result instanceof \mysqli_result) {
             $data = $result->fetch_assoc();
             if (!isset($data["ip"])) {
                 $this->db->query("ALTER TABLE players ADD ip VARCHAR(32) NOT NULL");
@@ -46,12 +46,10 @@ class MySQL implements Database
     /**
      * @return mixed
      */
-    public function getRegisteredCount()
+    public function getRegisteredCount($callback = null, $args = null)
     {
-        $result = $this->db->query("SELECT count(1) FROM players");
-        $data = $result->fetch_assoc();
-        $result->free();
-        return $data["count(1)"];
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "SELECT count(1) FROM players", $callback, $args);
+        $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
     /**
@@ -75,7 +73,7 @@ class MySQL implements Database
      * @param $callback
      * @param $args
      */
-    public function getPlayer($player, $callback, $args)
+    public function getPlayer($player, $callback = null, $args = null)
     {
         $player = strtolower($player);
         $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "SELECT * FROM players WHERE name = '" . $this->db->escape_string($player) . "'", $callback, $args);

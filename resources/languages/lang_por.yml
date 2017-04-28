@@ -107,6 +107,9 @@ plugin-up-to-date: "&aO plugin está atualizado."
 plugin-auto-updated: "&aO plugin foi atualizado para a nova versão {version}.\nNovas funcionalidades: {features}" 
 over-api-rate-limit: "&cAntingiste o limite de pedidos da API (60 pedidos/hora)." 
 
+#Database
+connection-lost: "&cConnection to MySQL Database lost." #Needs translation
+
 #General
 dont-say-password: "&cNunca digas a tua palavra-passe a ninguém!"
 account-blocked: "&cA tua conta está bloqueada."

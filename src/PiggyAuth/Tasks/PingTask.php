@@ -2,6 +2,7 @@
 
 namespace PiggyAuth\Tasks;
 
+use PiggyAuth\Main;
 use pocketmine\scheduler\PluginTask;
 
 /**
@@ -12,7 +13,7 @@ class PingTask extends PluginTask
 {
     /**
      * PingTask constructor.
-     * @param \pocketmine\plugin\Plugin $plugin
+     * @param Main $plugin
      * @param $db
      */
     public function __construct($plugin, $db)
@@ -27,7 +28,14 @@ class PingTask extends PluginTask
      */
     public function onRun($currentTick)
     {
-        $this->db->db->ping();
+        $ping = $this->db->db->ping();
+        if(!$ping){
+            foreach($this->plugin->getServer()->getOnlinePlayers() as $player){
+                $player->close("", $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->sessionmanager->getSession($player)->getLanguage(), "connection-lost"));
+            }
+            $this->plugin->getServer()->setConfigBool("white-list", true);
+            $this->plugin->getLogger()->error($this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "connection-lost"));
+        }
     }
 
 }

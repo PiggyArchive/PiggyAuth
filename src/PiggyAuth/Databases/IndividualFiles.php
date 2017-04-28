@@ -33,7 +33,7 @@ class IndividualFiles implements Database
     /**
      * @return int
      */
-    public function getRegisteredCount()
+    public function getRegisteredCount($callback = null, $args = null)
     {
         $files = scandir($this->plugin->getDataFolder() . "players/");
         $count = 0;
@@ -42,7 +42,7 @@ class IndividualFiles implements Database
                 $count++;
             }
         }
-        return $count;
+        $callback($count, $args, $this->plugin);
     }
 
     /**
@@ -50,7 +50,7 @@ class IndividualFiles implements Database
      * @param $callback
      * @param $args
      */
-    public function getPlayer($player, $callback, $args)
+    public function getPlayer($player, $callback = null, $args = null)
     {
         if (file_exists($this->plugin->getDataFolder() . "players/" . strtolower($player) . "." . $this->extension)) {
             $file = new Config($this->plugin->getDataFolder() . "players/" . strtolower($player) . "." . $this->extension);

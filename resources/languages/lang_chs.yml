@@ -107,6 +107,9 @@ plugin-up-to-date: "&a插件已经更新到最新了."
 plugin-auto-updated: "&a插件已经更新到｛version｝.\n新的功能: {features}"
 over-api-rate-limit: "&c你已经超过API率的极限了（60 请求1小时)"
 
+#Database
+connection-lost: "&cConnection to MySQL Database lost." #Needs translation
+
 #General
 dont-say-password: "&c请别分享您的密码."
 account-blocked: "&c此账户已受阻."

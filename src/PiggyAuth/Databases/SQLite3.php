@@ -57,9 +57,9 @@ class SQLite3 implements Database
     /**
      * @return mixed
      */
-    public function getRegisteredCount()
+    public function getRegisteredCount($callback = null, $args = null)
     {
-        return $this->db->querySingle("SELECT COUNT(*) as count FROM players");
+        $callback($this->db->querySingle("SELECT COUNT(*) as count FROM players"), $args, $this->plugin);
     }
 
     /**

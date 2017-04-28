@@ -107,6 +107,9 @@ plugin-up-to-date: "&aThe plugin is up to date."
 plugin-auto-updated: "&aThe plugin has been updated to {version}.\nNew features: {features}"
 over-api-rate-limit: "&cYou have passed the api rate limit (60 requests an hour)."
 
+#Database
+connection-lost: "&cConnection to MySQL Database lost."
+
 #General
 dont-say-password: "&cDo not say your password."
 account-blocked: "&cAccount is blocked."
