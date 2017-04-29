@@ -31,6 +31,8 @@ class IndividualFiles implements Database
 
 
     /**
+     * @param null $callback
+     * @param null $args
      * @return int
      */
     public function getRegisteredCount($callback = null, $args = null)

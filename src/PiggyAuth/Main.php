@@ -51,7 +51,7 @@ use pocketmine\entity\Attribute;
 use pocketmine\entity\Entity;
 
 
-use pocketmine\network\protocol\UpdateAttributesPacket;
+use pocketmine\network\mcpe\protocol\UpdateAttributesPacket;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Player;
 
@@ -920,6 +920,9 @@ class Main extends PluginBase
         return bin2hex(hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true));
     }
 
+    /**
+     * @param $name
+     */
     public function progressReport($name)
     {
         $callback = function ($result, $args, $plugin) {

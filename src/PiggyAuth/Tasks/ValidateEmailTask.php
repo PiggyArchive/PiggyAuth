@@ -78,7 +78,7 @@ class ValidateEmailTask extends AsyncTask
                     $this->result = filter_var(unserialize($this->email), FILTER_VALIDATE_EMAIL);
                 }
                 if ($this->callback && $this->args !== null) {
-                    $callback = $this->fetchLocal();
+                    $callback = $this->fetchLocal($server);
                     $callback($this->result, $this->args, $server->getPluginManager()->getPlugin("PiggyAuth"));
                 }
             }

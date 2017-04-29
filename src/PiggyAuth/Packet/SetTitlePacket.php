@@ -2,7 +2,8 @@
 
 namespace PiggyAuth\Packet;
 
-use pocketmine\network\protocol\DataPacket;
+use pocketmine\network\mcpe\NetworkSession;
+use pocketmine\network\mcpe\protocol\DataPacket;
 
 /**
  * Class SetTitlePacket
@@ -42,5 +43,9 @@ class SetTitlePacket extends DataPacket
         $this->putVarInt($this->fadeInTime);
         $this->putVarInt($this->stayTime);
         $this->putVarInt($this->fadeOutTime);
+    }
+
+    public function handle(NetworkSession $session) : bool{
+        return $session->handleSetTitle($this);
     }
 }

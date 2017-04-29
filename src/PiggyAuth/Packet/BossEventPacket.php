@@ -2,7 +2,8 @@
 
 namespace PiggyAuth\Packet;
 
-use pocketmine\network\protocol\DataPacket;
+use pocketmine\network\mcpe\NetworkSession;
+use pocketmine\network\mcpe\protocol\DataPacket;
 
 /**
  * Class BossEventPacket
@@ -17,14 +18,23 @@ class BossEventPacket extends DataPacket
 
     public function decode()
     {
-        $this->eid = $this->getEntityId();
+        $this->eid = $this->getEntityUniqueId();
         $this->state = $this->getUnsignedVarInt();
     }
 
     public function encode()
     {
         $this->reset();
-        $this->putEntityId($this->eid);
+        $this->putEntityUniqueId($this->eid);
+        $this->putEntityRuntimeId($this->eid);
         $this->putUnsignedVarInt($this->state);
+    }
+
+    /**
+     * @param NetworkSession $session
+     * @return bool
+     */
+    public function handle(NetworkSession $session) : bool{
+        return null;
     }
 }

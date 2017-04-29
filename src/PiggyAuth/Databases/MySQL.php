@@ -44,6 +44,8 @@ class MySQL implements Database
     }
 
     /**
+     * @param null $callback
+     * @param null $args
      * @return mixed
      */
     public function getRegisteredCount($callback = null, $args = null)

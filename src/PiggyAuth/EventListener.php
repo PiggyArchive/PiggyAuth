@@ -29,8 +29,8 @@ use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\event\Listener;
 use pocketmine\item\Item;
-use pocketmine\network\protocol\ContainerSetSlotPacket;
-use pocketmine\network\protocol\MobEffectPacket;
+use pocketmine\network\mcpe\protocol\ContainerSetSlotPacket;
+use pocketmine\network\mcpe\protocol\MobEffectPacket;
 use pocketmine\Player;
 
 /**
@@ -294,45 +294,9 @@ class EventListener implements Listener
     public function onJoin(PlayerJoinEvent $event)
     {
         $player = $event->getPlayer();
-        if (!$this->plugin->database instanceof MySQL) {
-            $this->plugin->sessionmanager->loadSession($player);
-        }
-        $data = $this->plugin->sessionmanager->getSession($player)->getData();
-        if (!$this->plugin->sessionmanager->getSession($player)->isRegistered() && $this->plugin->getConfig()->getNested("message.join-message-for-new-players")) {
-            $event->setJoinMessage(str_replace("{player}", $player->getName(), $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "new-player")));
-        }
+        $this->plugin->sessionmanager->loadSession($player, false, $event->getJoinMessage());
         if ($this->plugin->getConfig()->getNested("message.hold-join-message")) {
-            $this->plugin->sessionmanager->getSession($player)->setJoinMessage($event->getJoinMessage());
             $event->setJoinMessage(null);
-        }
-        if ($this->plugin->getConfig()->getNested("login.auto-authentication") && !is_null($data) && $player->getUniqueId()->toString() == $data["uuid"]) {
-            $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this->plugin, $player, Main::UUID));
-            if (!$event->isCancelled()) {
-                $this->plugin->force($player, true, 1);
-            }
-            return true;
-        }
-        if ($this->plugin->getConfig()->getNested("login.xbox-bypass") && $this->plugin->getServer()->getName() == "ClearSky" && $player->isAuthenticated()) {
-            if (!$this->plugin->sessionmanager->getSession($player)->isRegistered()) {
-                $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-                $randompassword = [];
-                $characteramount = strlen($characters) - 1;
-                for ($i = 0; $i < $this->plugin->getConfig()->getNested("register.minimum-password-length"); $i++) {
-                    $character = mt_rand(0, $characteramount);
-                    array_push($randompassword, $characters[$character]);
-                }
-                $randompassword = implode("", $randompassword);
-                $this->plugin->register($player, $randompassword, $randompassword, "none", true);
-                $player->sendMessage(str_replace("{pin}", $this->plugin->database->getPin($player->getName()), str_replace("{password}", $randompassword, $this->plugin->languagemanager->getMessage($player, "register-success-xbox"))));
-            } else {
-                if (!is_null($data) && $data["xbox"] == true) {
-                    $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this->plugin, $player, Main::XBOX));
-                    if (!$event->isCancelled()) {
-                        $this->plugin->force($player, true, 2);
-                    }
-                }
-            }
-            return true;
         }
     }
 
@@ -361,27 +325,6 @@ class EventListener implements Listener
             if (!$this->plugin->getConfig()->getNested("events.allow-movement") && (!$this->plugin->getConfig()->getNested("events.allow-head-movement") || floor($event->getFrom()->x) !== floor($player->x) || floor($event->getFrom()->z) !== floor($player->z))) {
                 $event->setCancelled();
             }
-        }
-    }
-
-    /**
-     * @param PlayerPreLoginEvent $event
-     */
-    public function onPrelogin(PlayerPreLoginEvent $event)
-    {
-        $player = $event->getPlayer();
-        if ($this->plugin->getConfig()->getNested("login.single-session")) {
-            if (!is_null($p = $this->plugin->getServer()->getPlayerExact($player->getName()))) {
-                if ($this->plugin->isAuthenticated($p) && $player->getUniqueId()->toString() !== $p->getUniqueId()->toString()) {
-                    $player->close("", "Already logged in!");
-                    $event->setCancelled();
-                } else {
-                    $p->close("", "Someone else is connecting to this account.");
-                }
-            }
-        }
-        if ($this->plugin->database instanceof MySQL) {
-            $this->plugin->sessionmanager->loadSession($player);
         }
     }
 

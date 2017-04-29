@@ -2,6 +2,8 @@
 
 namespace PiggyAuth\Sessions;
 
+use PiggyAuth\Events\PlayerLoginEvent;
+use PiggyAuth\Main;
 use PiggyAuth\Packet\BossEventPacket;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
@@ -9,7 +11,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
-use pocketmine\network\protocol\MobEffectPacket;
+use pocketmine\network\mcpe\protocol\MobEffectPacket;
 use pocketmine\Player;
 
 /**
@@ -372,7 +374,8 @@ class PiggyAuthSession implements Session
     /**
      * @param $message
      */
-    public function setJoinMessage($message){
+    public function setJoinMessage($message)
+    {
         $this->joinmessage = $message;
     }
 
@@ -406,12 +409,47 @@ class PiggyAuthSession implements Session
      * @return bool
      * @internal param Player $player
      */
-    public function startSession()
+    public function startSession($joinmessage = null)
     {
         if (in_array(strtolower($this->player->getName()), $this->plugin->getConfig()->getNested("login.accounts-bypassed"))) {
             $this->authenticated = true;
             return true;
         }
+        if (!$this->isRegistered() && $this->plugin->getConfig()->getNested("message.join-message-for-new-players")) {
+            $this->setJoinMessage(str_replace("{player}", $this->player->getName(), $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "new-player")));
+        }
+        if ($this->plugin->getConfig()->getNested("message.hold-join-message")) {
+            $this->setJoinMessage($joinmessage);
+        }
+        if ($this->plugin->getConfig()->getNested("login.auto-authentication") && !is_null($this->getData()) && $this->player->getUniqueId()->toString() == $this->getUUID()) {
+            $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this->plugin, $this->player, Main::UUID));
+            if (!$event->isCancelled()) {
+                $this->plugin->force($this->player, true, 1);
+            }
+            return true;
+        }
+        /*if ($this->plugin->getConfig()->getNested("login.xbox-bypass") && $this->plugin->getServer()->getName() == "ClearSky" && $player->isAuthenticated()) {
+            if (!$this->plugin->sessionmanager->getSession($player)->isRegistered()) {
+                $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+                $randompassword = [];
+                $characteramount = strlen($characters) - 1;
+                for ($i = 0; $i < $this->plugin->getConfig()->getNested("register.minimum-password-length"); $i++) {
+                    $character = mt_rand(0, $characteramount);
+                    array_push($randompassword, $characters[$character]);
+                }
+                $randompassword = implode("", $randompassword);
+                $this->plugin->register($player, $randompassword, $randompassword, "none", true);
+                $player->sendMessage(str_replace("{pin}", $this->plugin->database->getPin($player->getName()), str_replace("{password}", $randompassword, $this->plugin->languagemanager->getMessage($player, "register-success-xbox"))));
+            } else {
+                if (!is_null($data) && $data["xbox"] == true) {
+                    $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this->plugin, $player, Main::XBOX));
+                    if (!$event->isCancelled()) {
+                        $this->plugin->force($player, true, 2);
+                    }
+                }
+            }
+            return true;
+        }*/
         $this->player->sendMessage($this->plugin->languagemanager->getMessage($this->player, "join-message"));
         if ($this->plugin->getConfig()->getNested("register.cape-for-registration")) {
             $stevecapes = array(

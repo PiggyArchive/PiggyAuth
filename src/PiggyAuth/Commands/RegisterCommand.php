@@ -36,7 +36,6 @@ class RegisterCommand extends PluginCommand
      */
     public function execute(CommandSender $sender, $currentAlias, array $args)
     {
-        var_dump($args);
         if (!$this->testPermission($sender)) {
             return true;
         }
