@@ -6,7 +6,7 @@ use PiggyAuth\Main;
 
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
-use pocketmine\Player;
+
 
 /**
  * Class ResetPasswordCommand

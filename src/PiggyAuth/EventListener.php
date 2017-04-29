@@ -2,9 +2,8 @@
 
 namespace PiggyAuth;
 
-use PiggyAuth\Databases\MySQL;
+
 use PiggyAuth\Events\PlayerFailEvent;
-use PiggyAuth\Events\PlayerLoginEvent;
 
 
 use pocketmine\event\block\BlockBreakEvent;
@@ -23,7 +22,7 @@ use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
 use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\player\PlayerPreLoginEvent;
+
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;

@@ -2,7 +2,7 @@
 
 namespace PiggyAuth\Sessions;
 
-use PiggyAuth\Databases\MySQL;
+
 use pocketmine\Player;
 
 /**
