@@ -20,7 +20,7 @@ permissions:
           default: true
           description: "Allow using /changepassword"
         piggyauth.command.convert:
-          default: true
+          default: op
           description: "Allow using /convert"
         piggyauth.command.forgotpassword:
           default: true
