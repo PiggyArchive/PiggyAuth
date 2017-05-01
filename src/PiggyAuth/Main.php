@@ -835,7 +835,7 @@ class Main extends PluginBase
         foreach ($this->getServer()->getOnlinePlayers() as $p) {
             if ($p !== $player) {
                 if ($p->getAddress() == $player->getAddress()) {
-                    if ($this->sessionmanager->getPlayer($p)->isAuthenticated()) {
+                    if ($this->sessionmanager->getSession($p)->isAuthenticated()) {
                         $players++;
                     }
                 }
