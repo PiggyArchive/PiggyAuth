@@ -108,10 +108,10 @@ plugin-auto-updated: "&aPlugin byl aktualizován na {version}.\nNové funkce: {f
 over-api-rate-limit: "&cProšli jste api limit (60 žádostí za hodinu)."
 
 #Database
-connection-lost: "&cConnection to MySQL Database lost." #Needs translation
+connection-lost: "&cBylo ztraceno spojení s MySQL databází"
 
 #General
 dont-say-password: "&cNesděluj své heslo!"
 account-blocked: "&cÚčet je zablokovaný!"
-use-in-game: "&cYou must use the command in-game." #Needs translation
-use-on-console: "&cYou must use the command on console." #Needs translation
+use-in-game: "&cPříkaz musíš použít ve hře."
+use-on-console: "&cPříkaz musíš použít z konzole."
