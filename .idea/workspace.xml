@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="adb4469f-6d55-4e41-ba0d-d137fb9a759f" name="Default" comment="" />
+    <list default="true" id="adb4469f-6d55-4e41-ba0d-d137fb9a759f" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/PiggyAuth/Sessions/SessionManager.php" afterPath="$PROJECT_DIR$/src/PiggyAuth/Sessions/SessionManager.php" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,7 +18,7 @@
       <file leaf-file-name="Main.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Main.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="211">
+            <state relative-caret-position="-2873">
               <caret line="699" column="45" lean-forward="false" selection-start-line="699" selection-start-column="45" selection-end-line="699" selection-end-column="45" />
               <folding>
                 <element signature="e#29#74#0#PHP" expanded="true" />
@@ -24,11 +27,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SessionManager.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SessionManager.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Sessions/SessionManager.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="9" column="14" lean-forward="false" selection-start-line="9" selection-start-column="14" selection-end-line="9" selection-end-column="14" />
+            <state relative-caret-position="340">
+              <caret line="50" column="17" lean-forward="false" selection-start-line="50" selection-start-column="17" selection-end-line="50" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -37,20 +40,41 @@
       <file leaf-file-name="PiggyAuthSession.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Sessions/PiggyAuthSession.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="52" column="31" lean-forward="false" selection-start-line="52" selection-start-column="31" selection-end-line="52" selection-end-column="31" />
+            <state relative-caret-position="-7630">
+              <caret line="52" column="9" lean-forward="false" selection-start-line="52" selection-start-column="9" selection-end-line="52" selection-end-column="9" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EventListener.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="EventListener.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/PiggyAuth/EventListener.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
-              <caret line="125" column="103" lean-forward="false" selection-start-line="125" selection-start-column="103" selection-end-line="125" selection-end-column="103" />
+            <state relative-caret-position="-2788">
+              <caret line="125" column="65" lean-forward="false" selection-start-line="125" selection-start-column="65" selection-end-line="125" selection-end-column="65" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="OtherMessageTypeTick.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Tasks/OtherMessageTypeTick.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="425">
+              <caret line="74" column="44" lean-forward="true" selection-start-line="74" selection-start-column="44" selection-end-line="74" selection-end-column="44" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SimpleAuthConverter.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Converter/SimpleAuthConverter.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
-                <element signature="e#29#59#0#PHP" expanded="true" />
+                <marker date="1493430957169" expanded="true" signature="820:834" ph="SELECT * fro... ${$table}" />
+                <marker date="1493430957169" expanded="true" signature="2855:2869" ph="SELECT * FRO... ${$table}" />
               </folding>
             </state>
           </provider>
@@ -59,26 +83,9 @@
       <file leaf-file-name="MySQL.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Databases/MySQL.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
+            <state relative-caret-position="935">
               <caret line="58" column="21" lean-forward="false" selection-start-line="58" selection-start-column="21" selection-end-line="58" selection-end-column="21" />
-              <folding>
-                <marker date="1491107940009" expanded="true" signature="529:709" ph="CREATE TABLE... IF" />
-                <marker date="1491107940009" expanded="true" signature="846:867" ph="SELECT * FRO... players" />
-                <marker date="1491107940009" expanded="true" signature="976:1023" ph="ALTER TABLE players... " />
-                <marker date="1491107940009" expanded="true" signature="1127:1155" ph="SELECT count... players" />
-                <marker date="1491107940009" expanded="true" signature="1435:1442" ph="SELECT count... players" />
-                <marker date="1491107940009" expanded="true" signature="1435:1471" ph="SELECT * FRO... players" />
-                <marker date="1491107940009" expanded="true" signature="1435:1513" ph="SELECT * FRO... players" />
-                <marker date="1491107940009" expanded="true" signature="1435:1514" ph="SELECT * FRO... players" />
-                <marker date="1491107940009" expanded="true" signature="1878:1956" ph="SELECT * FRO... players" />
-                <marker date="1491107940009" expanded="true" signature="2386:2451" ph="UPDATE playe... " />
-                <marker date="1491107940009" expanded="true" signature="2386:2452" ph="UPDATE playe... " />
-                <marker date="1491107940009" expanded="true" signature="2386:2506" ph="UPDATE playe... " />
-                <marker date="1491107940009" expanded="true" signature="2386:2507" ph="UPDATE playe... " />
-                <marker date="1491107940009" expanded="true" signature="2803:3132" ph="INSERT INTO players... " />
-                <marker date="1491107940009" expanded="true" signature="3434:3706" ph="INSERT INTO players... " />
-                <marker date="1491107940009" expanded="true" signature="3949:4025" ph="DELETE FROM " />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -86,18 +93,8 @@
       <file leaf-file-name="KeyCommand.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Commands/KeyCommand.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="30" column="70" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ChangeEmailCommand.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Commands/ChangeEmailCommand.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="457">
-              <caret line="36" column="36" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+            <state relative-caret-position="459">
+              <caret line="30" column="34" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -116,34 +113,11 @@
       <file leaf-file-name="SQLite3.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Databases/SQLite3.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="194">
-              <caret line="86" column="99" lean-forward="true" selection-start-line="86" selection-start-column="99" selection-end-line="86" selection-end-column="99" />
+            <state relative-caret-position="1445">
+              <caret line="86" column="9" lean-forward="true" selection-start-line="86" selection-start-column="9" selection-end-line="86" selection-end-column="9" />
               <folding>
                 <element signature="e#39#58#0#PHP" expanded="true" />
-                <marker date="1491107842297" expanded="true" signature="477:643" ph="CREATE TABLE... players" />
-                <marker date="1491107842297" expanded="true" signature="836:857" ph="SELECT * FRO... players" />
-                <marker date="1491107842297" expanded="true" signature="1083:1121" ph="ALTER TABLE players... " />
-                <marker date="1491107842297" expanded="true" signature="1229:1272" ph="ALTER TABLE players... " />
-                <marker date="1491107842297" expanded="true" signature="1377:1426" ph="ALTER TABLE players... " />
-                <marker date="1491107842297" expanded="true" signature="1528:1573" ph="ALTER TABLE players... " />
-                <marker date="1491107842297" expanded="true" signature="1713:1750" ph="SELECT COUNT... " />
-                <marker date="1491107842297" expanded="true" signature="1904:1944" ph="SELECT * FRO... players" />
-                <marker date="1491107842297" expanded="true" signature="2607:2647" ph="SELECT * FRO... players" />
-                <marker date="1491107842297" expanded="true" signature="3211:3283" ph="UPDATE playe... " />
-                <marker date="1491107842297" expanded="true" signature="3763:3898" ph="INSERT INTO players... " />
-                <marker date="1491107842297" expanded="true" signature="4706:4841" ph="INSERT INTO players... " />
-                <marker date="1491107842297" expanded="true" signature="5569:5607" ph="DELETE FROM " />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MySQLTask.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Tasks/MySQLTask.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="35" column="25" lean-forward="true" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -221,7 +195,6 @@
         <option value="$PROJECT_DIR$/src/PiggyAuth/Commands/SendPinCommand.php" />
         <option value="$PROJECT_DIR$/src/PiggyAuth/Commands/PinCommand.php" />
         <option value="$PROJECT_DIR$/src/PiggyAuth/Commands/ChangeEmailCommand.php" />
-        <option value="$PROJECT_DIR$/src/PiggyAuth/Sessions/SessionManager.php" />
         <option value="$PROJECT_DIR$/src/PiggyAuth/Tasks/PopupTipBarTick.php" />
         <option value="$PROJECT_DIR$/src/PiggyAuth/Tasks/TimeoutTask.php" />
         <option value="$PROJECT_DIR$/src/PiggyAuth/Tasks/AttributeTick.php" />
@@ -233,6 +206,7 @@
         <option value="$PROJECT_DIR$/src/PiggyAuth/Databases/MySQL.php" />
         <option value="$PROJECT_DIR$/src/PiggyAuth/Main.php" />
         <option value="$PROJECT_DIR$/src/PiggyAuth/EventListener.php" />
+        <option value="$PROJECT_DIR$/src/PiggyAuth/Sessions/SessionManager.php" />
       </list>
     </option>
   </component>
@@ -251,10 +225,9 @@
     </include_path>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1456" />
-    <option name="height" value="876" />
+    <option name="x" value="-7" />
+    <option name="width" value="1452" />
+    <option name="height" value="867" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -271,7 +244,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -452,6 +424,28 @@
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="Converter" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PiggyAuth" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PiggyAuth" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PiggyAuth" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="Commands" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
@@ -459,10 +453,11 @@
         </subPane>
       </pane>
       <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/Pigsplosion-Hub/src" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="settings.editor.selected.configurable" value="reference.webide.settings.project.settings.php" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
@@ -564,33 +559,36 @@
       <workItem from="1491069984568" duration="3481000" />
       <workItem from="1491073472966" duration="4882000" />
       <workItem from="1491078927624" duration="28846000" />
+      <workItem from="1494046439882" duration="1437000" />
+      <workItem from="1494117107133" duration="1519000" />
+      <workItem from="1494120379400" duration="814000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="37209000" />
+    <option name="totallyTimeSpent" value="40979000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
+    <frame x="-7" y="0" width="1452" height="867" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21875" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22413793" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.0" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.0" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -625,27 +623,10 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Tasks/SendEmailTask.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Tasks/TimeoutTask.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Tasks/ValidateEmailTask.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
           <caret line="28" column="33" lean-forward="false" selection-start-line="28" selection-start-column="33" selection-end-line="28" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -653,9 +634,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3179">
           <caret line="187" column="24" lean-forward="false" selection-start-line="187" selection-start-column="24" selection-end-line="187" selection-end-column="24" />
-          <folding>
-            <element signature="e#29#59#0#PHP" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -771,7 +750,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
           <caret line="33" column="27" lean-forward="false" selection-start-line="33" selection-start-column="27" selection-end-line="33" selection-end-column="27" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -779,7 +757,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="454">
           <caret line="30" column="0" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -787,7 +764,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
           <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -795,7 +771,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
           <caret line="28" column="28" lean-forward="false" selection-start-line="28" selection-start-column="28" selection-end-line="28" selection-end-column="28" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -803,7 +778,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="442">
           <caret line="30" column="0" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -811,7 +785,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="454">
           <caret line="30" column="0" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -819,7 +792,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
           <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -827,7 +799,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
           <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -851,7 +822,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
           <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -867,7 +837,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -875,7 +844,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
           <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -899,18 +867,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-153">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/lang_eng.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="3" column="6" lean-forward="true" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/lang_eng.yml" />
     <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Commands/ResetPasswordCommand.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -919,19 +879,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Tasks/PopupTipBarTick.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="20" column="17" lean-forward="false" selection-start-line="20" selection-start-column="17" selection-end-line="20" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Tasks/PopupTipBarTick.php" />
     <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Tasks/TimeoutTask.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
           <caret line="17" column="149" lean-forward="true" selection-start-line="17" selection-start-column="149" selection-end-line="17" selection-end-column="149" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -939,7 +891,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
           <caret line="17" column="79" lean-forward="false" selection-start-line="17" selection-start-column="79" selection-end-line="17" selection-end-column="79" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -947,7 +898,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
           <caret line="20" column="79" lean-forward="false" selection-start-line="20" selection-start-column="79" selection-end-line="20" selection-end-column="79" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -955,21 +905,19 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
           <caret line="28" column="33" lean-forward="false" selection-start-line="28" selection-start-column="33" selection-end-line="28" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Tasks/MySQLTask.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="35" column="25" lean-forward="true" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
-          <folding />
+        <state relative-caret-position="578">
+          <caret line="35" column="5" lean-forward="true" selection-start-line="35" selection-start-column="5" selection-end-line="35" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Commands/ChangeEmailCommand.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="457">
+        <state relative-caret-position="561">
           <caret line="36" column="36" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
           <folding />
         </state>
@@ -985,79 +933,52 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Databases/SQLite3.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="86" column="99" lean-forward="true" selection-start-line="86" selection-start-column="99" selection-end-line="86" selection-end-column="99" />
+        <state relative-caret-position="1445">
+          <caret line="86" column="9" lean-forward="true" selection-start-line="86" selection-start-column="9" selection-end-line="86" selection-end-column="9" />
           <folding>
             <element signature="e#39#58#0#PHP" expanded="true" />
-            <marker date="1491107842297" expanded="true" signature="477:643" ph="CREATE TABLE... players" />
-            <marker date="1491107842297" expanded="true" signature="836:857" ph="SELECT * FRO... players" />
-            <marker date="1491107842297" expanded="true" signature="1083:1121" ph="ALTER TABLE players... " />
-            <marker date="1491107842297" expanded="true" signature="1229:1272" ph="ALTER TABLE players... " />
-            <marker date="1491107842297" expanded="true" signature="1377:1426" ph="ALTER TABLE players... " />
-            <marker date="1491107842297" expanded="true" signature="1528:1573" ph="ALTER TABLE players... " />
-            <marker date="1491107842297" expanded="true" signature="1713:1750" ph="SELECT COUNT... " />
-            <marker date="1491107842297" expanded="true" signature="1904:1944" ph="SELECT * FRO... players" />
-            <marker date="1491107842297" expanded="true" signature="2607:2647" ph="SELECT * FRO... players" />
-            <marker date="1491107842297" expanded="true" signature="3211:3283" ph="UPDATE playe... " />
-            <marker date="1491107842297" expanded="true" signature="3763:3898" ph="INSERT INTO players... " />
-            <marker date="1491107842297" expanded="true" signature="4706:4841" ph="INSERT INTO players... " />
-            <marker date="1491107842297" expanded="true" signature="5569:5607" ph="DELETE FROM " />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Databases/MySQL.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
+        <state relative-caret-position="935">
           <caret line="58" column="21" lean-forward="false" selection-start-line="58" selection-start-column="21" selection-end-line="58" selection-end-column="21" />
-          <folding>
-            <marker date="1491107940009" expanded="true" signature="529:709" ph="CREATE TABLE... IF" />
-            <marker date="1491107940009" expanded="true" signature="846:867" ph="SELECT * FRO... players" />
-            <marker date="1491107940009" expanded="true" signature="976:1023" ph="ALTER TABLE players... " />
-            <marker date="1491107940009" expanded="true" signature="1127:1155" ph="SELECT count... players" />
-            <marker date="1491107940009" expanded="true" signature="1435:1442" ph="SELECT count... players" />
-            <marker date="1491107940009" expanded="true" signature="1435:1471" ph="SELECT * FRO... players" />
-            <marker date="1491107940009" expanded="true" signature="1435:1513" ph="SELECT * FRO... players" />
-            <marker date="1491107940009" expanded="true" signature="1435:1514" ph="SELECT * FRO... players" />
-            <marker date="1491107940009" expanded="true" signature="1878:1956" ph="SELECT * FRO... players" />
-            <marker date="1491107940009" expanded="true" signature="2386:2451" ph="UPDATE playe... " />
-            <marker date="1491107940009" expanded="true" signature="2386:2452" ph="UPDATE playe... " />
-            <marker date="1491107940009" expanded="true" signature="2386:2506" ph="UPDATE playe... " />
-            <marker date="1491107940009" expanded="true" signature="2386:2507" ph="UPDATE playe... " />
-            <marker date="1491107940009" expanded="true" signature="2803:3132" ph="INSERT INTO players... " />
-            <marker date="1491107940009" expanded="true" signature="3434:3706" ph="INSERT INTO players... " />
-            <marker date="1491107940009" expanded="true" signature="3949:4025" ph="DELETE FROM " />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Commands/KeyCommand.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="30" column="70" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+        <state relative-caret-position="459">
+          <caret line="30" column="34" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Sessions/SessionManager.php">
+    <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Converter/SimpleAuthConverter.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="14" lean-forward="false" selection-start-line="9" selection-start-column="14" selection-end-line="9" selection-end-column="14" />
-          <folding />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1493430957169" expanded="true" signature="820:834" ph="SELECT * fro... ${$table}" />
+            <marker date="1493430957169" expanded="true" signature="2855:2869" ph="SELECT * FRO... ${$table}" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Sessions/PiggyAuthSession.php">
+    <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Tasks/OtherMessageTypeTick.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="52" column="31" lean-forward="false" selection-start-line="52" selection-start-column="31" selection-end-line="52" selection-end-column="31" />
+        <state relative-caret-position="425">
+          <caret line="74" column="44" lean-forward="true" selection-start-line="74" selection-start-column="44" selection-end-line="74" selection-end-column="44" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Main.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
+        <state relative-caret-position="-2873">
           <caret line="699" column="45" lean-forward="false" selection-start-line="699" selection-start-column="45" selection-end-line="699" selection-end-column="45" />
           <folding>
             <element signature="e#29#74#0#PHP" expanded="true" />
@@ -1067,11 +988,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/PiggyAuth/EventListener.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="125" column="103" lean-forward="false" selection-start-line="125" selection-start-column="103" selection-end-line="125" selection-end-column="103" />
-          <folding>
-            <element signature="e#29#59#0#PHP" expanded="true" />
-          </folding>
+        <state relative-caret-position="-2788">
+          <caret line="125" column="65" lean-forward="false" selection-start-line="125" selection-start-column="65" selection-end-line="125" selection-end-column="65" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Sessions/PiggyAuthSession.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-7630">
+          <caret line="52" column="9" lean-forward="false" selection-start-line="52" selection-start-column="9" selection-end-line="52" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/PiggyAuth/Sessions/SessionManager.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="50" column="17" lean-forward="false" selection-start-line="50" selection-start-column="17" selection-end-line="50" selection-end-column="17" />
+          <folding />
         </state>
       </provider>
     </entry>
