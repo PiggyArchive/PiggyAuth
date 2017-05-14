@@ -85,7 +85,7 @@ your-pin: "&aO teu PIN: {pin}"
 
 #Key
 key-expired: "&cA tua chave passou do prazo de validade!"
-key-disabled: "&cKeys aren't enabled on this server." #Needs translation
+key-disabled: "&cChaves não estão ativadas neste servidor."
 
 #Language
 invalid-language: "&cIdioma não dísponível.\nIdiomas dísponíveis: {languages}" 
@@ -108,7 +108,7 @@ plugin-auto-updated: "&aO plugin foi atualizado para a nova versão {version}.\n
 over-api-rate-limit: "&cAntingiste o limite de pedidos da API (60 pedidos/hora)." 
 
 #Database
-connection-lost: "&cConnection to MySQL Database lost." #Needs translation
+connection-lost: "&cA ligação com a base de dados MySQL foi perdida."
 
 #General
 dont-say-password: "&cNunca digas a tua palavra-passe a ninguém!"
