@@ -1,0 +1,117 @@
+#By @jerryzooyoyo
+
+#Join
+join-message: "&6伺服器需要進行帳號認證"
+new-player: "&e歡迎 {player} 進入伺服器!"
+
+#Login
+login-message: "&6請輸入 /login <密碼> 進行登入\n&6忘記密碼? 輸入&f /forgotpassword <pin碼> <新密碼>"
+login-popup: "&6請登入"
+login-tip: "&6請登入"
+login-title: "&6請登入"
+login-subtitle: "&6請登入"
+login-actionbar: "&6請登入"
+login-boss-bar: "&6請登入"
+authentication-success: "&a登入成功!"
+authentication-success-uuid: "&a已自動登入&f(透過UUID)&a, 請勿再輸入密碼"
+authentication-success-xbox: "&a已自動登入&f(透過Xbox Live)&a, 請勿再輸入密碼"
+attempted-logins: "&6您的帳號被嘗試登入&f {attempts} &6次, 請確保帳號安全"
+already-authenticated: "&c您已經登入"
+incorrect-password: "&c輸入的密碼不正確, 還剩下&f {tries} &c次機會"
+not-registered: "&c您還沒註冊"
+too-many-tries: "&c密碼錯誤太多次"
+timeout-message: "&c登入超時"
+too-many-on-ip: "&c相同IP存在太多帳號"
+
+#Register
+register-message: "&6請輸入 /register <密碼> <確認密碼> [電子信箱] 進行註冊"
+register-popup: "&6請註冊"
+register-tip: "&6請註冊"
+register-title: "&6請註冊"
+register-subtitle: "&6請註冊"
+register-actionbar: "&6請註冊"
+register-boss-bar: "&6請註冊"
+register-success: "&a註冊成功! 您的&f pin碼 &a是&f {pin} &a, 變更密碼時將會使用"
+register-success-xbox: "&a你已經使用 Xbox Live 進行遊玩, 您的&f pin碼 &a是&f {pin} &a, 您的密碼是&f {password} &a, 如果要更改密碼請輸入&f /changepassword"
+already-registered: "&c您已經註冊"
+password-too-short: "&c您的密碼太短"
+password-blocked: "&c您的密碼過於常見"
+password-username: "&c您的密碼不可以是帳號名稱"
+password-not-match: "&c兩次密碼不符合"
+confirm-password: "&a密碼輸入成功! 請再次輸入密碼"
+
+#Unregister
+unregister-success: "&a註銷成功!"
+
+#Preregister
+preregister-success: "&a帳號註冊成功!"
+already-registered-two: "&c帳號已經註冊"
+
+#Change password
+change-password-success: "&a變更密碼成功! 您的新&f pin碼 &a是&f {pin} &a, 變更密碼時將會使用"
+incorrect-password-other: "&c密碼錯誤"
+
+#Forget password
+forgot-password-success: "&a變更密碼成功! 您的新&f pin碼 &a是&f {pin} &a, 變更密碼時將會使用"
+incorrect-pin: "&c輸入的&f pin碼 &c錯誤, 還剩下&f {tries} &c次機會"
+cant-use-pin: "該帳號禁止使用 pin碼 服務"
+
+#Reset password
+password-reset-success: "&a該帳號密碼重設成功!"
+not-registered-two: "&c該帳號尚未註冊"
+
+#Email
+email: "&6請輸入您的電子信箱, 输入&f none &6跳過此步驟"
+email-set: "&a電子信箱設置成功!"
+email-change-success:  "&a變更電子信箱成功"
+email-success: "&a已發送電子郵件"
+email-fail: "&c電子郵件發送失敗"
+invalid-email: "&c電子信箱格式錯誤"
+no-email: "&c電子信箱不存在"
+
+email-subject-sendpin: "PiggyAuth - pin碼發送"
+email-sendpin: "您的pin碼是 {pin} ，如果您沒有要求發送此通知，請忽略此郵件。pin碼可以用來重新啟動您的帳號。"
+email-subject-attemptedlogin: "PiggyAuth - 嘗試登入"
+email-attemptedlogin: "有人正在嘗試登入您的帳號！如果那不是您，請在遊戲中輸入 /sendpin 以獲取新的 pin碼 來重設密碼。"
+email-subject-changedpassword: "PiggyAuth - 密碼變更"
+email-changedpassword: "密碼已變更。如果那不是您，請在遊戲中輸入 /sendpin 以獲取新的 pin碼 來重設密碼。"
+email-subject-passwordreset: "PiggyAuth - 密碼重設"
+email-passwordreset: "您的密碼已經被管理員重設，請進入遊戲並完成後續步驟。"
+email-subject-login-from-new-ip: "PiggyAuth - 從新的IP位址登入"
+email-login-from-new-ip: "您的帳號登入於 {ip} （IP地址）如果那不是您，請立即更換您的密碼。"
+
+#Pin
+your-pin: "&a您的&f pin碼 &a是&f {pin}"
+
+#Key
+key-expired: "&c您的金鑰已經過期"
+key-disabled: "&c金鑰功能尚未啟用"
+
+#Language
+invalid-language: "&c不存在該語言\n可用的語言: {languages}"
+language-changed: "&a語言變更成功!"
+
+#Converting
+player-account-already-exists: "&c帳號&f {player} &c已經存在"
+file-not-yml: "&c檔案 {file} 格式不是 YML"
+file-not-db: "&c檔案 {file} 格式不是 DB"
+invalid-file: "&c檔案未找到"
+invalid-directory: "&c資料庫不存在"
+invalid-database: "&c資料庫錯誤\n可使用的資料庫:&f {db}"
+invalid-auth: "&c帳號系統不存在或不兼容\n兼容的插件: {auth}"
+invalid-hash-algorithm: "&c{algorithm} 不能使用\n可使用的hash: {algorithms}."
+
+#Updater
+plugin-outdated: "&c插件過期! 新版本&f ({version})&c 已經推出\n新的功能: {features}"
+plugin-up-to-date: "&a插件已是最新版本"
+plugin-auto-updated: "&a插件更新到版本&f｛version｝\n新的功能: {features}"
+over-api-rate-limit: "&cAPI頻率超頻(60 請求每小時)"
+
+#Database
+connection-lost: "&c與 MySQL 資料庫的連線中斷"
+
+#General
+dont-say-password: "&c請不要在聊天時透露自己的密碼"
+account-blocked: "&c該帳號已經被封鎖"
+use-in-game: "&c請在遊戲中輸入該指令"
+use-on-console: "&c請在後台中輸入該指令"
