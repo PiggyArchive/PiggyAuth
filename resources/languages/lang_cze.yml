@@ -2,7 +2,7 @@
 
 #Join
 join-message: "&6Tento server vyžaduje přihlášení."
-new-player: "&eVítej {player} na serveru!"
+new-player: "&eVítej {player} na tomto serveru!"
 
 #Login
 login-message: "&6Prosím, přihlaš se zadáním příkazu /login <heslo>.\n&6Pokud jsi zapomněl heslo, zadej příkaz /forgotpassword <pin> <nové heslo>."
@@ -72,7 +72,7 @@ no-email: "&cK tomuto účtu není nastaven žádný email."
 email-subject-sendpin: "PiggyAuth - Žádost o zaslání pinu"
 email-sendpin: "Tvůj pin je {pin}. Pokud jsi nežádal o zaslání svého pinu, tento email ignoruj."
 email-subject-attemptedlogin: "PiggyAuth - Oznámení o pokusu o přihlášení"
-email-attemptedlogin: "Někdo se pokusil o přihlášení ke tvému účtu. Pokud jsi to nebyl ty, zadej ve hře příkaz /sendpin. Bude ti zaslán 4 místné pin číslo pro změnu nebo resetování hesla."
+email-attemptedlogin: "Někdo se pokusil o přihlášení ke tvému účtu. Pokud jsi to nebyl ty, zadej ve hře příkaz /sendpin. Bude ti zaslán 4 místný pin pro změnu nebo resetování hesla."
 email-subject-changedpassword: "PiggyAuth - Oznámení o změně hesla"
 email-changedpassword: "Tvoje heslo bylo změněno. Pokud jsi to nebyl ty, zadej ve hře příkaz /sendpin. Bude ti zaslán 4 místné pin číslo pro změnu nebo resetování hesla."
 email-subject-passwordreset: "PiggyAuth - Oznámení o resetování hesla"
@@ -81,11 +81,11 @@ email-subject-login-from-new-ip: "PiggyAuth - Oznámení o přihlášení z nov�
 email-login-from-new-ip: "Někdo se přihlásil k tvému účtu z IP adresy {ip}. Pokud jsi to nebyl ty, ihned si změň heslo!"
 
 #Pin
-your-pin: "&aTvů pin je {pin}."
+your-pin: "&aTvůj pin je {pin}."
 
 #Key
 key-expired: "&cTvůj klíč expiroval."
-key-disabled: "&cKeys aren't enabled on this server." #Needs translation
+key-disabled: "&cKlíče jsou vypnuty na serveru." 
 
 #Language
 invalid-language: "&cJazyk není dostupný.\nDostupné jazyky: {languages}"
@@ -105,10 +105,10 @@ invalid-hash-algorithm: "&c{algorithm} není platný hashovací algoritmus.\nDos
 plugin-outdated: "&cJe dostupná nová verze ({version}) tohoto pluginu.\nNové funkce: {features}"
 plugin-up-to-date: "&aPlugin je aktuální."
 plugin-auto-updated: "&aPlugin byl aktualizován na {version}.\nNové funkce: {features}"
-over-api-rate-limit: "&cProšli jste api limit (60 žádostí za hodinu)."
+over-api-rate-limit: "&cProšli jste api limit (tj. 60 žádostí za hodinu)."
 
 #Database
-connection-lost: "&cBylo ztraceno spojení s MySQL databází"
+connection-lost: "&cBylo ztraceno spojení s MySQL databází!"
 
 #General
 dont-say-password: "&cNesděluj své heslo!"
