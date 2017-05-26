@@ -454,6 +454,7 @@ class Main extends PluginBase
         }
         if ($this->getConfig()->getNested("effects.hide-items")) {
             $player->getInventory()->sendContents($player);
+            $player->getInventory()->sendArmorContents($player);
         }
         if ($this->getConfig()->getNested("login.adventure-mode")) {
             if ($this->sessionmanager->getSession($player)->getGamemode() !== null) {
