@@ -36,6 +36,7 @@ use PiggyAuth\Entities\Wither;
 use PiggyAuth\Language\LanguageManager;
 use PiggyAuth\Packet\BossEventPacket;
 use PiggyAuth\Sessions\SessionManager;
+use PiggyAuth\Tasks\AsyncLoginTask;
 use PiggyAuth\Tasks\AttributeTick;
 use PiggyAuth\Tasks\AutoUpdaterTask;
 use PiggyAuth\Tasks\DelayedPinTask;
@@ -354,6 +355,39 @@ class Main extends PluginBase
             $this->force($player, true, $mode, $rehashedpassword);
         }
         return true;
+    }
+
+    /**
+     * @param Player $player
+     * @param $password
+     * @param int $mode
+     * @return bool
+     */
+    public function asyncLogin(Player $player, $password, $mode = 0)
+    {
+        if ($this->isBlocked($player->getName())) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "account-blocked"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::ACCOUNT_BLOCKED));
+            return false;
+        }
+        if ($this->sessionmanager->getSession($player)->isAuthenticated()) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "already-authenticated"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::ALREADY_AUTHENTICATED));
+            return false;
+        }
+        if (!$this->sessionmanager->getSession($player)->isRegistered()) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "not-registered"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::NOT_REGISTERED));
+            return false;
+        }
+
+        $player->sendMessage($this->languagemanager->getMessage($player, "authentication-pending"));
+
+        $originAuth = $this->sessionmanager->getSession($player)->getOriginAuth();
+        $passwordHash = $this->sessionmanager->getSession($player)->getPassword();
+
+        $this->getServer()->getScheduler()->scheduleAsyncTask(new AsyncLoginTask($player, $passwordHash, $password, $originAuth, $mode, $this->getConfig()->getNested("hash.cost")));
+        return true; // Does NOT mean the player is authenticated!
     }
 
     /**
