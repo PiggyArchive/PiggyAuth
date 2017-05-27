@@ -387,6 +387,8 @@ class Main extends PluginBase
         $passwordHash = $this->sessionmanager->getSession($player)->getPassword();
 
         $this->getServer()->getScheduler()->scheduleAsyncTask(new AsyncLoginTask($player, $passwordHash, $password, $originAuth, $mode, $this->getConfig()->getNested("hash.cost")));
+
+        $this->sessionmanager->getSession($player)->setVerifying();
         return true; // Does NOT mean the player is authenticated!
     }
 

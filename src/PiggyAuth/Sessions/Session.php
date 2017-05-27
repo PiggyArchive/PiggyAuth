@@ -54,6 +54,10 @@ interface Session
      */
     public function setGivingEmail($arg = true);
 
+    public function isVerifying() : bool;
+
+    public function setVerifying(bool $arg);
+
     public function getMessageTick();
 
     /**

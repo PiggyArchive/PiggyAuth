@@ -74,6 +74,7 @@ class AsyncLoginTask extends AsyncTask
     public function onCompletion(Server $server)
     {
         $plugin = $server->getPluginManager()->getPlugin('PiggyAuth');
+        $plugin->sessionmanager->getSession($player)->setVerifying(); // This should be fine, even if the plugin is disabled, right?
 
         if($plugin->isDisabled() || !(($player = $server->getPlayerExact($this->playerName)) instanceof Player)){
             return;
