@@ -27,7 +27,7 @@ class AsyncRegisterTask extends AsyncTask
     public function onCompletion(Server $server){
         $plugin = $server->getPluginManager()->getPlugin('PiggyAuth');
 
-        if($plugin->isDisabled() || (($player = $server->getPlayerExact($this->playerName)) instanceof Player)){
+        if($plugin->isDisabled() || !(($player = $server->getPlayerExact($this->playerName)) instanceof Player)){
             return;
         }
         $plugin->sessionmanager->getSession($player)->setRegistering(false);
@@ -49,7 +49,7 @@ class AsyncRegisterTask extends AsyncTask
                     }
                 }
             };
-            $args = array($player->getName(), $xbox);
+            $args = array($player->getName(), $this->xbox);
             $plugin->sessionmanager->getSession($player)->insertData($password, $this->email, $this->pin, $this->xbox, $callback, $args);
             if ($plugin->getConfig()->getNested("progress-reports.enabled")) {
                 $plugin->progressReport($player->getName());

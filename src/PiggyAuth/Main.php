@@ -96,7 +96,7 @@ class Main extends PluginBase
     const CANT_USE_PIN = 25;
     const OTHER = 100;
 
-    public static $hashCost;
+    public static $hashCost = 15;
 
     public $database;
     public $emailmanager;
@@ -172,7 +172,7 @@ class Main extends PluginBase
             //$this->getServer()->getScheduler()->scheduleAsyncTask(new AutoUpdaterTask($this->getConfig()->getNested("auto-updater.auto-install")));
         }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
-        self::$hashCost = $this->getConfig()->getNested("hash.cost");
+        //self::$hashCost = $this->getConfig()->getNested("hash.cost");
         foreach ($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
             $this->sessionmanager->loadSession($player);
         }
@@ -635,7 +635,7 @@ class Main extends PluginBase
         $player->sendMessage($this->languagemanager->getMessage($player, "register-pending"));
 
         $pin = $this->generatePin($player);
-        $this->getServer()->getScheduler()->scheduleAsyncTask(new AsyncRegisterTask($playerName, $password, $email, $pin, $xbox == "false" ? self::NORMAL : self::XBOX));
+        $this->getServer()->getScheduler()->scheduleAsyncTask(new AsyncRegisterTask($player->getName(), $password, $email, $pin, $xbox == "false" ? self::NORMAL : self::XBOX));
 
         $this->sessionmanager->getSession($player)->setRegistering();
         return true;
