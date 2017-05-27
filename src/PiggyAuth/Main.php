@@ -172,7 +172,7 @@ class Main extends PluginBase
             //$this->getServer()->getScheduler()->scheduleAsyncTask(new AutoUpdaterTask($this->getConfig()->getNested("auto-updater.auto-install")));
         }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
-        //self::$hashCost = $this->getConfig()->getNested("hash.cost");
+        self::$hashCost = $this->getConfig()->getNested("hash.cost");
         foreach ($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
             $this->sessionmanager->loadSession($player);
         }
