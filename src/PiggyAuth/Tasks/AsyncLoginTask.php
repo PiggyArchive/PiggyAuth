@@ -85,13 +85,13 @@ class AsyncLoginTask extends AsyncTask
 
         if (!$this->getResult()['authenticated']) { // Failed
             if ($plugin->getConfig()->getNested("key.enabled")) {
-                if ($password == $plugin->key) {
+                if ($this->potentialPassword === $plugin->getKey($this->potentialPassword)) { // Please look at this @MCPEPIG
                     $plugin->changeKey();
                     $plugin->keytime = 0;
                     $plugin->force($player);
                     return;
                 }
-                if (in_array($password, $plugin->expiredkeys)) {
+                if (in_array($this->potentialPassword, $plugin->expiredkeys)) { // Please look at this @MCPEPIG
                     $player->sendMessage($plugin->languagemanager->getMessage($player, "key-expired"));
                     $server->getPluginManager()->callEvent(new PlayerFailEvent($plugin, $player, Main::LOGIN, Main::KEY_EXPIRED));
                     return;
