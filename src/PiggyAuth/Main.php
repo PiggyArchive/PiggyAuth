@@ -95,6 +95,8 @@ class Main extends PluginBase
     const CANT_USE_PIN = 25;
     const OTHER = 100;
 
+    public static $hashCost;
+
     public $database;
     public $emailmanager;
     public $expiredkeys = [];
@@ -169,6 +171,7 @@ class Main extends PluginBase
             //$this->getServer()->getScheduler()->scheduleAsyncTask(new AutoUpdaterTask($this->getConfig()->getNested("auto-updater.auto-install")));
         }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
+        self::$hashCost = $this->getConfig()->getNested("hash.cost");
         foreach ($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
             $this->sessionmanager->loadSession($player);
         }
@@ -247,7 +250,7 @@ class Main extends PluginBase
         }
         switch ($this->sessionmanager->getSession($player)->getOriginAuth()) {
             case "SimpleAuth":
-                if (hash_equals($this->sessionmanager->getSession($player)->getPassword(), $this->hashSimpleAuth(strtolower($player->getName()), $password))) {
+                if (hash_equals($this->sessionmanager->getSession($player)->getPassword(), Main::hashSimpleAuth(strtolower($player->getName()), $password))) {
                     $this->sessionmanager->getSession($player)->updatePlayer("auth", "PiggyAuth");
                     return true;
                 }
@@ -351,7 +354,7 @@ class Main extends PluginBase
                     $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->languagemanager->getMessage($player, "email-subject-login-from-new-ip"), str_replace("{ip}", $player->getAddress(), $this->languagemanager->getMessage($player, "email-login-from-new-ip")));
                 }
             }
-            $rehashedpassword = $this->needsRehashPassword($this->sessionmanager->getSession($player)->getPassword(), $password);
+            $rehashedpassword = Main::needsRehashPassword($this->sessionmanager->getSession($player)->getPassword(), $password);
             $this->force($player, true, $mode, $rehashedpassword);
         }
         return true;
@@ -885,9 +888,9 @@ class Main extends PluginBase
      * @param $password
      * @return bool|string
      */
-    public function hashPassword($password)
+    public static function hashPassword($password)
     {
-        $options = ['cost' => $this->getConfig()->getNested("hash.cost")];
+        $options = ['cost' => self::$hashCost];
         return password_hash($password, PASSWORD_BCRYPT, $options);
     }
 
@@ -896,9 +899,9 @@ class Main extends PluginBase
      * @param $plainpassword
      * @return bool|null|string
      */
-    public function needsRehashPassword($password, $plainpassword)
+    public static function needsRehashPassword($password, $plainpassword)
     {
-        $options = ['cost' => $this->getConfig()->getNested("hash.cost")];
+        $options = ['cost' => self::$hashCost];
         if (password_needs_rehash($password, PASSWORD_BCRYPT, $options)) {
             return password_hash($plainpassword, PASSWORD_BCRYPT, $options);
         }
@@ -952,7 +955,7 @@ class Main extends PluginBase
      * @param $password
      * @return string
      */
-    public function hashSimpleAuth($salt, $password)
+    public static function hashSimpleAuth($salt, $password)
     {
         return bin2hex(hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true));
     }

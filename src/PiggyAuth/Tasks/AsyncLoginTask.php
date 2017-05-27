@@ -30,7 +30,7 @@ class AsyncLoginTask extends AsyncTask
             $auth = explode("_", $this->originAuth);
             if (isset($auth[0]) && isset($auth[1])) {
                 if (hash($auth[1], $this->potentialPassword) == $this->passwordHash) {
-                    $this->setResult(['authenticated' => true, 'updatePlayer' => true, 'rehashedPassword' => $this->needsRehashPassword()]);
+                    $this->setResult(['authenticated' => true, 'updatePlayer' => true, 'rehashedPassword' => Main::needsRehashPassword()]);
                     return;
                 }
                 $this->setResult(['authenticated' => false, 'updatePlayer' => false]);
@@ -40,8 +40,8 @@ class AsyncLoginTask extends AsyncTask
 
         switch ($this->originAuth) {
             case "SimpleAuth":
-                if (hash_equals($this->passwordHash, $this->hashSimpleAuth(strtolower($this->playerName), $this->potentialPassword))) {
-                    $this->setResult(['authenticated' => true, 'updatePlayer' => true, 'rehashedPassword' => $this->needsRehashPassword()]);
+                if (hash_equals($this->passwordHash, Main::hashSimpleAuth(strtolower($this->playerName), $this->potentialPassword))) {
+                    $this->setResult(['authenticated' => true, 'updatePlayer' => true, 'rehashedPassword' => Main::needsRehashPassword()]);
                     return;
                 }
                 $this->setResult(['authenticated' => false, 'updatePlayer' => false]);
@@ -49,26 +49,12 @@ class AsyncLoginTask extends AsyncTask
             case "PiggyAuth":
             default:
                 if (password_verify($this->potentialPassword, $this->passwordHash)) {
-                    $this->setResult(['authenticated' => true, 'updatePlayer' => false, 'rehashedPassword' => $this->needsRehashPassword()]);
+                    $this->setResult(['authenticated' => true, 'updatePlayer' => false, 'rehashedPassword' => Main::needsRehashPassword()]);
                     return;
                 }
                 $this->setResult(['authenticated' => false, 'updatePlayer' => false]);
                 return;
         }
-    }
-
-    public function hashSimpleAuth($salt, $password)
-    {
-        return bin2hex(hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true));
-    }
-
-    public function needsRehashPassword()
-    {
-        $options = ['cost' => $this->cost];
-        if (password_needs_rehash($this->passwordHash, PASSWORD_BCRYPT, $options)) {
-            return password_hash($this->potentialPassword, PASSWORD_BCRYPT, $options);
-        }
-        return null;
     }
 
     public function onCompletion(Server $server)
