@@ -46,7 +46,7 @@ class LoginCommand extends PluginCommand
             $sender->sendMessage("/login <password>");
             return false;
         }
-        $this->getPlugin()->login($sender, $args[0], 0);
+        $this->getPlugin()->getConfig()->get('async') ? $this->getPlugin()->asyncLogin($sender, $args[0], 0) : $this->getPlugin()->login($sender, $args[0], 0);
         return true;
     }
 }

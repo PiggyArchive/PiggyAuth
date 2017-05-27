@@ -36,6 +36,8 @@ use PiggyAuth\Entities\Wither;
 use PiggyAuth\Language\LanguageManager;
 use PiggyAuth\Packet\BossEventPacket;
 use PiggyAuth\Sessions\SessionManager;
+use PiggyAuth\Tasks\AsyncLoginTask;
+use PiggyAuth\Tasks\AsyncRegisterTask;
 use PiggyAuth\Tasks\AttributeTick;
 use PiggyAuth\Tasks\AutoUpdaterTask;
 use PiggyAuth\Tasks\DelayedPinTask;
@@ -93,6 +95,8 @@ class Main extends PluginBase
     const TOO_MANY_ON_IP = 24;
     const CANT_USE_PIN = 25;
     const OTHER = 100;
+
+    public static $hashCost = 15;
 
     public $database;
     public $emailmanager;
@@ -168,6 +172,7 @@ class Main extends PluginBase
             //$this->getServer()->getScheduler()->scheduleAsyncTask(new AutoUpdaterTask($this->getConfig()->getNested("auto-updater.auto-install")));
         }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
+        self::$hashCost = $this->getConfig()->getNested("hash.cost");
         foreach ($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
             $this->sessionmanager->loadSession($player);
         }
@@ -246,7 +251,7 @@ class Main extends PluginBase
         }
         switch ($this->sessionmanager->getSession($player)->getOriginAuth()) {
             case "SimpleAuth":
-                if (hash_equals($this->sessionmanager->getSession($player)->getPassword(), $this->hashSimpleAuth(strtolower($player->getName()), $password))) {
+                if (hash_equals($this->sessionmanager->getSession($player)->getPassword(), Main::hashSimpleAuth(strtolower($player->getName()), $password))) {
                     $this->sessionmanager->getSession($player)->updatePlayer("auth", "PiggyAuth");
                     return true;
                 }
@@ -350,10 +355,49 @@ class Main extends PluginBase
                     $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->languagemanager->getMessage($player, "email-subject-login-from-new-ip"), str_replace("{ip}", $player->getAddress(), $this->languagemanager->getMessage($player, "email-login-from-new-ip")));
                 }
             }
-            $rehashedpassword = $this->needsRehashPassword($this->sessionmanager->getSession($player)->getPassword(), $password);
+            $rehashedpassword = Main::needsRehashPassword($this->sessionmanager->getSession($player)->getPassword(), $password);
             $this->force($player, true, $mode, $rehashedpassword);
         }
         return true;
+    }
+
+    /**
+     * @param Player $player
+     * @param $password
+     * @param int $mode
+     * @return bool
+     */
+    public function asyncLogin(Player $player, $password, $mode = 0)
+    {
+        if($this->sessionmanager->getSession($player)->isVerifying()){
+            $player->sendMessage($this->languagemanager->getMessage($player, "already-verifying"));
+            return true;
+        }
+        if ($this->isBlocked($player->getName())) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "account-blocked"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::ACCOUNT_BLOCKED));
+            return false;
+        }
+        if ($this->sessionmanager->getSession($player)->isAuthenticated()) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "already-authenticated"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::ALREADY_AUTHENTICATED));
+            return false;
+        }
+        if (!$this->sessionmanager->getSession($player)->isRegistered()) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "not-registered"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::NOT_REGISTERED));
+            return false;
+        }
+
+        $player->sendMessage($this->languagemanager->getMessage($player, "authentication-pending"));
+
+        $originAuth = $this->sessionmanager->getSession($player)->getOriginAuth();
+        $passwordHash = $this->sessionmanager->getSession($player)->getPassword();
+
+        $this->getServer()->getScheduler()->scheduleAsyncTask(new AsyncLoginTask($player, $passwordHash, $password, $originAuth, $mode, $this->getConfig()->getNested("hash.cost")));
+
+        $this->sessionmanager->getSession($player)->setVerifying();
+        return true; // Does NOT mean the player is authenticated!
     }
 
     /**
@@ -540,6 +584,60 @@ class Main extends PluginBase
                 $this->progressReport($player->getName());
             }
         }
+        return true;
+    }
+
+    /**
+     * @param Player $player
+     * @param $password
+     * @param $confirmpassword
+     * @param string $email
+     * @param bool $xbox
+     * @return bool
+     */
+    public function asyncRegister(Player $player, $password, $confirmpassword, $email = "none", $xbox = false)
+    {
+        $this->sessionmanager->getSession($player)->setSecondPassword(null);
+        if ($this->sessionmanager->getSession($player)->isRegistering()) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "already-registering"));
+        }
+        if ($this->isBlocked($player->getName())) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "account-blocked"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::ACCOUNT_BLOCKED));
+            return false;
+        }
+        if ($this->sessionmanager->getSession($player)->isRegistered()) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "already-registered"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::ALREADY_REGISTERED));
+            return false;
+        }
+        if ($password !== $confirmpassword) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "password-not-match"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORDS_NOT_MATCHED));
+            return false;
+        }
+        if ($this->isPasswordBlocked($password)) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "password-blocked"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_BLOCKED));
+            return false;
+        }
+        if (strtolower($password) == strtolower($player->getName()) || strpos($password, strtolower($player->getName())) !== false) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "password-username"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_USERNAME));
+            return false;
+        }
+        if (strlen($password) < $this->getConfig()->getNested("register.minimum-password-length")) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "password-too-short"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_TOO_SHORT));
+            return false;
+        }
+
+        $player->sendMessage($this->languagemanager->getMessage($player, "register-pending"));
+
+        $pin = $this->generatePin($player);
+        $this->getServer()->getScheduler()->scheduleAsyncTask(new AsyncRegisterTask($player->getName(), $password, $email, $pin, $xbox == "false" ? self::NORMAL : self::XBOX));
+
+        $this->sessionmanager->getSession($player)->setRegistering();
         return true;
     }
 
@@ -849,9 +947,9 @@ class Main extends PluginBase
      * @param $password
      * @return bool|string
      */
-    public function hashPassword($password)
+    public static function hashPassword($password)
     {
-        $options = ['cost' => $this->getConfig()->getNested("hash.cost")];
+        $options = ['cost' => self::$hashCost];
         return password_hash($password, PASSWORD_BCRYPT, $options);
     }
 
@@ -860,9 +958,9 @@ class Main extends PluginBase
      * @param $plainpassword
      * @return bool|null|string
      */
-    public function needsRehashPassword($password, $plainpassword)
+    public static function needsRehashPassword($password, $plainpassword)
     {
-        $options = ['cost' => $this->getConfig()->getNested("hash.cost")];
+        $options = ['cost' => self::$hashCost];
         if (password_needs_rehash($password, PASSWORD_BCRYPT, $options)) {
             return password_hash($plainpassword, PASSWORD_BCRYPT, $options);
         }
@@ -871,14 +969,11 @@ class Main extends PluginBase
 
     /**
      * @param $password
-     * @return bool|string
+     * @return string
      */
-    public function getKey($password)
+    public function getKey()
     {
-        if (password_verify($password, $this->database->getOfflinePlayer($this->getConfig()->getNested("key.owner"))["password"])) {
-            return $this->key;
-        }
-        return false;
+        return $this->key;
     }
 
     /**
@@ -916,7 +1011,7 @@ class Main extends PluginBase
      * @param $password
      * @return string
      */
-    public function hashSimpleAuth($salt, $password)
+    public static function hashSimpleAuth($salt, $password)
     {
         return bin2hex(hash("sha512", $password . $salt, true) ^ hash("whirlpool", $salt . $password, true));
     }

@@ -144,7 +144,7 @@ class EventListener implements Listener
         if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
             if ($this->plugin->getConfig()->getNested("login.chat-login")) {
                 if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
-                    $this->plugin->login($player, $message, 0);
+                    $this->plugin->getConfig()->get('async') ? $this->plugin->asyncLogin($player, $message, 0) : $this->plugin->login($player, $message, 0);
                 } else {
                     if (!$this->plugin->sessionmanager->getSession($player)->isConfirmingPassword()) {
                         if ($this->plugin->sessionmanager->getSession($player)->getSecondPassword() == null) {
@@ -178,6 +178,7 @@ class EventListener implements Listener
                                     $plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
                                 } else {
                                     $plugin->register($player, $plugin->sessionmanager->getSession($player)->getSecondPassword(), $plugin->sessionmanager->getSession($player)->getSecondPassword(), $message);
+                                    $plugin->getConfig()->get('async') ? $plugin->asyncRegister($player, $plugin->sessionmanager->getSession($player)->getSecondPassword(), $plugin->sessionmanager->getSession($player)->getSecondPassword(), $message) : $plugin->register($player, $plugin->sessionmanager->getSession($player)->getSecondPassword(), $plugin->sessionmanager->getSession($player)->getSecondPassword(), $message);
                                     $plugin->sessionmanager->getSession($player)->setSecondPassword(null);
                                     $plugin->sessionmanager->getSession($player)->setGivingEmail(false);
                                 }

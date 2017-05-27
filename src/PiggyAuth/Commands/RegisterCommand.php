@@ -54,7 +54,7 @@ class RegisterCommand extends PluginCommand
                 $sender = $plugin->getServer()->getPlayerExact($args[0]);
                 if ($sender instanceof Player) { //Check to make sure player didn't log off
                     if ($result) {
-                        $plugin->register($sender, $args[1], $args[2], $args[3]);
+                        $plugin->getConfig()->get('async') ? $plugin->asyncRegister($sender, $args[1], $args[2], $args[3]) : $plugin->register($sender, $args[1], $args[2], $args[3]);
                     } else {
                         $sender->sendMessage($plugin->languagemanager->getMessage($sender, "invalid-email"));
                     }

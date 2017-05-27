@@ -49,7 +49,7 @@ class KeyCommand extends PluginCommand
             $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "key-disabled"));
             return false;
         }
-        $sender->sendMessage($this->getPlugin()->getKey($args[0]) == false ? $this->getPlugin()->languagemanager->getMessage($sender, "incorrect-password-other") : $this->getPlugin()->getKey($args[0]));
+        $sender->sendMessage(password_verify($args[0], $this->getPlugin()->database->getOfflinePlayer($this->plugin->getConfig()->getNested("key.owner"))["password"]) == false ? $this->getPlugin()->languagemanager->getMessage($sender, "incorrect-password-other") : $this->getPlugin()->getKey());
         return true;
     }
 }

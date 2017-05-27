@@ -1,19 +1,19 @@
-#                                                                                                      
-#,-.----.                                                                                              
-#\    /  \                                             ,---,                        ___      ,---,     
-#|   :    \   ,--,                                    '  .' \                     ,--.'|_  ,--.' |     
-#|   |  .\ :,--.'|                                   /  ;    '.             ,--,  |  | :,' |  |  :     
-#.   :  |: ||  |,     ,----._,.  ,----._,.          :  :       \          ,'_ /|  :  : ' : :  :  :     
-#|   |   \ :`--'_    /   /  ' / /   /  ' /     .--, :  |   /\   \    .--. |  | :.;__,'  /  :  |  |,--. 
-#|   : .   /,' ,'|  |   :     ||   :     |   /_ ./| |  :  ' ;.   : ,'_ /| :  . ||  |   |   |  :  '   | 
-#;   | |`-' '  | |  |   | .\  .|   | .\  ., ' , ' : |  |  ;/  \   \|  ' | |  . .:__,'| :   |  |   /' : 
-#|   | ;    |  | :  .   ; ';  |.   ; ';  /___/ \: | '  :  | \  \ ,'|  | ' |  | |  '  : |__ '  :  | | | 
-#:   ' |    '  : |__'   .   . |'   .   . |.  \  ' | |  |  '  '--'  :  | : ;  ; |  |  | '.'||  |  ' | : 
-#:   : :    |  | '.'|`---`-'| | `---`-'| | \  ;   : |  :  :        '  :  `--'   \ ;  :    ;|  :  :_:,' 
-#|   | :    ;  :    ;.'__/\_: | .'__/\_: |  \  \  ; |  | ,'        :  ,      .-./ |  ,   / |  | ,'     
-#`---'.|    |  ,   / |   :    : |   :    :   :  \  \`--''           `--`----'      ---`-'  `--''       
-#  `---`     ---`-'   \   \  /   \   \  /     \  ' ;                                                   
-#                      `--`-'     `--`-'       `--`                                                    
+#
+#,-.----.
+#\    /  \                                             ,---,                        ___      ,---,
+#|   :    \   ,--,                                    '  .' \                     ,--.'|_  ,--.' |
+#|   |  .\ :,--.'|                                   /  ;    '.             ,--,  |  | :,' |  |  :
+#.   :  |: ||  |,     ,----._,.  ,----._,.          :  :       \          ,'_ /|  :  : ' : :  :  :
+#|   |   \ :`--'_    /   /  ' / /   /  ' /     .--, :  |   /\   \    .--. |  | :.;__,'  /  :  |  |,--.
+#|   : .   /,' ,'|  |   :     ||   :     |   /_ ./| |  :  ' ;.   : ,'_ /| :  . ||  |   |   |  :  '   |
+#;   | |`-' '  | |  |   | .\  .|   | .\  ., ' , ' : |  |  ;/  \   \|  ' | |  . .:__,'| :   |  |   /' :
+#|   | ;    |  | :  .   ; ';  |.   ; ';  /___/ \: | '  :  | \  \ ,'|  | ' |  | |  '  : |__ '  :  | | |
+#:   ' |    '  : |__'   .   . |'   .   . |.  \  ' | |  |  '  '--'  :  | : ;  ; |  |  | '.'||  |  ' | :
+#:   : :    |  | '.'|`---`-'| | `---`-'| | \  ;   : |  :  :        '  :  `--'   \ ;  :    ;|  :  :_:,'
+#|   | :    ;  :    ;.'__/\_: | .'__/\_: |  \  \  ; |  | ,'        :  ,      .-./ |  ,   / |  | ,'
+#`---'.|    |  ,   / |   :    : |   :    :   :  \  \`--''           `--`----'      ---`-'  `--''
+#  `---`     ---`-'   \   \  /   \   \  /     \  ' ;
+#                      `--`-'     `--`-'       `--`
 
 events:
   #If enabled, interaction with blocks will be allowed when not authenticated
@@ -76,7 +76,7 @@ register:
   blocked-accounts: ["notch"]
   #Capes will be given for registered players
   cape-for-registration: true
-pin: 
+pin:
   cant-use-pin: ["Owner"]
 timeout:
   #Kick players after certain time
@@ -125,7 +125,7 @@ message:
   #If on, there will be a seperate join message for new players
   join-message-for-new-players: true
 progress-reports:
-  #Send progress reports every certain number of players registered 
+  #Send progress reports every certain number of players registered
   enabled: true
   #Email to send progress report to
   progress-report-email: youremail@gmail.com
@@ -145,7 +145,7 @@ emails:
     from: PiggyAuth <postmaster@YOUR_DOMAIN>
 vipslots:
   #Players with VIP slot
-  players: [MCPEPIG] 
+  players: [MCPEPIG]
   #Ranks with VIP slot
   ranks: ["Owner"]
 key:
@@ -167,3 +167,4 @@ hash:
 auto-updater:
   enabled: true
   auto-install: true
+async: true

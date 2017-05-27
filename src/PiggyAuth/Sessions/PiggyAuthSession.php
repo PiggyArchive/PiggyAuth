@@ -36,6 +36,8 @@ class PiggyAuthSession implements Session
     private $wither = null;
     private $tries = 0;
     private $joinmessage = null;
+    private $isVerifying = false;
+    private $isRegistering = false;
 
     /**
      * PiggyAuthSession constructor.
@@ -250,6 +252,40 @@ class PiggyAuthSession implements Session
     public function setGivingEmail($arg = true)
     {
         $this->isGivingEmail = $arg;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVerifying() : bool
+    {
+        return $this->isVerifying;
+    }
+
+    /**
+     * @param bool $arg
+     * @return void
+     */
+    public function setVerifying(bool $arg = true)
+    {
+        $this->isVerifying = $arg;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRegistering() : bool
+    {
+        return $this->isRegistering;
+    }
+
+    /**
+     * @param bool $arg
+     * @return void
+     */
+    public function setRegistering(bool $arg = true)
+    {
+        $this->isRegistering = $arg;
     }
 
     /**
@@ -534,4 +570,3 @@ class PiggyAuthSession implements Session
     }
 
 }
-

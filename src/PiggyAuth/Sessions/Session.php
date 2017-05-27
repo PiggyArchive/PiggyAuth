@@ -54,6 +54,14 @@ interface Session
      */
     public function setGivingEmail($arg = true);
 
+    public function isVerifying() : bool;
+
+    public function setVerifying(bool $arg = true);
+
+    public function isRegistering() : bool;
+
+    public function setRegistering(bool $arg = true);
+
     public function getMessageTick();
 
     /**
