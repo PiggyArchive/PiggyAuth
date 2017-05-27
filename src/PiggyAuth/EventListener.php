@@ -144,7 +144,7 @@ class EventListener implements Listener
         if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
             if ($this->plugin->getConfig()->getNested("login.chat-login")) {
                 if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
-                    $this->plugin->login($player, $message, 0);
+                    $this->plugin->getConfig()->get('async') ? $this->plugin->asyncLogin($player, $message, 0) : $this->plugin->login($player, $message, 0);
                 } else {
                     if (!$this->plugin->sessionmanager->getSession($player)->isConfirmingPassword()) {
                         if ($this->plugin->sessionmanager->getSession($player)->getSecondPassword() == null) {
