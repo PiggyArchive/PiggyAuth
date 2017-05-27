@@ -914,14 +914,11 @@ class Main extends PluginBase
 
     /**
      * @param $password
-     * @return bool|string
+     * @return string
      */
-    public function getKey($password)
+    public function getKey()
     {
-        if (password_verify($password, $this->database->getOfflinePlayer($this->getConfig()->getNested("key.owner"))["password"])) {
-            return $this->key;
-        }
-        return false;
+        return $this->key;
     }
 
     /**
