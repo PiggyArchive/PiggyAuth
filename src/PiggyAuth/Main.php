@@ -635,7 +635,7 @@ class Main extends PluginBase
         $player->sendMessage($this->languagemanager->getMessage($player, "register-pending"));
 
         $pin = $this->generatePin($player);
-        $this->getServer()->getScheduler()->scheduleAsyncTask(new AsyncRegisterTask($playerName, $password, $email, $pin, $xbox == "false" ? self::NORMAL : self::XBOX);
+        $this->getServer()->getScheduler()->scheduleAsyncTask(new AsyncRegisterTask($playerName, $password, $email, $pin, $xbox == "false" ? self::NORMAL : self::XBOX));
 
         $this->sessionmanager->getSession($player)->setRegistering();
         return true;

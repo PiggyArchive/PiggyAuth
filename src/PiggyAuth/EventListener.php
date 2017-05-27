@@ -178,6 +178,7 @@ class EventListener implements Listener
                                     $plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
                                 } else {
                                     $plugin->register($player, $plugin->sessionmanager->getSession($player)->getSecondPassword(), $plugin->sessionmanager->getSession($player)->getSecondPassword(), $message);
+                                    $plugin->getConfig()->get('async') ? $plugin->asyncRegister($player, $plugin->sessionmanager->getSession($player)->getSecondPassword(), $plugin->sessionmanager->getSession($player)->getSecondPassword(), $message) : $plugin->register($player, $plugin->sessionmanager->getSession($player)->getSecondPassword(), $plugin->sessionmanager->getSession($player)->getSecondPassword(), $message);
                                     $plugin->sessionmanager->getSession($player)->setSecondPassword(null);
                                     $plugin->sessionmanager->getSession($player)->setGivingEmail(false);
                                 }

@@ -30,7 +30,7 @@ class AsyncLoginTask extends AsyncTask
             $auth = explode("_", $this->originAuth);
             if (isset($auth[0]) && isset($auth[1])) {
                 if (hash($auth[1], $this->potentialPassword) == $this->passwordHash) {
-                    $this->setResult(['authenticated' => true, 'updatePlayer' => true, 'rehashedPassword' => Main::needsRehashPassword()]);
+                    $this->setResult(['authenticated' => true, 'updatePlayer' => true, 'rehashedPassword' => Main::needsRehashPassword($this->passwordHash, $this->potentialPassword)]);
                     return;
                 }
                 $this->setResult(['authenticated' => false, 'updatePlayer' => false]);
@@ -41,7 +41,7 @@ class AsyncLoginTask extends AsyncTask
         switch ($this->originAuth) {
             case "SimpleAuth":
                 if (hash_equals($this->passwordHash, Main::hashSimpleAuth(strtolower($this->playerName), $this->potentialPassword))) {
-                    $this->setResult(['authenticated' => true, 'updatePlayer' => true, 'rehashedPassword' => Main::needsRehashPassword()]);
+                    $this->setResult(['authenticated' => true, 'updatePlayer' => true, 'rehashedPassword' => Main::needsRehashPassword($this->passwordHash, $this->potentialPassword)]);
                     return;
                 }
                 $this->setResult(['authenticated' => false, 'updatePlayer' => false]);
@@ -49,7 +49,7 @@ class AsyncLoginTask extends AsyncTask
             case "PiggyAuth":
             default:
                 if (password_verify($this->potentialPassword, $this->passwordHash)) {
-                    $this->setResult(['authenticated' => true, 'updatePlayer' => false, 'rehashedPassword' => Main::needsRehashPassword()]);
+                    $this->setResult(['authenticated' => true, 'updatePlayer' => false, 'rehashedPassword' => Main::needsRehashPassword($this->passwordHash, $this->potentialPassword)]);
                     return;
                 }
                 $this->setResult(['authenticated' => false, 'updatePlayer' => false]);
