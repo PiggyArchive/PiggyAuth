@@ -368,6 +368,10 @@ class Main extends PluginBase
      */
     public function asyncLogin(Player $player, $password, $mode = 0)
     {
+        if($this->sessionmanager->getSession($player)->isVerifying()){
+            $player->sendMessage($this->languagemanager->getMessage($player, "already-verifying"));
+            return true;
+        }
         if ($this->isBlocked($player->getName())) {
             $player->sendMessage($this->languagemanager->getMessage($player, "account-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::ACCOUNT_BLOCKED));
