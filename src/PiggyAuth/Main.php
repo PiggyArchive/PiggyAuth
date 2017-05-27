@@ -37,6 +37,7 @@ use PiggyAuth\Language\LanguageManager;
 use PiggyAuth\Packet\BossEventPacket;
 use PiggyAuth\Sessions\SessionManager;
 use PiggyAuth\Tasks\AsyncLoginTask;
+use PiggyAuth\Tasks\AsyncRegisterTask;
 use PiggyAuth\Tasks\AttributeTick;
 use PiggyAuth\Tasks\AutoUpdaterTask;
 use PiggyAuth\Tasks\DelayedPinTask;
@@ -583,6 +584,60 @@ class Main extends PluginBase
                 $this->progressReport($player->getName());
             }
         }
+        return true;
+    }
+
+    /**
+     * @param Player $player
+     * @param $password
+     * @param $confirmpassword
+     * @param string $email
+     * @param bool $xbox
+     * @return bool
+     */
+    public function asyncRegister(Player $player, $password, $confirmpassword, $email = "none", $xbox = false)
+    {
+        $this->sessionmanager->getSession($player)->setSecondPassword(null);
+        if ($this->sessionmanager->getSession($player)->isRegistering()) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "already-registering"));
+        }
+        if ($this->isBlocked($player->getName())) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "account-blocked"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::ACCOUNT_BLOCKED));
+            return false;
+        }
+        if ($this->sessionmanager->getSession($player)->isRegistered()) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "already-registered"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::ALREADY_REGISTERED));
+            return false;
+        }
+        if ($password !== $confirmpassword) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "password-not-match"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORDS_NOT_MATCHED));
+            return false;
+        }
+        if ($this->isPasswordBlocked($password)) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "password-blocked"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_BLOCKED));
+            return false;
+        }
+        if (strtolower($password) == strtolower($player->getName()) || strpos($password, strtolower($player->getName())) !== false) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "password-username"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_USERNAME));
+            return false;
+        }
+        if (strlen($password) < $this->getConfig()->getNested("register.minimum-password-length")) {
+            $player->sendMessage($this->languagemanager->getMessage($player, "password-too-short"));
+            $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_TOO_SHORT));
+            return false;
+        }
+
+        $player->sendMessage($this->languagemanager->getMessage($player, "register-pending"));
+
+        $pin = $this->generatePin($player);
+        $this->getServer()->getScheduler()->scheduleAsyncTask(new AsyncRegisterTask($playerName, $password, $email, $pin, $xbox == "false" ? self::NORMAL : self::XBOX);
+
+        $this->sessionmanager->getSession($player)->setRegistering();
         return true;
     }
 
