@@ -56,7 +56,11 @@ interface Session
 
     public function isVerifying() : bool;
 
-    public function setVerifying(bool $arg);
+    public function setVerifying(bool $arg = 0);
+
+    public function isRegistering() : bool;
+
+    public function setRegistering(bool $arg = 0) : bool;
 
     public function getMessageTick();
 
