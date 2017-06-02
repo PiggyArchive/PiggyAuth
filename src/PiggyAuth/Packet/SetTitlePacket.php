@@ -45,6 +45,10 @@ class SetTitlePacket extends DataPacket
         $this->putVarInt($this->fadeOutTime);
     }
 
+    /**
+     * @param NetworkSession $session
+     * @return bool
+     */
     public function handle(NetworkSession $session) : bool{
         return $session->handleSetTitle($this);
     }

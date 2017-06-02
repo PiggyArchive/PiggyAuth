@@ -2,11 +2,13 @@
 
 //Credits to @thebigsmileXD
 namespace PiggyAuth;
+use pocketmine\entity\Attribute;
+
 /**
  * Class FakeAttribute
  * @package PiggyAuth
  */
-class FakeAttribute
+class FakeAttribute extends Attribute
 {
     public $min, $max, $value, $name;
 
@@ -25,26 +27,41 @@ class FakeAttribute
         $this->name = $name;
     }
 
+    /**
+     * @return mixed
+     */
     public function getMinValue()
     {
         return $this->min;
     }
 
+    /**
+     * @return mixed
+     */
     public function getMaxValue()
     {
         return $this->max;
     }
 
+    /**
+     * @return mixed
+     */
     public function getValue()
     {
         return $this->value;
     }
 
+    /**
+     * @return mixed
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * @return mixed
+     */
     public function getDefaultValue()
     {
         return $this->min;

@@ -968,8 +968,8 @@ class Main extends PluginBase
     }
 
     /**
-     * @param $password
      * @return string
+     * @internal param $password
      */
     public function getKey()
     {

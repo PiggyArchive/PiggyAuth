@@ -10,9 +10,21 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\scheduler\AsyncTask;
 
+/**
+ * Class AsyncRegisterTask
+ * @package PiggyAuth\Tasks
+ */
 class AsyncRegisterTask extends AsyncTask
 {
 
+    /**
+     * AsyncRegisterTask constructor.
+     * @param mixed|null $playerName
+     * @param $password
+     * @param $email
+     * @param $pin
+     * @param $xbox
+     */
     public function __construct($playerName, $password, $email, $pin, $xbox){
         $this->playerName = $playerName;
         $this->password = $password;
@@ -24,6 +36,9 @@ class AsyncRegisterTask extends AsyncTask
         $this->setResult(Main::hashPassword($this->password));
     }
 
+    /**
+     * @param Server $server
+     */
     public function onCompletion(Server $server){
         $plugin = $server->getPluginManager()->getPlugin('PiggyAuth');
 

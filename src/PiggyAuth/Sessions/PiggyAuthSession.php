@@ -442,6 +442,7 @@ class PiggyAuthSession implements Session
     }
 
     /**
+     * @param null $joinmessage
      * @return bool
      * @internal param Player $player
      */

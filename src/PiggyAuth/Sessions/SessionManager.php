@@ -38,6 +38,7 @@ class SessionManager
     /**
      * @param Player $player
      * @param bool $authenticated
+     * @param null $joinmessage
      */
     public function loadSession(Player $player, $authenticated = false, $joinmessage = null)
     {

@@ -68,6 +68,7 @@ class SQLite3 implements Database
      * @param $player
      * @param $callback
      * @param $args
+     * @return mixed|void
      */
     public function getPlayer($player, $callback, $args)
     {
@@ -119,6 +120,7 @@ class SQLite3 implements Database
      * @param int $type
      * @param null $callback
      * @param null $args
+     * @return mixed|void
      */
     public function updatePlayer($player, $column, $arg, $type = 0, $callback = null, $args = null)
     {
@@ -139,6 +141,7 @@ class SQLite3 implements Database
      * @param $xbox
      * @param null $callback
      * @param null $args
+     * @return mixed|void
      */
     public function insertData(Player $player, $password, $email, $pin, $xbox, $callback = null, $args = null)
     {
@@ -166,6 +169,7 @@ class SQLite3 implements Database
      * @param string $auth
      * @param null $callback
      * @param null $args
+     * @return mixed|void
      */
     public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $auth = "PiggyAuth", $callback = null, $args = null)
     {
@@ -189,6 +193,7 @@ class SQLite3 implements Database
      * @param $player
      * @param null $callback
      * @param null $args
+     * @return mixed|void
      */
     public function clearPassword($player, $callback = null, $args = null)
     {
