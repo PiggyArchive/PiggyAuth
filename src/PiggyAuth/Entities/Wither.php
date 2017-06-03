@@ -35,7 +35,7 @@ class Wither extends Entity
     public function spawnTo(Player $player)
     {
         $pk = new AddEntityPacket();
-        $pk->eid = $this->getId();
+        $pk->entityRuntimeId = $this->getId();
         $pk->type = Wither::NETWORK_ID;
         $pk->x = $this->x;
         $pk->y = $this->y;
