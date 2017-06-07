@@ -13,20 +13,20 @@ class BossEventPacket extends DataPacket
 {
     const NETWORK_ID = 0x4c;
 
-    public $eid;
+    public $entityRuntimeId;
     public $state;
 
     public function decode()
     {
-        $this->eid = $this->getEntityUniqueId();
+        $this->entityRuntimeId = $this->getEntityUniqueId();
         $this->state = $this->getUnsignedVarInt();
     }
 
     public function encode()
     {
         $this->reset();
-        $this->putEntityUniqueId($this->eid);
-        $this->putEntityRuntimeId($this->eid);
+        $this->putEntityUniqueId($this->entityRuntimeId);
+        $this->putEntityRuntimeId($this->entityRuntimeId);
         $this->putUnsignedVarInt($this->state);
     }
 
