@@ -546,7 +546,7 @@ class PiggyAuthSession implements Session
                     continue;
                 }
                 $pk = new MobEffectPacket();
-                $pk->eid = $this->player->getId();
+                $pk->entityRuntimeId = $this->player->getId();
                 $pk->eventId = MobEffectPacket::EVENT_REMOVE;
                 $pk->effectId = $effect->getId();
                 $this->player->dataPacket($pk);
