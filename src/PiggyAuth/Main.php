@@ -457,19 +457,19 @@ class Main extends PluginBase
         }
         if ($this->getConfig()->getNested("effects.hide-health")) {
             $pk = new UpdateAttributesPacket();
-            $pk->entityId = $player->getId();
+            $pk->entityRuntimeId = $player->getId();
             $pk->entries = [$player->getAttributeMap()->getAttribute(Attribute::HEALTH)];
             $player->dataPacket($pk);
         }
         if ($this->getConfig()->getNested("effects.hide-hunger")) {
             $pk = new UpdateAttributesPacket();
-            $pk->entityId = $player->getId();
+            $pk->entityRuntimeId = $player->getId();
             $pk->entries = [$player->getAttributeMap()->getAttribute(Attribute::HUNGER)];
             $player->dataPacket($pk);
         }
         if ($this->getConfig()->getNested("effects.hide-xp")) {
             $pk = new UpdateAttributesPacket();
-            $pk->entityId = $player->getId();
+            $pk->entityRuntimeId = $player->getId();
             $pk->entries = [$player->getAttributeMap()->getAttribute(Attribute::EXPERIENCE)];
             $player->dataPacket($pk);
         }

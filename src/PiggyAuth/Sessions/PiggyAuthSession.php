@@ -564,7 +564,7 @@ class PiggyAuthSession implements Session
             $wither->setMaxHealth($this->plugin->getConfig()->getNested("timeout.timeout-time"));
             $wither->setHealth($this->plugin->getConfig()->getNested("timeout.timeout-time"));
             $pk = new BossEventPacket();
-            $pk->eid = $wither->getId();
+            $pk->entityRuntimeId = $wither->getId();
             $pk->state = 0;
             $this->player->dataPacket($pk);
         }

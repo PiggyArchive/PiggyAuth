@@ -85,7 +85,7 @@ class OtherMessageTypeTick extends PluginTask
                     if ($this->plugin->sessionmanager->getSession($player)->getWither() !== null) {
                         $pk = new UpdateAttributesPacket();
                         $pk->entries[] = new FakeAttribute(0.00, $this->plugin->getConfig()->getNested("timeout.timeout-time"), ($this->plugin->getConfig()->getNested("timeout.timeout-time") - $this->plugin->sessionmanager->getSession($player)->getTimeoutTick() - 1), "minecraft:health");
-                        $pk->entityId = $this->plugin->sessionmanager->getSession($player)->getWither()->getId();
+                        $pk->entityRuntimeId = $this->plugin->sessionmanager->getSession($player)->getWither()->getId();
                         $player->dataPacket($pk);
                     }
                 }
