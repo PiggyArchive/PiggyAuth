@@ -39,14 +39,14 @@ class ChangePasswordCommand extends PluginCommand
             return true;
         }
         if (!$sender instanceof Player) {
-            $sender->sendMessage($this->plugin->languagemanager->getMessage($sender, "use-in-game"));
+            $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "use-in-game"));
             return false;
         }
         if (!isset($args[1])) {
             $sender->sendMessage("/changepassword <old password> <new password>");
             return false;
         }
-        $this->plugin->changepassword($sender, $args[0], $args[1]);
+        $this->getPlugin()->changepassword($sender, $args[0], $args[1]);
         return true;
     }
 }
