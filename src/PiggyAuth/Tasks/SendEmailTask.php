@@ -60,8 +60,8 @@ class SendEmailTask extends AsyncTask
         $error = curl_error($ch);
         if ($error == "SSL certificate problem: unable to get local issuer certificate") {
             $this->error = "SSL certificate problem: unable to get local issuer certificate\nPlease make sure you have downloaded the file from https://github.com/MCPEPIG/PiggyAuth-MailGunFiles & edited the php.ini.";
-        }else{
-            if($error !== ""){
+        } else {
+            if ($error !== "") {
                 $this->error = $error;
             }
         }
@@ -73,15 +73,17 @@ class SendEmailTask extends AsyncTask
      */
     public function onCompletion(Server $server)
     {
-        $player = $server->getPlayerExact($this->player);
-        if ($this->error !== null) {
-            $server->getPluginManager()->getPlugin("PiggyAuth")->getLogger()->error($this->error);
-            if ($player instanceof Player) {
-                $player->sendMessage($server->getPluginManager()->getPlugin("PiggyAuth")->languagemanager->getMessage($player, "email-fail"));
-            }
-        } else {
-            if ($player instanceof Player) {
-                $player->sendMessage($server->getPluginManager()->getPlugin("PiggyAuth")->languagemanager->getMessage($player, "email-success"));
+        if (is_string($this->player)) {
+            $player = $server->getPlayerExact($this->player);
+            if ($this->error !== null) {
+                $server->getPluginManager()->getPlugin("PiggyAuth")->getLogger()->error($this->error);
+                if ($player instanceof Player) {
+                    $player->sendMessage($server->getPluginManager()->getPlugin("PiggyAuth")->languagemanager->getMessage($player, "email-fail"));
+                }
+            } else {
+                if ($player instanceof Player) {
+                    $player->sendMessage($server->getPluginManager()->getPlugin("PiggyAuth")->languagemanager->getMessage($player, "email-success"));
+                }
             }
         }
     }
