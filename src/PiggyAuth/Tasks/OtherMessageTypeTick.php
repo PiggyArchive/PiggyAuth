@@ -2,7 +2,7 @@
 
 namespace PiggyAuth\Tasks;
 
-use PiggyAuth\Packet\SetTitlePacket;
+use pocketmine\network\mcpe\protocol\SetTitlePacket;
 use pocketmine\network\mcpe\protocol\UpdateAttributesPacket;
 use pocketmine\scheduler\PluginTask;
 
