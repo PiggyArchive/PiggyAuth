@@ -38,6 +38,8 @@ use pocketmine\Player;
  */
 class EventListener implements Listener
 {
+    private $plugin;
+
     /**
      * EventListener constructor.
      * @param Main $plugin
@@ -289,7 +291,6 @@ class EventListener implements Listener
 
     /**
      * @param PlayerJoinEvent $event
-     * @return bool
      */
     public function onJoin(PlayerJoinEvent $event)
     {
@@ -308,10 +309,20 @@ class EventListener implements Listener
         $player = $event->getPlayer();
         $reason = $event->getReason();
         $plugin = $this->plugin->getServer()->getPluginManager()->getPlugin("PurePerms");
-        if ($reason == "disconnectionScreen.serverFull") {
-            if (in_array($player->getName(), $this->plugin->getConfig()->getNested("vipslots.players")) || ($plugin !== null && in_array($plugin->getUserDataMgr()->getGroup($player)->getName(), $this->plugin->getConfig()->getNested("vipslots.ranks")))) {
-                $event->setCancelled();
-            }
+        switch ($reason) {
+            case "disconnectionScreen.serverFull":
+                if (in_array($player->getName(), $this->plugin->getConfig()->getNested("vipslots.players")) || ($plugin !== null && in_array($plugin->getUserDataMgr()->getGroup($player)->getName(), $this->plugin->getConfig()->getNested("vipslots.ranks")))) {
+                    $event->setCancelled();
+                }
+                break;
+            case "logged in from another location":
+                if ($this->plugin->getConfig()->getNested("login.single-session")) {
+                    $uuid = $this->plugin->getServer()->getPlayerExact($player->getName());
+                    if ($this->plugin->sessionmanager->getSession($player)->isAuthenticated() && $uuid !== $player->getUniqueId()) {
+                        $event->setCancelled();
+                    }
+                }
+                break;
         }
     }
 
