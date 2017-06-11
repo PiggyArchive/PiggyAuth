@@ -23,6 +23,7 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 
+use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;
@@ -315,14 +316,6 @@ class EventListener implements Listener
                     $event->setCancelled();
                 }
                 break;
-            case "logged in from another location":
-                if ($this->plugin->getConfig()->getNested("login.single-session")) {
-                    $uuid = $this->plugin->getServer()->getPlayerExact($player->getName());
-                    if ($this->plugin->sessionmanager->getSession($player)->isAuthenticated() && $uuid !== $player->getUniqueId()) {
-                        $event->setCancelled();
-                    }
-                }
-                break;
         }
     }
 
@@ -335,6 +328,20 @@ class EventListener implements Listener
         if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
             if (!$this->plugin->getConfig()->getNested("events.allow-movement") && (!$this->plugin->getConfig()->getNested("events.allow-head-movement") || floor($event->getFrom()->x) !== floor($player->x) || floor($event->getFrom()->z) !== floor($player->z))) {
                 $event->setCancelled();
+            }
+        }
+    }
+
+    public function onPreLogin(PlayerPreLoginEvent $event){
+        $player = $event->getPlayer();
+        if ($this->plugin->getConfig()->getNested("login.single-session")) {
+            if (!is_null($p = $this->plugin->getServer()->getPlayerExact($player->getName()))) {
+                if ($this->plugin->isAuthenticated($p) && $player->getUniqueId()->toString() !== $p->getUniqueId()->toString()) {
+                    $player->close("", "Already logged in!");
+                    $event->setCancelled();
+                } else {
+                    $p->close("", "Someone else is connecting to this account.");
+                }
             }
         }
     }
