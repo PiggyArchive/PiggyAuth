@@ -332,11 +332,14 @@ class EventListener implements Listener
         }
     }
 
+    /**
+     * @param PlayerPreLoginEvent $event
+     */
     public function onPreLogin(PlayerPreLoginEvent $event){
         $player = $event->getPlayer();
         if ($this->plugin->getConfig()->getNested("login.single-session")) {
             if (!is_null($p = $this->plugin->getServer()->getPlayerExact($player->getName()))) {
-                if ($this->plugin->isAuthenticated($p) && $player->getUniqueId()->toString() !== $p->getUniqueId()->toString()) {
+                if ($this->plugin->sessionmanager->getSession($p)->isAuthenticated() && $player->getUniqueId()->toString() !== $p->getUniqueId()->toString()) {
                     $player->close("", "Already logged in!");
                     $event->setCancelled();
                 } else {
