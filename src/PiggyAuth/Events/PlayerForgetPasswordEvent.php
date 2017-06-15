@@ -13,6 +13,9 @@ class PlayerForgetPasswordEvent extends PlayerEvent implements Cancellable
 {
     public static $handlerList = null;
     protected $player;
+    private $password;
+    private $oldpin;
+    private $pin;
 
     /**
      * PlayerForgetPasswordEvent constructor.

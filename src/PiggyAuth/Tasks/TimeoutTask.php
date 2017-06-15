@@ -3,6 +3,8 @@
 namespace PiggyAuth\Tasks;
 
 use PiggyAuth\Events\PlayerTimeoutEvent;
+use PiggyAuth\Main;
+use PiggyAuth\Sessions\PiggyAuthSession;
 use pocketmine\scheduler\PluginTask;
 
 /**
@@ -11,11 +13,13 @@ use pocketmine\scheduler\PluginTask;
  */
 class TimeoutTask extends PluginTask
 {
+    private $plugin;
+
     /**
      * TimeoutTask constructor.
-     * @param \pocketmine\plugin\Plugin $plugin
+     * @param Main $plugin
      */
-    public function __construct($plugin)
+    public function __construct(Main $plugin)
     {
         parent::__construct($plugin);
         $this->plugin = $plugin;
@@ -27,12 +31,13 @@ class TimeoutTask extends PluginTask
     public function onRun($currentTick)
     {
         foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {
-            if ($this->plugin->sessionmanager->getSession($player) !== null && !$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
-                $this->plugin->sessionmanager->getSession($player)->addTimeoutTick();
-                if ($this->plugin->sessionmanager->getSession($player)->getTimeoutTick() == $this->plugin->getConfig()->getNested("timeout.timeout-time")) {
+            $session = $this->plugin->getSessionManager()->getSession($player);
+            if ($session instanceof PiggyAuthSession && !$session->isAuthenticated()) {
+                $session->addTimeoutTick();
+                if ($session->getTimeoutTick() == $this->plugin->getConfig()->getNested("timeout.timeout-time")) {
                     $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerTimeoutEvent($this->plugin, $player));
                     if (!$event->isCancelled()) {
-                        $player->kick($this->plugin->languagemanager->getMessage($player, "timeout-message"));
+                        $player->kick($this->plugin->getLanguageManager()->getMessage($player, "timeout-message"));
                     }
                 }
             }

@@ -5,14 +5,13 @@ namespace PiggyAuth\Commands;
 use PiggyAuth\Main;
 
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
 
 
 /**
  * Class ResetPasswordCommand
  * @package PiggyAuth\Commands
  */
-class ResetPasswordCommand extends PluginCommand
+class ResetPasswordCommand extends PiggyAuthCommand
 {
     /**
      * ResetPasswordCommand constructor.

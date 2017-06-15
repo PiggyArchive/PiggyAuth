@@ -15,6 +15,14 @@ use pocketmine\scheduler\AsyncTask;
  */
 class AsyncLoginTask extends AsyncTask
 {
+    private $originAuth;
+    private $potentialPassword;
+    private $playerName;
+    private $playerUniqueId;
+    private $passwordHash;
+    private $mode;
+    private $cost;
+    private $playerAddress;
 
     /**
      * AsyncLoginTask constructor.
@@ -81,10 +89,10 @@ class AsyncLoginTask extends AsyncTask
             return;
         }
 
-        $plugin->sessionmanager->getSession($player)->setVerifying(false);
+        $plugin->getSessionManager()->getSession($player)->setVerifying(false);
 
         if($this->getResult()['updatePlayer']){
-            $plugin->sessionmanager->getSession($player)->updatePlayer("auth", "PiggyAuth");
+            $plugin->getSessionManager()->getSession($player)->updatePlayer("auth", "PiggyAuth");
         }
 
         if (!$this->getResult()['authenticated']) { // Failed
@@ -96,23 +104,23 @@ class AsyncLoginTask extends AsyncTask
                     return;
                 }
                 if (in_array($this->potentialPassword, $plugin->expiredkeys)) {
-                    $player->sendMessage($plugin->languagemanager->getMessage($player, "key-expired"));
+                    $player->sendMessage($plugin->getLanguageManager()->getMessage($player, "key-expired"));
                     $server->getPluginManager()->callEvent(new PlayerFailEvent($plugin, $player, Main::LOGIN, Main::KEY_EXPIRED));
                     return;
                 }
             }
 
-            $plugin->sessionmanager->getSession($player)->addTry();
-            if ($plugin->sessionmanager->getSession($player)->getTries() >= $plugin->getConfig()->getNested("login.tries")) {
-                $plugin->sessionmanager->getSession($player)->updatePlayer("attempts", $plugin->sessionmanager->getSession($player)->getAttempts() + 1, 1);
+            $plugin->getSessionManager()->getSession($player)->addTry();
+            if ($plugin->getSessionManager()->getSession($player)->getTries() >= $plugin->getConfig()->getNested("login.tries")) {
+                $plugin->getSessionManager()->getSession($player)->updatePlayer("attempts", $plugin->getSessionManager()->getSession($player)->getAttempts() + 1, 1);
                 if ($plugin->getConfig()->getNested("emails.send-email-on-attemptedlogin")) {
-                    $plugin->emailmanager->sendEmail($plugin->sessionmanager->getSession($player)->getEmail(), $plugin->languagemanager->getMessage($player, "email-subject-attemptedlogin"), $plugin->languagemanager->getMessage($player, "email-attemptedlogin"));
+                    $plugin->getEmailManager()->sendEmail($plugin->getSessionManager()->getSession($player)->getEmail(), $plugin->getLanguageManager()->getMessage($player, "email-subject-attemptedlogin"), $plugin->getLanguageManager()->getMessage($player, "email-attemptedlogin"));
                 }
-                $player->kick($plugin->languagemanager->getMessage($player, "too-many-tries"));
+                $player->kick($plugin->getLanguageManager()->getMessage($player, "too-many-tries"));
                 return;
             }
-            $tries = $plugin->getConfig()->getNested("login.tries") - $plugin->sessionmanager->getSession($player)->getTries();
-            $player->sendMessage(str_replace("{tries}", $tries, $plugin->languagemanager->getMessage($player, "incorrect-password")));
+            $tries = $plugin->getConfig()->getNested("login.tries") - $plugin->getSessionManager()->getSession($player)->getTries();
+            $player->sendMessage(str_replace("{tries}", $tries, $plugin->getLanguageManager()->getMessage($player, "incorrect-password")));
             $server->getPluginManager()->callEvent(new PlayerFailEvent($plugin, $player, Main::LOGIN, Main::WRONG_PASSWORD));
             return;
         }
@@ -121,9 +129,9 @@ class AsyncLoginTask extends AsyncTask
 
         $server->getPluginManager()->callEvent($event = new PlayerLoginEvent($plugin, $player, Main::NORMAL));
         if (!$event->isCancelled()) {
-            if ($player->getAddress() !== $plugin->sessionmanager->getSession($player)->getIP()) {
+            if ($player->getAddress() !== $plugin->getSessionManager()->getSession($player)->getIP()) {
                 if ($plugin->getConfig()->getNested("emails.send-email-on-login-from-new-ip")) {
-                    $plugin->emailmanager->sendEmail($plugin->sessionmanager->getSession($player)->getEmail(), $plugin->languagemanager->getMessage($player, "email-subject-login-from-new-ip"), str_replace("{ip}", $player->getAddress(), $plugin->languagemanager->getMessage($player, "email-login-from-new-ip")));
+                    $plugin->getEmailManager()->sendEmail($plugin->getSessionManager()->getSession($player)->getEmail(), $plugin->getLanguageManager()->getMessage($player, "email-subject-login-from-new-ip"), str_replace("{ip}", $player->getAddress(), $plugin->getLanguageManager()->getMessage($player, "email-login-from-new-ip")));
                 }
             }
             $rehashedpassword = $this->getResult()['rehashedPassword'];

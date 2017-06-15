@@ -10,6 +10,7 @@ use pocketmine\utils\Config;
  */
 class ServerAuthConverter implements Converter
 {
+    private $plugin;
 
     /**
      * ServerAuthConverter constructor.
@@ -56,7 +57,7 @@ class ServerAuthConverter implements Converter
             if ($result instanceof \mysqli_result) {
                 while ($row = $result->fetch_assoc()) {
                     if ($this->plugin->database->getOfflinePlayer($row["user"])) {
-                        $this->plugin->getLogger()->info(str_replace("{player}", $row["user"], $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "player-account-already-exists")));
+                        $this->plugin->getLogger()->info(str_replace("{player}", $row["user"], $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "player-account-already-exists")));
                         continue;
                     }
                     $this->plugin->database->insertDataWithoutPlayerObject($row["user"], $row["password"], "none", mt_rand(1000, 9999), "ServerAuth_" . $algorithm);
@@ -65,9 +66,10 @@ class ServerAuthConverter implements Converter
                 return true;
             }
         } else {
-            $this->plugin->getLogger()->info(str_replace("{algorithms}", implode(", ", $algorithms), str_replace("{algorithm}", $algorithm, $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "invalid-hash-algorithm"))));
+            $this->plugin->getLogger()->info(str_replace("{algorithms}", implode(", ", $algorithms), str_replace("{algorithm}", $algorithm, $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "invalid-hash-algorithm"))));
             return false;
         }
+        return false;
     }
 
     /**
@@ -88,21 +90,21 @@ class ServerAuthConverter implements Converter
                             $data = $yml->getAll();
                             $name = str_replace(".yml", "", $file);
                             if ($this->plugin->database->getOfflinePlayer($name)) {
-                                $this->plugin->getLogger()->info(str_replace("{player}", $name, $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "player-account-already-exists")));
+                                $this->plugin->getLogger()->info(str_replace("{player}", $name, $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "player-account-already-exists")));
                                 continue;
                             }
                             $this->plugin->database->insertDataWithoutPlayerObject($name, $data["password"], "none", mt_rand(1000, 9999), "ServerAuth_" . $algorithm);
                         } else {
-                            $this->plugin->getLogger()->info(str_replace("{file}", $file, $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "file-not-yml")));
+                            $this->plugin->getLogger()->info(str_replace("{file}", $file, $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "file-not-yml")));
                         }
                     }
                 }
             } else {
-                $this->plugin->getLogger()->info(str_replace("{file}", $directoryname, $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "invalid-directory")));
+                $this->plugin->getLogger()->info(str_replace("{file}", $directoryname, $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "invalid-directory")));
                 return false;
             }
         } else {
-            $this->plugin->getLogger()->info(str_replace("{algorithms}", implode(", ", $algorithms), str_replace("{algorithm}", $algorithm, $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "invalid-hash-algorithm"))));
+            $this->plugin->getLogger()->info(str_replace("{algorithms}", implode(", ", $algorithms), str_replace("{algorithm}", $algorithm, $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "invalid-hash-algorithm"))));
             return false;
         }
         return true;

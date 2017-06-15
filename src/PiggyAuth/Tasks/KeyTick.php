@@ -10,6 +10,8 @@ use pocketmine\scheduler\PluginTask;
  */
 class KeyTick extends PluginTask
 {
+    private $plugin;
+
     /**
      * KeyTick constructor.
      * @param \pocketmine\plugin\Plugin $plugin

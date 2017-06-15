@@ -6,14 +6,13 @@ use PiggyAuth\Main;
 
 
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class RegisterCommand
  * @package PiggyAuth\Commands
  */
-class RegisterCommand extends PluginCommand
+class RegisterCommand extends PiggyAuthCommand
 {
     /**
      * RegisterCommand constructor.
@@ -40,7 +39,7 @@ class RegisterCommand extends PluginCommand
             return true;
         }
         if (!$sender instanceof Player) {
-            $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "use-in-game"));
+            $sender->sendMessage($this->getPlugin()->getLanguageManager()->getMessage($sender, "use-in-game"));
             return false;
         }
         if (!isset($args[0]) || !isset($args[1])) {
@@ -56,7 +55,7 @@ class RegisterCommand extends PluginCommand
                     if ($result) {
                         $plugin->getConfig()->get('async') ? $plugin->asyncRegister($sender, $args[1], $args[2], $args[3]) : $plugin->register($sender, $args[1], $args[2], $args[3]);
                     } else {
-                        $sender->sendMessage($plugin->languagemanager->getMessage($sender, "invalid-email"));
+                        $sender->sendMessage($plugin->getLanguageManager()->getMessage($sender, "invalid-email"));
                     }
                 }
                 return true;
@@ -66,7 +65,7 @@ class RegisterCommand extends PluginCommand
                 $args[0],
                 $args[1],
                 $args[2]);
-            $this->getPlugin()->emailmanager->validateEmail($args[2], $function, $arguements);
+            $this->getPlugin()->getEmailManager()->validateEmail($args[2], $function, $arguements);
             return true;
         }
         return true;

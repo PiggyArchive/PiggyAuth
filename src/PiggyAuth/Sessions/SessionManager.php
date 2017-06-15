@@ -45,10 +45,10 @@ class SessionManager
         $callback = function ($result, $args, $plugin) {
             $player = $plugin->getServer()->getPlayerExact($args[0]);
             if ($player instanceof Player) {
-                $plugin->sessionmanager->createSession($player, $result);
-                $plugin->sessionmanager->getSession($player)->setAuthenticated($args[1]);
+                $plugin->getSessionManager()->createSession($player, $result);
+                $plugin->getSessionManager()->getSession($player)->setAuthenticated($args[1]);
                 if (!$args[1]) {
-                    $plugin->sessionmanager->getSession($player)->startSession($args[2]);
+                    $plugin->getSessionManager()->getSession($player)->startSession($args[2]);
                 }
             }
         };

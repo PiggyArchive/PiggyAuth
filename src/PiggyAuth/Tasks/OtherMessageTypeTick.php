@@ -14,6 +14,8 @@ use PiggyAuth\FakeAttribute;
  */
 class OtherMessageTypeTick extends PluginTask
 {
+    private $plugin;
+
     /**
      * OtherMessageTypeTick constructor.
      * @param \pocketmine\plugin\Plugin $plugin
@@ -30,27 +32,27 @@ class OtherMessageTypeTick extends PluginTask
     public function onRun($currentTick)
     {
         foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {
-            if ($this->plugin->sessionmanager->getSession($player) !== null && !$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
+            if ($this->plugin->getSessionManager()->getSession($player) !== null && !$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
                 if ($this->plugin->getConfig()->getNested("message.popup")) {
-                    if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
-                        $player->sendPopup($this->plugin->languagemanager->getMessage($player, "login-popup"));
+                    if ($this->plugin->getSessionManager()->getSession($player)->isRegistered()) {
+                        $player->sendPopup($this->plugin->getLanguageManager()->getMessage($player, "login-popup"));
                     } else {
-                        $player->sendPopup($this->plugin->languagemanager->getMessage($player, "register-popup"));
+                        $player->sendPopup($this->plugin->getLanguageManager()->getMessage($player, "register-popup"));
                     }
                 }
                 if ($this->plugin->getConfig()->getNested("message.tip")) {
-                    if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
-                        $player->sendTip($this->plugin->languagemanager->getMessage($player, "login-tip"));
+                    if ($this->plugin->getSessionManager()->getSession($player)->isRegistered()) {
+                        $player->sendTip($this->plugin->getLanguageManager()->getMessage($player, "login-tip"));
                     } else {
-                        $player->sendTip($this->plugin->languagemanager->getMessage($player, "register-tip"));
+                        $player->sendTip($this->plugin->getLanguageManager()->getMessage($player, "register-tip"));
                     }
                 }
                 if ($this->plugin->getConfig()->getNested("message.title")) {
                     $message = "";
-                    if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
-                        $message = $this->plugin->languagemanager->getMessage($player, "login-title");
+                    if ($this->plugin->getSessionManager()->getSession($player)->isRegistered()) {
+                        $message = $this->plugin->getLanguageManager()->getMessage($player, "login-title");
                     } else {
-                        $message = $this->plugin->languagemanager->getMessage($player, "register-title");
+                        $message = $this->plugin->getLanguageManager()->getMessage($player, "register-title");
                     }
                     $pk = new SetTitlePacket();
                     $pk->type = SetTitlePacket::TYPE_SET_TITLE;
@@ -59,10 +61,10 @@ class OtherMessageTypeTick extends PluginTask
                 }
                 if ($this->plugin->getConfig()->getNested("message.subtitle")) {
                     $message = "";
-                    if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
-                        $message = $this->plugin->languagemanager->getMessage($player, "login-subtitle");
+                    if ($this->plugin->getSessionManager()->getSession($player)->isRegistered()) {
+                        $message = $this->plugin->getLanguageManager()->getMessage($player, "login-subtitle");
                     } else {
-                        $message = $this->plugin->languagemanager->getMessage($player, "register-subtitle");
+                        $message = $this->plugin->getLanguageManager()->getMessage($player, "register-subtitle");
                     }
                     $pk = new SetTitlePacket();
                     $pk->type = SetTitlePacket::TYPE_SET_SUBTITLE;
@@ -71,10 +73,10 @@ class OtherMessageTypeTick extends PluginTask
                 }
                 if ($this->plugin->getConfig()->getNested("message.actionbar")) {
                     $message = "";
-                    if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
-                        $message = $this->plugin->languagemanager->getMessage($player, "login-actionbar");
+                    if ($this->plugin->getSessionManager()->getSession($player)->isRegistered()) {
+                        $message = $this->plugin->getLanguageManager()->getMessage($player, "login-actionbar");
                     } else {
-                        $message = $this->plugin->languagemanager->getMessage($player, "register-actionbar");
+                        $message = $this->plugin->getLanguageManager()->getMessage($player, "register-actionbar");
                     }
                     $pk = new SetTitlePacket();
                     $pk->type = SetTitlePacket::TYPE_SET_ACTIONBAR_MESSAGE;
@@ -82,10 +84,10 @@ class OtherMessageTypeTick extends PluginTask
                     $player->dataPacket($pk);
                 }
                 if ($this->plugin->getConfig()->getNested("message.boss-bar")) {
-                    if ($this->plugin->sessionmanager->getSession($player)->getWither() !== null) {
+                    if ($this->plugin->getSessionManager()->getSession($player)->getWither() !== null) {
                         $pk = new UpdateAttributesPacket();
-                        $pk->entries[] = new FakeAttribute(0.00, $this->plugin->getConfig()->getNested("timeout.timeout-time"), ($this->plugin->getConfig()->getNested("timeout.timeout-time") - $this->plugin->sessionmanager->getSession($player)->getTimeoutTick() - 1), "minecraft:health");
-                        $pk->entityRuntimeId = $this->plugin->sessionmanager->getSession($player)->getWither()->getId();
+                        $pk->entries[] = new FakeAttribute(0.00, $this->plugin->getConfig()->getNested("timeout.timeout-time"), ($this->plugin->getConfig()->getNested("timeout.timeout-time") - $this->plugin->getSessionManager()->getSession($player)->getTimeoutTick() - 1), "minecraft:health");
+                        $pk->entityRuntimeId = $this->plugin->getSessionManager()->getSession($player)->getWither()->getId();
                         $player->dataPacket($pk);
                     }
                 }

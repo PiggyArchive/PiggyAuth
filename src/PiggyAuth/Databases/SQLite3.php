@@ -55,11 +55,10 @@ class SQLite3 implements Database
 
 
     /**
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
-     * @return mixed
      */
-    public function getRegisteredCount($callback = null, $args = null)
+    public function getRegisteredCount(callable $callback = null, $args = null)
     {
         $callback($this->db->querySingle("SELECT COUNT(*) as count FROM players"), $args, $this->plugin);
     }
@@ -70,7 +69,7 @@ class SQLite3 implements Database
      * @param $args
      * @return mixed|void
      */
-    public function getPlayer($player, $callback, $args)
+    public function getPlayer($player, callable $callback, $args)
     {
         $player = strtolower($player);
         $statement = $this->db->prepare("SELECT * FROM players WHERE name = :name");
@@ -118,11 +117,11 @@ class SQLite3 implements Database
      * @param $column
      * @param $arg
      * @param int $type
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
      * @return mixed|void
      */
-    public function updatePlayer($player, $column, $arg, $type = 0, $callback = null, $args = null)
+    public function updatePlayer($player, $column, $arg, $type = 0, callable $callback = null, $args = null)
     {
         $statement = $this->db->prepare("UPDATE players SET " . $column . " = :" . $column . " WHERE name = :name");
         $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
@@ -139,11 +138,11 @@ class SQLite3 implements Database
      * @param $email
      * @param $pin
      * @param $xbox
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
      * @return mixed|void
      */
-    public function insertData(Player $player, $password, $email, $pin, $xbox, $callback = null, $args = null)
+    public function insertData(Player $player, $password, $email, $pin, $xbox, callable $callback = null, $args = null)
     {
         $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language, auth) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox, :language, :auth)");
         $statement->bindValue(":name", strtolower($player->getName()), SQLITE3_TEXT);
@@ -153,7 +152,7 @@ class SQLite3 implements Database
         $statement->bindValue(":uuid", $player->getUniqueId()->toString(), SQLITE3_TEXT);
         $statement->bindValue(":attempts", 0, SQLITE3_INTEGER);
         $statement->bindValue(":xbox", $xbox, SQLITE3_TEXT);
-        $statement->bindValue(":language", $this->plugin->languagemanager->getDefaultLanguage(), SQLITE3_TEXT);
+        $statement->bindValue(":language", $this->plugin->getLanguageManager()->getDefaultLanguage(), SQLITE3_TEXT);
         $statement->bindValue(":auth", "PiggyAuth", SQLITE3_TEXT);
         $result = $statement->execute();
         if ($callback !== null) {
@@ -167,11 +166,11 @@ class SQLite3 implements Database
      * @param $email
      * @param $pin
      * @param string $auth
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
      * @return mixed|void
      */
-    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $auth = "PiggyAuth", $callback = null, $args = null)
+    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $auth = "PiggyAuth", callable $callback = null, $args = null)
     {
         $statement = $this->db->prepare("INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language, auth) VALUES (:name, :password, :email, :pin, :uuid, :attempts, :xbox, :language, :auth)");
         $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);
@@ -182,7 +181,7 @@ class SQLite3 implements Database
         $statement->bindValue(":attempts", 0, SQLITE3_INTEGER);
         $statement->bindValue(":xbox", false, SQLITE3_TEXT);
         $statement->bindValue("::auth", $auth, SQLITE3_TEXT);
-        $statement->bindValue(":language", $this->plugin->languagemanager->getDefaultLanguage(), SQLITE3_TEXT);
+        $statement->bindValue(":language", $this->plugin->getLanguageManager()->getDefaultLanguage(), SQLITE3_TEXT);
         $result = $statement->execute();
         if ($callback !== null) {
             $callback($result, $args, $this->plugin);
@@ -191,11 +190,11 @@ class SQLite3 implements Database
 
     /**
      * @param $player
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
      * @return mixed|void
      */
-    public function clearPassword($player, $callback = null, $args = null)
+    public function clearPassword($player, callable $callback = null, $args = null)
     {
         $statement = $this->db->prepare("DELETE FROM players WHERE name = :name");
         $statement->bindValue(":name", strtolower($player), SQLITE3_TEXT);

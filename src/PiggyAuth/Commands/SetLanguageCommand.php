@@ -5,14 +5,13 @@ namespace PiggyAuth\Commands;
 use PiggyAuth\Main;
 
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class SetLanguageCommand
  * @package PiggyAuth\Commands
  */
-class SetLanguageCommand extends PluginCommand
+class SetLanguageCommand extends PiggyAuthCommand
 {
     /**
      * SetLanguageCommand constructor.
@@ -40,18 +39,20 @@ class SetLanguageCommand extends PluginCommand
             return true;
         }
         if (!$sender instanceof Player) {
-            $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "use-in-game"));
+            $sender->sendMessage($this->getPlugin()->getLanguageManager()->getMessage($sender, "use-in-game"));
             return false;
         }
         if (!isset($args[0])) {
             $sender->sendMessage("/setlanguage <language>");
+            return false;
         }
-        if (!$this->getPlugin()->languagemanager->isLanguage($args[0])) {
-            $languages = implode(", ", $this->getPlugin()->languagemanager->getLanguages());
-            $sender->sendMessage(str_replace("{languages}", $languages, $this->getPlugin()->languagemanager->getMessage($sender, "invalid-language")));
-            return true;
+        if (!$this->getPlugin()->getLanguageManager()->isLanguage($args[0])) {
+            $languages = implode(", ", $this->getPlugin()->getLanguageManager()->getLanguages());
+            $sender->sendMessage(str_replace("{languages}", $languages, $this->getPlugin()->getLanguageManager()->getMessage($sender, "invalid-language")));
+            return false;
         }
-        $this->getPlugin()->sessionmanager->getSession($sender)->updatePlayer("language", $args[0]);
-        $sender->sendMessage($this->getPlugin()->languagemanager->getMessageFromLanguage($args[0], "language-changed"));
+        $this->getPlugin()->getSessionManager()->getSession($sender)->updatePlayer("language", $args[0]);
+        $sender->sendMessage($this->getPlugin()->getLanguageManager()->getMessageFromLanguage($args[0], "language-changed"));
+        return true;
     }
 }

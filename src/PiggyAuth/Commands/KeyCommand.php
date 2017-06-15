@@ -4,15 +4,16 @@ namespace PiggyAuth\Commands;
 
 use PiggyAuth\Main;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class KeyCommand
  * @package PiggyAuth\Commands
  */
-class KeyCommand extends PluginCommand
+class KeyCommand extends PiggyAuthCommand
 {
+    private $plugin;
+
     /**
      * KeyCommand constructor.
      * @param string $name
@@ -38,7 +39,7 @@ class KeyCommand extends PluginCommand
             return true;
         }
         if ($sender instanceof Player) {
-            $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "use-on-console"));
+            $sender->sendMessage($this->getPlugin()->getLanguageManager()->getMessage($sender, "use-on-console"));
             return false;
         }
         if (!isset($args[0])) {
@@ -46,10 +47,10 @@ class KeyCommand extends PluginCommand
             return false;
         }
         if (!$this->getPlugin()->getConfig()->getNested("key.enabled")) {
-            $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "key-disabled"));
+            $sender->sendMessage($this->getPlugin()->getLanguageManager()->getMessage($sender, "key-disabled"));
             return false;
         }
-        $sender->sendMessage(password_verify($args[0], $this->getPlugin()->database->getOfflinePlayer($this->plugin->getConfig()->getNested("key.owner"))["password"]) == false ? $this->getPlugin()->languagemanager->getMessage($sender, "incorrect-password-other") : $this->getPlugin()->getKey());
+        $sender->sendMessage(password_verify($args[0], $this->getPlugin()->database->getOfflinePlayer($this->plugin->getConfig()->getNested("key.owner"))["password"]) == false ? $this->getPlugin()->getLanguageManager()->getMessage($sender, "incorrect-password-other") : $this->getPlugin()->getKey());
         return true;
     }
 }

@@ -63,6 +63,7 @@ class ValidateEmailTask extends AsyncTask
             $this->error = "SSL certificate problem: unable to get local issuer certificate\nPlease make sure you have downloaded the file from https://github.com/MCPEPIG/PiggyAuth-MailGunFiles & edited the php.ini.";
         }
         curl_close($ch);
+        return true;
     }
 
     /**

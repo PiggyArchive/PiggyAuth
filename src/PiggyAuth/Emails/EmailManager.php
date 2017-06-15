@@ -16,6 +16,7 @@ class EmailManager
     const INVALID_CREDENTIALS = 1;
     const NO_EMAIL = 2;
 
+    private $plugin;
     private $domain;
     private $api;
     private $pubapi;
@@ -156,13 +157,13 @@ class EmailManager
     {
         if ($this->canSendEmail !== true) {
             if ($player instanceof Player) {
-                $player->sendMessage($this->plugin->languagemanager->getMessage($player, "email-fail"));
+                $player->sendMessage($this->plugin->getLanguageManager()->getMessage($player, "email-fail"));
             }
             return self::INVALID_CREDENTIALS;
         }
         if ($email == "none") {
             if ($player instanceof Player) {
-                $player->sendMessage($this->plugin->languagemanager->getMessage($player, "no-email"));
+                $player->sendMessage($this->plugin->getLanguageManager()->getMessage($player, "no-email"));
             }
             return self::NO_EMAIL;
         }
@@ -174,11 +175,11 @@ class EmailManager
 
     /**
      * @param $email
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
      * @return bool|int
      */
-    public function validateEmail($email, $callback = null, $args = null)
+    public function validateEmail($email, callable $callback = null, $args = null)
     {
         if ($email == "none") {
             $callback(true, $args, $this->plugin);

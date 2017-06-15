@@ -103,9 +103,9 @@ class Main extends PluginBase
     public $expiredkeys = [];
     private $key = "PiggyAuthKey";
     public $keytime = 299; //300 = Reset
-    public $languagemanager;
+    private $languagemanager;
     public $serverauthconverter;
-    public $sessionmanager;
+    private $sessionmanager;
     public $simpleauthconverter;
     public $tries;
 
@@ -239,26 +239,26 @@ class Main extends PluginBase
      */
     public function isCorrectPassword(Player $player, $password)
     {
-        if (strpos($this->sessionmanager->getSession($player)->getOriginAuth(), "ServerAuth") !== false) {
-            $auth = explode("_", $this->sessionmanager->getSession($player)->getOriginAuth());
+        if (strpos($this->getSessionManager()->getSession($player)->getOriginAuth(), "ServerAuth") !== false) {
+            $auth = explode("_", $this->getSessionManager()->getSession($player)->getOriginAuth());
             if (isset($auth[0]) && isset($auth[1])) {
-                if (hash($auth[1], $password) == $this->sessionmanager->getSession($player)->getPassword()) {
-                    $this->sessionmanager->getSession($player)->updatePlayer("auth", "PiggyAuth");
+                if (hash($auth[1], $password) == $this->getSessionManager()->getSession($player)->getPassword()) {
+                    $this->getSessionManager()->getSession($player)->updatePlayer("auth", "PiggyAuth");
                     return true;
                 }
                 return false;
             }
         }
-        switch ($this->sessionmanager->getSession($player)->getOriginAuth()) {
+        switch ($this->getSessionManager()->getSession($player)->getOriginAuth()) {
             case "SimpleAuth":
-                if (hash_equals($this->sessionmanager->getSession($player)->getPassword(), Main::hashSimpleAuth(strtolower($player->getName()), $password))) {
-                    $this->sessionmanager->getSession($player)->updatePlayer("auth", "PiggyAuth");
+                if (hash_equals($this->getSessionManager()->getSession($player)->getPassword(), Main::hashSimpleAuth(strtolower($player->getName()), $password))) {
+                    $this->getSessionManager()->getSession($player)->updatePlayer("auth", "PiggyAuth");
                     return true;
                 }
                 return false;
             case "PiggyAuth":
             default:
-                if (password_verify($password, $this->sessionmanager->getSession($player)->getPassword())) {
+                if (password_verify($password, $this->getSessionManager()->getSession($player)->getPassword())) {
                     return true;
                 }
                 return false;
@@ -272,7 +272,7 @@ class Main extends PluginBase
      */
     public function isCorrectPin(Player $player, $pin)
     {
-        if ($pin == $this->sessionmanager->getSession($player)->getPin()) {
+        if ($pin == $this->getSessionManager()->getSession($player)->getPin()) {
             return true;
         }
         return false;
@@ -305,17 +305,17 @@ class Main extends PluginBase
     public function login(Player $player, $password, $mode = 0)
     {
         if ($this->isBlocked($player->getName())) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "account-blocked"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "account-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::ACCOUNT_BLOCKED));
             return false;
         }
-        if ($this->sessionmanager->getSession($player)->isAuthenticated()) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "already-authenticated"));
+        if ($this->getSessionManager()->getSession($player)->isAuthenticated()) {
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "already-authenticated"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::ALREADY_AUTHENTICATED));
             return false;
         }
-        if (!$this->sessionmanager->getSession($player)->isRegistered()) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "not-registered"));
+        if (!$this->getSessionManager()->getSession($player)->isRegistered()) {
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "not-registered"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::NOT_REGISTERED));
             return false;
         }
@@ -328,34 +328,34 @@ class Main extends PluginBase
                     return true;
                 }
                 if (in_array($password, $this->expiredkeys)) {
-                    $player->sendMessage($this->languagemanager->getMessage($player, "key-expired"));
+                    $player->sendMessage($this->getLanguageManager()->getMessage($player, "key-expired"));
                     $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::KEY_EXPIRED));
                     return true;
                 }
             }
 
-            $this->sessionmanager->getSession($player)->addTry();
-            if ($this->sessionmanager->getSession($player)->getTries() >= $this->getConfig()->getNested("login.tries")) {
-                $this->sessionmanager->getSession($player)->updatePlayer("attempts", $this->sessionmanager->getSession($player)->getAttempts() + 1, 1);
+            $this->getSessionManager()->getSession($player)->addTry();
+            if ($this->getSessionManager()->getSession($player)->getTries() >= $this->getConfig()->getNested("login.tries")) {
+                $this->getSessionManager()->getSession($player)->updatePlayer("attempts", $this->getSessionManager()->getSession($player)->getAttempts() + 1, 1);
                 if ($this->getConfig()->getNested("emails.send-email-on-attemptedlogin")) {
-                    $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->languagemanager->getMessage($player, "email-subject-attemptedlogin"), $this->languagemanager->getMessage($player, "email-attemptedlogin"));
+                    $this->getEmailManager()->sendEmail($this->getSessionManager()->getSession($player)->getEmail(), $this->getLanguageManager()->getMessage($player, "email-subject-attemptedlogin"), $this->getLanguageManager()->getMessage($player, "email-attemptedlogin"));
                 }
-                $player->kick($this->languagemanager->getMessage($player, "too-many-tries"));
+                $player->kick($this->getLanguageManager()->getMessage($player, "too-many-tries"));
                 return false;
             }
-            $tries = $this->getConfig()->getNested("login.tries") - $this->sessionmanager->getSession($player)->getTries();
-            $player->sendMessage(str_replace("{tries}", $tries, $this->languagemanager->getMessage($player, "incorrect-password")));
+            $tries = $this->getConfig()->getNested("login.tries") - $this->getSessionManager()->getSession($player)->getTries();
+            $player->sendMessage(str_replace("{tries}", $tries, $this->getLanguageManager()->getMessage($player, "incorrect-password")));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::WRONG_PASSWORD));
             return false;
         }
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this, $player, self::NORMAL));
         if (!$event->isCancelled()) {
-            if ($player->getAddress() !== $this->sessionmanager->getSession($player)->getIP()) {
+            if ($player->getAddress() !== $this->getSessionManager()->getSession($player)->getIP()) {
                 if ($this->getConfig()->getNested("emails.send-email-on-login-from-new-ip")) {
-                    $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->languagemanager->getMessage($player, "email-subject-login-from-new-ip"), str_replace("{ip}", $player->getAddress(), $this->languagemanager->getMessage($player, "email-login-from-new-ip")));
+                    $this->getEmailManager()->sendEmail($this->getSessionManager()->getSession($player)->getEmail(), $this->getLanguageManager()->getMessage($player, "email-subject-login-from-new-ip"), str_replace("{ip}", $player->getAddress(), $this->getLanguageManager()->getMessage($player, "email-login-from-new-ip")));
                 }
             }
-            $rehashedpassword = Main::needsRehashPassword($this->sessionmanager->getSession($player)->getPassword(), $password);
+            $rehashedpassword = Main::needsRehashPassword($this->getSessionManager()->getSession($player)->getPassword(), $password);
             $this->force($player, true, $mode, $rehashedpassword);
         }
         return true;
@@ -369,34 +369,34 @@ class Main extends PluginBase
      */
     public function asyncLogin(Player $player, $password, $mode = 0)
     {
-        if($this->sessionmanager->getSession($player)->isVerifying()){
-            $player->sendMessage($this->languagemanager->getMessage($player, "already-verifying"));
+        if($this->getSessionManager()->getSession($player)->isVerifying()){
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "already-verifying"));
             return true;
         }
         if ($this->isBlocked($player->getName())) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "account-blocked"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "account-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::ACCOUNT_BLOCKED));
             return false;
         }
-        if ($this->sessionmanager->getSession($player)->isAuthenticated()) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "already-authenticated"));
+        if ($this->getSessionManager()->getSession($player)->isAuthenticated()) {
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "already-authenticated"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::ALREADY_AUTHENTICATED));
             return false;
         }
-        if (!$this->sessionmanager->getSession($player)->isRegistered()) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "not-registered"));
+        if (!$this->getSessionManager()->getSession($player)->isRegistered()) {
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "not-registered"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::NOT_REGISTERED));
             return false;
         }
 
-        $player->sendMessage($this->languagemanager->getMessage($player, "authentication-pending"));
+        $player->sendMessage($this->getLanguageManager()->getMessage($player, "authentication-pending"));
 
-        $originAuth = $this->sessionmanager->getSession($player)->getOriginAuth();
-        $passwordHash = $this->sessionmanager->getSession($player)->getPassword();
+        $originAuth = $this->getSessionManager()->getSession($player)->getOriginAuth();
+        $passwordHash = $this->getSessionManager()->getSession($player)->getPassword();
 
         $this->getServer()->getScheduler()->scheduleAsyncTask(new AsyncLoginTask($player, $passwordHash, $password, $originAuth, $mode, $this->getConfig()->getNested("hash.cost")));
 
-        $this->sessionmanager->getSession($player)->setVerifying();
+        $this->getSessionManager()->getSession($player)->setVerifying();
         return true; // Does NOT mean the player is authenticated!
     }
 
@@ -411,37 +411,37 @@ class Main extends PluginBase
     {
         if ($login) {
             if ($this->isTooManyIPOnline($player)) {
-                $player->sendMessage($this->languagemanager->getMessage($player, "too-many-on-ip"));
+                $player->sendMessage($this->getLanguageManager()->getMessage($player, "too-many-on-ip"));
                 $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::LOGIN, self::TOO_MANY_ON_IP));
                 return false;
             }
             switch ($mode) {
                 case 1:
-                    $player->sendMessage($this->languagemanager->getMessage($player, "authentication-success-uuid"));
+                    $player->sendMessage($this->getLanguageManager()->getMessage($player, "authentication-success-uuid"));
                     break;
                 case 2:
-                    $player->sendMessage($this->languagemanager->getMessage($player, "authentication-success-xbox"));
+                    $player->sendMessage($this->getLanguageManager()->getMessage($player, "authentication-success-xbox"));
                     break;
                 case 0:
                 default:
-                    $player->sendMessage($this->languagemanager->getMessage($player, "authentication-success"));
+                    $player->sendMessage($this->getLanguageManager()->getMessage($player, "authentication-success"));
                     break;
             }
-            if (!$this->sessionmanager->getSession($player)->getAttempts() == 0) {
-                $player->sendMessage(str_replace("{attempts}", $this->sessionmanager->getSession($player)->getAttempts(), $this->languagemanager->getMessage($player, "attempted-logins")));
-                $this->sessionmanager->getSession($player)->updatePlayer("attempts", 0);
+            if (!$this->getSessionManager()->getSession($player)->getAttempts() == 0) {
+                $player->sendMessage(str_replace("{attempts}", $this->getSessionManager()->getSession($player)->getAttempts(), $this->getLanguageManager()->getMessage($player, "attempted-logins")));
+                $this->getSessionManager()->getSession($player)->updatePlayer("attempts", 0);
             }
         }
-        $this->sessionmanager->getSession($player)->setMessageTick(0);
-        $this->sessionmanager->getSession($player)->setTimeoutTick(0);
-        $this->sessionmanager->getSession($player)->setTries(0);
+        $this->getSessionManager()->getSession($player)->setMessageTick(0);
+        $this->getSessionManager()->getSession($player)->setTimeoutTick(0);
+        $this->getSessionManager()->getSession($player)->setTries(0);
         if ($this->getConfig()->getNested("message.hold-join-message")) {
-            if ($this->sessionmanager->getSession($player)->getJoinMessage() !== null) {
-                $this->getServer()->broadcastMessage($this->sessionmanager->getSession($player)->getJoinMessage());
-                $this->sessionmanager->getSession($player)->setJoinMessage(null);
+            if ($this->getSessionManager()->getSession($player)->getJoinMessage() !== null) {
+                $this->getServer()->broadcastMessage($this->getSessionManager()->getSession($player)->getJoinMessage());
+                $this->getSessionManager()->getSession($player)->setJoinMessage(null);
             }
         }
-        $this->sessionmanager->getSession($player)->setAuthenticated();
+        $this->getSessionManager()->getSession($player)->setAuthenticated();
         if ($this->getConfig()->getNested("effects.invisible")) {
             $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, false);
             $player->setNameTagVisible(true);
@@ -481,9 +481,9 @@ class Main extends PluginBase
         }
         if ($this->getConfig()->getNested("register.cape-for-registration")) {
             $cape = "Minecon_MineconSteveCape2016";
-            if ($this->sessionmanager->getSession($player)->getCape() !== null) {
-                $cape = $this->sessionmanager->getSession($player)->getCape();
-                $this->sessionmanager->getSession($player)->setCape(null);
+            if ($this->getSessionManager()->getSession($player)->getCape() !== null) {
+                $cape = $this->getSessionManager()->getSession($player)->getCape();
+                $this->getSessionManager()->getSession($player)->setCape(null);
             } else {
                 $capes = array(
                     "Minecon_MineconSteveCape2016",
@@ -501,22 +501,22 @@ class Main extends PluginBase
             $player->getInventory()->sendArmorContents($player);
         }
         if ($this->getConfig()->getNested("login.adventure-mode")) {
-            if ($this->sessionmanager->getSession($player)->getGamemode() !== null) {
-                $player->setGamemode($this->sessionmanager->getSession($player)->getGamemode());
-                $this->sessionmanager->getSession($player)->setGamemode(null);
+            if ($this->getSessionManager()->getSession($player)->getGamemode() !== null) {
+                $player->setGamemode($this->getSessionManager()->getSession($player)->getGamemode());
+                $this->getSessionManager()->getSession($player)->setGamemode(null);
             }
         }
         if ($this->getConfig()->getNested("message.boss-bar")) {
-            if ($this->sessionmanager->getSession($player)->getWither() !== null) {
-                $this->sessionmanager->getSession($player)->getWither()->kill();
-                $this->sessionmanager->getSession($player)->setWither(null);
+            if ($this->getSessionManager()->getSession($player)->getWither() !== null) {
+                $this->getSessionManager()->getSession($player)->getWither()->kill();
+                $this->getSessionManager()->getSession($player)->setWither(null);
             }
         }
         if ($rehashedpassword !== null) {
-            $this->sessionmanager->getSession($player)->updatePlayer("password", $rehashedpassword);
+            $this->getSessionManager()->getSession($player)->updatePlayer("password", $rehashedpassword);
         }
-        $this->sessionmanager->getSession($player)->updatePlayer("ip", $player->getAddress());
-        $this->sessionmanager->getSession($player)->updatePlayer("uuid", $player->getUniqueId()->toString());
+        $this->getSessionManager()->getSession($player)->updatePlayer("ip", $player->getAddress());
+        $this->getSessionManager()->getSession($player)->updatePlayer("uuid", $player->getUniqueId()->toString());
         return true;
     }
 
@@ -530,34 +530,34 @@ class Main extends PluginBase
      */
     public function register(Player $player, $password, $confirmpassword, $email = "none", $xbox = false)
     {
-        $this->sessionmanager->getSession($player)->setSecondPassword(null);
+        $this->getSessionManager()->getSession($player)->setSecondPassword(null);
         if ($this->isBlocked($player->getName())) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "account-blocked"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "account-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::ACCOUNT_BLOCKED));
             return false;
         }
-        if ($this->sessionmanager->getSession($player)->isRegistered()) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "already-registered"));
+        if ($this->getSessionManager()->getSession($player)->isRegistered()) {
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "already-registered"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::ALREADY_REGISTERED));
             return false;
         }
         if ($password !== $confirmpassword) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "password-not-match"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "password-not-match"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORDS_NOT_MATCHED));
             return false;
         }
         if ($this->isPasswordBlocked($password)) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "password-blocked"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "password-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_BLOCKED));
             return false;
         }
         if (strtolower($password) == strtolower($player->getName()) || strpos($password, strtolower($player->getName())) !== false) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "password-username"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "password-username"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_USERNAME));
             return false;
         }
         if (strlen($password) < $this->getConfig()->getNested("register.minimum-password-length")) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "password-too-short"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "password-too-short"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_TOO_SHORT));
             return false;
         }
@@ -573,13 +573,13 @@ class Main extends PluginBase
                         if ($plugin->database instanceof MySQL) {
                             $plugin->getServer()->getScheduler()->scheduleDelayedTask(new DelayedPinTask($plugin, $player), 5);
                         } else {
-                            $player->sendMessage(str_replace("{pin}", $plugin->sessionmanager->getSession($player)->getPin(), $plugin->languagemanager->getMessage($player, "register-success")));
+                            $player->sendMessage(str_replace("{pin}", $plugin->getSessionManager()->getSession($player)->getPin(), $plugin->getLanguageManager()->getMessage($player, "register-success")));
                         }
                     }
                 }
             };
             $args = array($player->getName(), $xbox);
-            $this->sessionmanager->getSession($player)->insertData($password, $email, $pin, $xbox, $callback, $args);
+            $this->getSessionManager()->getSession($player)->insertData($password, $email, $pin, $xbox, $callback, $args);
             if ($this->getConfig()->getNested("progress-reports.enabled")) {
                 $this->progressReport($player->getName());
             }
@@ -597,47 +597,47 @@ class Main extends PluginBase
      */
     public function asyncRegister(Player $player, $password, $confirmpassword, $email = "none", $xbox = false)
     {
-        $this->sessionmanager->getSession($player)->setSecondPassword(null);
-        if ($this->sessionmanager->getSession($player)->isRegistering()) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "already-registering"));
+        $this->getSessionManager()->getSession($player)->setSecondPassword(null);
+        if ($this->getSessionManager()->getSession($player)->isRegistering()) {
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "already-registering"));
         }
         if ($this->isBlocked($player->getName())) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "account-blocked"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "account-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::ACCOUNT_BLOCKED));
             return false;
         }
-        if ($this->sessionmanager->getSession($player)->isRegistered()) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "already-registered"));
+        if ($this->getSessionManager()->getSession($player)->isRegistered()) {
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "already-registered"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::ALREADY_REGISTERED));
             return false;
         }
         if ($password !== $confirmpassword) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "password-not-match"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "password-not-match"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORDS_NOT_MATCHED));
             return false;
         }
         if ($this->isPasswordBlocked($password)) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "password-blocked"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "password-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_BLOCKED));
             return false;
         }
         if (strtolower($password) == strtolower($player->getName()) || strpos($password, strtolower($player->getName())) !== false) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "password-username"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "password-username"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_USERNAME));
             return false;
         }
         if (strlen($password) < $this->getConfig()->getNested("register.minimum-password-length")) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "password-too-short"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "password-too-short"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::REGISTER, self::PASSWORD_TOO_SHORT));
             return false;
         }
 
-        $player->sendMessage($this->languagemanager->getMessage($player, "register-pending"));
+        $player->sendMessage($this->getLanguageManager()->getMessage($player, "register-pending"));
 
         $pin = $this->generatePin($player);
         $this->getServer()->getScheduler()->scheduleAsyncTask(new AsyncRegisterTask($player->getName(), $password, $email, $pin, $xbox == "false" ? self::NORMAL : self::XBOX));
 
-        $this->sessionmanager->getSession($player)->setRegistering();
+        $this->getSessionManager()->getSession($player)->setRegistering();
         return true;
     }
 
@@ -652,32 +652,32 @@ class Main extends PluginBase
     public function preregister($sender, $player, $password, $confirmpassword, $email = "none")
     {
         if ($this->isBlocked($player)) {
-            $sender->sendMessage($this->languagemanager->getMessage($sender, "account-blocked"));
+            $sender->sendMessage($this->getLanguageManager()->getMessage($sender, "account-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::ACCOUNT_BLOCKED));
             return false;
         }
         if ($this->database->getOfflinePlayer($player) !== null) {
-            $sender->sendMessage($this->languagemanager->getMessage($sender, "already-registered-two"));
+            $sender->sendMessage($this->getLanguageManager()->getMessage($sender, "already-registered-two"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::ALREADY_REGISTERED));
             return false;
         }
         if ($password !== $confirmpassword) {
-            $sender->sendMessage($this->languagemanager->getMessage($sender, "password-not-match"));
+            $sender->sendMessage($this->getLanguageManager()->getMessage($sender, "password-not-match"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORDS_NOT_MATCHED));
             return false;
         }
         if ($this->isPasswordBlocked($password)) {
-            $sender->sendMessage($this->languagemanager->getMessage($sender, "password-blocked"));
+            $sender->sendMessage($this->getLanguageManager()->getMessage($sender, "password-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORD_BLOCKED));
             return false;
         }
         if (strtolower($password) == strtolower($player) || strpos($password, strtolower($player)) !== false) {
-            $sender->sendMessage($this->languagemanager->getMessage($sender, "password-username"));
+            $sender->sendMessage($this->getLanguageManager()->getMessage($sender, "password-username"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORD_USERNAME));
             return false;
         }
         if (strlen($password) < $this->getConfig()->getNested("register.minimum-password-length")) {
-            $sender->sendMessage($this->languagemanager->getMessage($sender, "password-too-short"));
+            $sender->sendMessage($this->getLanguageManager()->getMessage($sender, "password-too-short"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::PREREGISTER, self::PASSWORD_TOO_SHORT));
             return false;
         }
@@ -689,7 +689,7 @@ class Main extends PluginBase
                 $player = $this->getServer()->getPlayerExact($args[0]);
                 if ($player instanceof Player) {
                     $plugin->force($player, false);
-                    $player->sendMessage(str_replace("{pin}", $plugin->sessionmanager->getSession($player)->getPin(), $plugin->languagemanager->getMessage($player, "register-success")));
+                    $player->sendMessage(str_replace("{pin}", $plugin->getSessionManager()->getSession($player)->getPin(), $plugin->getLanguageManager()->getMessage($player, "register-success")));
                 }
             };
             $args = array($player);
@@ -697,7 +697,7 @@ class Main extends PluginBase
             if ($this->getConfig()->getNested("progress-reports.enabled")) {
                 $this->progressReport($player);
             }
-            $sender->sendMessage($this->languagemanager->getMessage($sender, "preregister-success"));
+            $sender->sendMessage($this->getLanguageManager()->getMessage($sender, "preregister-success"));
         }
         return true;
     }
@@ -709,13 +709,13 @@ class Main extends PluginBase
      */
     public function unregister(Player $player, $password)
     {
-        if (!$this->sessionmanager->getSession($player)->isRegistered()) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "not-registered"));
+        if (!$this->getSessionManager()->getSession($player)->isRegistered()) {
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "not-registered"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::UNREGISTER, self::NOT_REGISTERED));
             return false;
         }
         if (!$this->isCorrectPassword($player, $password)) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "incorrect-password-other"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "incorrect-password-other"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::UNREGISTER, self::WRONG_PASSWORD));
             return false;
         }
@@ -728,8 +728,8 @@ class Main extends PluginBase
                 }
             };
             $args = array($player->getName());
-            $this->sessionmanager->getSession($player)->clearPassword($callback, $args);
-            $player->sendMessage($this->languagemanager->getMessage($player, "unregister-success"));
+            $this->getSessionManager()->getSession($player)->clearPassword($callback, $args);
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "unregister-success"));
         }
         return true;
     }
@@ -742,37 +742,37 @@ class Main extends PluginBase
      */
     public function changepassword(Player $player, $oldpassword, $newpassword)
     {
-        if (!$this->sessionmanager->getSession($player)->isRegistered()) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "not-registered"));
+        if (!$this->getSessionManager()->getSession($player)->isRegistered()) {
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "not-registered"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::CHANGE_PASSWORD, self::NOT_REGISTERED));
             return false;
         }
         if (!$this->isCorrectPassword($player, $oldpassword)) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "incorrect-password-other"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "incorrect-password-other"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::CHANGE_PASSWORD, self::WRONG_PASSWORD));
             return false;
         }
         if ($this->isPasswordBlocked($newpassword)) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "password-blocked"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "password-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::CHANGE_PASSWORD, self::PASSWORD_BLOCKED));
             return false;
         }
         if (strtolower($newpassword) == strtolower($player->getName()) || strpos($newpassword, strtolower($player->getName())) !== false) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "password-username"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "password-username"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::CHANGE_PASSWORD, self::PASSWORD_USERNAME));
             return false;
         }
         $newpassword = $this->hashPassword($newpassword);
         $oldpassword = $this->hashPassword($oldpassword);
-        $oldpin = $this->sessionmanager->getSession($player)->getPin();
+        $oldpin = $this->getSessionManager()->getSession($player)->getPin();
         $pin = $this->generatePin($player);
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerChangePasswordEvent($this, $player, $oldpassword, $newpassword, $oldpin, $pin));
         if (!$event->isCancelled()) {
-            $this->sessionmanager->getSession($player)->updatePlayer("password", $newpassword);
-            $this->sessionmanager->getSession($player)->updatePlayer("pin", $pin, 1);
-            $player->sendMessage(str_replace("{pin}", $pin, $this->languagemanager->getMessage($player, "change-password-success")));
+            $this->getSessionManager()->getSession($player)->updatePlayer("password", $newpassword);
+            $this->getSessionManager()->getSession($player)->updatePlayer("pin", $pin, 1);
+            $player->sendMessage(str_replace("{pin}", $pin, $this->getLanguageManager()->getMessage($player, "change-password-success")));
             if ($this->getConfig()->getNested("emails.send-email-on-changepassword")) {
-                $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->languagemanager->getMessage($player, "email-subject-changedpassword"), $this->languagemanager->getMessage($player, "email-changedpassword"));
+                $this->getEmailManager()->sendEmail($this->getSessionManager()->getSession($player)->getEmail(), $this->getLanguageManager()->getMessage($player, "email-subject-changedpassword"), $this->getLanguageManager()->getMessage($player, "email-changedpassword"));
             }
         }
         return true;
@@ -786,43 +786,43 @@ class Main extends PluginBase
      */
     public function forgotpassword(Player $player, $pin, $newpassword)
     {
-        if (!$this->sessionmanager->getSession($player)->isRegistered()) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "not-registered"));
+        if (!$this->getSessionManager()->getSession($player)->isRegistered()) {
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "not-registered"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::NOT_REGISTERED));
             return false;
         }
-        if ($this->sessionmanager->getSession($player)->isAuthenticated()) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "already-authenticated"));
+        if ($this->getSessionManager()->getSession($player)->isAuthenticated()) {
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "already-authenticated"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::ALREADY_AUTHENTICATED));
             return false;
         }
         if (!$this->isCorrectPin($player, $pin)) {
-            $this->sessionmanager->getSession($player)->addTry();
-            if ($this->sessionmanager->getSession($player)->getTries() >= $this->getConfig()->getNested("login.tries")) {
-                $this->sessionmanager->getSession($player)->updatePlayer("attempts", $this->sessionmanager->getSession($player)->getAttempts() + 1, 1);
+            $this->getSessionManager()->getSession($player)->addTry();
+            if ($this->getSessionManager()->getSession($player)->getTries() >= $this->getConfig()->getNested("login.tries")) {
+                $this->getSessionManager()->getSession($player)->updatePlayer("attempts", $this->getSessionManager()->getSession($player)->getAttempts() + 1, 1);
                 if ($this->getConfig()->getNested("emails.send-email-on-attemptedlogin")) {
-                    $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->languagemanager->getMessage($player, "email-subject-attemptedlogin"), $this->languagemanager->getMessage($player, "email-attemptedlogin"));
+                    $this->getEmailManager()->sendEmail($this->getSessionManager()->getSession($player)->getEmail(), $this->getLanguageManager()->getMessage($player, "email-subject-attemptedlogin"), $this->getLanguageManager()->getMessage($player, "email-attemptedlogin"));
                 }
-                $player->kick($this->languagemanager->getMessage($player, "too-many-tries"));
+                $player->kick($this->getLanguageManager()->getMessage($player, "too-many-tries"));
                 return false;
             }
-            $tries = $this->getConfig()->getNested("login.tries") - $this->sessionmanager->getSession($player)->getTries();
-            $player->sendMessage(str_replace("{tries}", $tries, $this->languagemanager->getMessage($player, "incorrect-pin")));
+            $tries = $this->getConfig()->getNested("login.tries") - $this->getSessionManager()->getSession($player)->getTries();
+            $player->sendMessage(str_replace("{tries}", $tries, $this->getLanguageManager()->getMessage($player, "incorrect-pin")));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::WRONG_PIN));
             return false;
         }
         if (in_array($player->getName(), $this->getConfig()->getNested("pin.cant-use-pin"))) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "cant-use-pin"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "cant-use-pin"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::CANT_USE_PIN));
             return false;
         }
         if ($this->isPasswordBlocked($newpassword)) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "password-blocked"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "password-blocked"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::PASSWORD_BLOCKED));
             return false;
         }
         if (strtolower($newpassword) == strtolower($player->getName()) || strpos($newpassword, strtolower($player->getName())) !== false) {
-            $player->sendMessage($this->languagemanager->getMessage($player, "password-username"));
+            $player->sendMessage($this->getLanguageManager()->getMessage($player, "password-username"));
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::PASSWORD_USERNAME));
             return false;
         }
@@ -837,13 +837,14 @@ class Main extends PluginBase
                 }
             };
             $args = array($player->getName());
-            $this->sessionmanager->getSession($player)->updatePlayer("password", $newpassword, 0, $callback, $args);
-            $this->sessionmanager->getSession($player)->updatePlayer("pin", $newpin, 1);
-            $player->sendMessage(str_replace("{pin}", $newpin, $this->languagemanager->getMessage($player, "forgot-password-success")));
+            $this->getSessionManager()->getSession($player)->updatePlayer("password", $newpassword, 0, $callback, $args);
+            $this->getSessionManager()->getSession($player)->updatePlayer("pin", $newpin, 1);
+            $player->sendMessage(str_replace("{pin}", $newpin, $this->getLanguageManager()->getMessage($player, "forgot-password-success")));
             if ($this->getConfig()->getNested("emails.send-email-on-changepassword")) {
-                $this->emailmanager->sendEmail($this->sessionmanager->getSession($player)->getEmail(), $this->languagemanager->getMessage($player, "email-subject-changedpassword"), $this->languagemanager->getMessage($player, "email-changedpassword"));
+                $this->getEmailManager()->sendEmail($this->getSessionManager()->getSession($player)->getEmail(), $this->getLanguageManager()->getMessage($player, "email-subject-changedpassword"), $this->getLanguageManager()->getMessage($player, "email-changedpassword"));
             }
         }
+        return true;
     }
 
     /**
@@ -858,7 +859,7 @@ class Main extends PluginBase
             $this->getServer()->getPluginManager()->callEvent($event = new PlayerResetPasswordEvent($this, $sender, $player));
             if (!$event->isCancelled()) {
                 if ($this->getConfig()->getNested("emails.send-email-on-resetpassword")) {
-                    $this->emailmanager->sendEmail($this->database->getOfflinePlayer($player)["email"], $this->languagemanager->getMessageFromLanguage($this->languagemanager->getDefaultLanguage(), "email-subject-passwordreset"), $this->languagemanager->getMessageFromLanguage($this->languagemanager->getDefaultLanguage(), "email-passwordreset"));
+                    $this->getEmailManager()->sendEmail($this->database->getOfflinePlayer($player)["email"], $this->getLanguageManager()->getMessageFromLanguage($this->getLanguageManager()->getDefaultLanguage(), "email-subject-passwordreset"), $this->getLanguageManager()->getMessageFromLanguage($this->getLanguageManager()->getDefaultLanguage(), "email-passwordreset"));
                 }
                 $callback = function ($result, $args, $plugin) {
                     $player = $plugin->getServer()->getPlayerExact($args[0]);
@@ -869,12 +870,12 @@ class Main extends PluginBase
                 $args = array($player);
                 $this->database->clearPassword($player, $callback, $args);
 
-                $sender->sendMessage($this->languagemanager->getMessage($sender, "password-reset-success"));
+                $sender->sendMessage($this->getLanguageManager()->getMessage($sender, "password-reset-success"));
                 return true;
             }
 
         }
-        $sender->sendMessage($this->languagemanager->getMessage($sender, "not-registered-two"));
+        $sender->sendMessage($this->getLanguageManager()->getMessage($sender, "not-registered-two"));
         $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::RESET_PASSWORD, self::NOT_REGISTERED));
         return false;
     }
@@ -887,29 +888,29 @@ class Main extends PluginBase
     {
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerLogoutEvent($this, $player));
         if (!$event->isCancelled()) {
-            if ($this->sessionmanager->getSession($player) !== null && !$this->sessionmanager->getSession($player)->isAuthenticated()) {
+            if ($this->getSessionManager()->getSession($player) !== null && !$this->getSessionManager()->getSession($player)->isAuthenticated()) {
                 {
                     if ($this->getConfig()->getNested("login.adventure-mode")) {
-                        if ($this->sessionmanager->getSession($player)->getGamemode() !== null) {
-                            $player->setGamemode($this->sessionmanager->getSession($player)->getGamemode());
-                            $this->sessionmanager->getSession($player)->setGamemode(null);
+                        if ($this->getSessionManager()->getSession($player)->getGamemode() !== null) {
+                            $player->setGamemode($this->getSessionManager()->getSession($player)->getGamemode());
+                            $this->getSessionManager()->getSession($player)->setGamemode(null);
                         }
                     }
-                    $this->sessionmanager->getSession($player)->setMessageTick(0);
-                    $this->sessionmanager->getSession($player)->setTimeoutTick(0);
-                    $this->sessionmanager->getSession($player)->setTries(0);
+                    $this->getSessionManager()->getSession($player)->setMessageTick(0);
+                    $this->getSessionManager()->getSession($player)->setTimeoutTick(0);
+                    $this->getSessionManager()->getSession($player)->setTries(0);
                     if ($this->getConfig()->getNested("message.boss-bar")) {
-                        if ($this->sessionmanager->getSession($player)->getWither() !== null) {
-                            $this->sessionmanager->getSession($player)->getWither()->kill();
-                            $this->sessionmanager->getSession($player)->setWither(null);
+                        if ($this->getSessionManager()->getSession($player)->getWither() !== null) {
+                            $this->getSessionManager()->getSession($player)->getWither()->kill();
+                            $this->getSessionManager()->getSession($player)->setWither(null);
                         }
                     }
                 }
             }
             if ($quit !== true) {
-                $this->sessionmanager->loadSession($player); //Reload
+                $this->getSessionManager()->loadSession($player); //Reload
             } else {
-                $this->sessionmanager->unloadSession($player);
+                $this->getSessionManager()->unloadSession($player);
             }
         }
     }
@@ -921,7 +922,7 @@ class Main extends PluginBase
      */
     public function getMessage($player, $message)
     {
-        return $this->languagemanager->getMessage($player, $message);
+        return $this->getLanguageManager()->getMessage($player, $message);
     }
 
     /**
@@ -934,7 +935,7 @@ class Main extends PluginBase
         foreach ($this->getServer()->getOnlinePlayers() as $p) {
             if ($p !== $player) {
                 if ($p->getAddress() == $player->getAddress()) {
-                    if ($this->sessionmanager->getSession($p)->isAuthenticated()) {
+                    if ($this->getSessionManager()->getSession($p)->isAuthenticated()) {
                         $players++;
                     }
                 }
@@ -1025,7 +1026,7 @@ class Main extends PluginBase
             $name = $args[0];
             $result = intval($result);
             if ($result / $plugin->getConfig()->getNested("progress-reports.progress-report-number") >= 0 && floor($result / $plugin->getConfig()->getNested("progress-reports.progress-report-number")) == $result / $plugin->getConfig()->getNested("progress-reports.progress-report-number")) {
-                $plugin->emailmanager->sendEmail($plugin->getConfig()->getNested("progress-reports.progress-report-email"), "Server Progress Report", str_replace("{port}", $plugin->getServer()->getPort(), str_replace("{ip}", $plugin->getServer()->getIP(), str_replace("{players}", $result, str_replace("{player}", $name, $plugin->getConfig()->getNested("progress-reports.progress-report"))))));
+                $plugin->getEmailManager()->sendEmail($plugin->getConfig()->getNested("progress-reports.progress-report-email"), "Server Progress Report", str_replace("{port}", $plugin->getServer()->getPort(), str_replace("{ip}", $plugin->getServer()->getIP(), str_replace("{players}", $result, str_replace("{player}", $name, $plugin->getConfig()->getNested("progress-reports.progress-report"))))));
             }
         };
         $args = array($name);

@@ -5,14 +5,13 @@ namespace PiggyAuth\Commands;
 use PiggyAuth\Main;
 
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class LoginCommand
  * @package PiggyAuth\Commands
  */
-class LoginCommand extends PluginCommand
+class LoginCommand extends PiggyAuthCommand
 {
     /**
      * LoginCommand constructor.
@@ -39,7 +38,7 @@ class LoginCommand extends PluginCommand
             return true;
         }
         if (!$sender instanceof Player) {
-            $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "use-in-game"));
+            $sender->sendMessage($this->getPlugin()->getLanguageManager()->getMessage($sender, "use-in-game"));
             return false;
         }
         if (!isset($args[0])) {

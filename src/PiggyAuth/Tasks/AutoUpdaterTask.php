@@ -55,18 +55,18 @@ class AutoUpdaterTask extends AsyncTask
                     $file = fopen("https://github.com/MCPEPIG/PiggyAuth/releases/download/v" . $release . "/PiggyAuth.phar", "r");
                     file_put_contents("plugins/PiggyAuth.phar", $file);
                     fclose($file);
-                    $plugin->getLogger()->info(str_replace("{features}", $features, str_replace("{version}", $release, $plugin->languagemanager->getMessageFromLanguage($plugin->languagemanager->getDefaultLanguage(), "plugin-auto-updated"))));
+                    $plugin->getLogger()->info(str_replace("{features}", $features, str_replace("{version}", $release, $plugin->getLanguageManager()->getMessageFromLanguage($plugin->getLanguageManager()->getDefaultLanguage(), "plugin-auto-updated"))));
                     $server->getPluginManager()->disablePlugin($plugin);
                     $server->getPluginManager()->enablePlugin($server->getPluginManager()->loadPlugin($server->getDataPath() . "/plugins/PiggyAuth.phar"));
                     return true;
                 }
-                $plugin->getLogger()->info(str_replace("{features}", $features, str_replace("{version}", $release, $plugin->languagemanager->getMessageFromLanguage($plugin->languagemanager->getDefaultLanguage(), "plugin-outdated"))));
+                $plugin->getLogger()->info(str_replace("{features}", $features, str_replace("{version}", $release, $plugin->getLanguageManager()->getMessageFromLanguage($plugin->getLanguageManager()->getDefaultLanguage(), "plugin-outdated"))));
                 return true;
             }
-            $plugin->getLogger()->info($plugin->languagemanager->getMessageFromLanguage($plugin->languagemanager->getDefaultLanguage(), "plugin-up-to-date"));
+            $plugin->getLogger()->info($plugin->getLanguageManager()->getMessageFromLanguage($plugin->getLanguageManager()->getDefaultLanguage(), "plugin-up-to-date"));
             return true;
         }
-        $plugin->getLogger()->info($plugin->languagemanager->getMessageFromLanguage($plugin->languagemanager->getDefaultLanguage(), "over-api-rate-limit"));
+        $plugin->getLogger()->info($plugin->getLanguageManager()->getMessageFromLanguage($plugin->getLanguageManager()->getDefaultLanguage(), "over-api-rate-limit"));
         return false;
     }
 }

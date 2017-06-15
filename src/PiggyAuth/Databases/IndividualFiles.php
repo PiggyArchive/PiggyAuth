@@ -31,11 +31,10 @@ class IndividualFiles implements Database
 
 
     /**
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
-     * @return int
      */
-    public function getRegisteredCount($callback = null, $args = null)
+    public function getRegisteredCount(callable $callback = null, $args = null)
     {
         $files = scandir($this->plugin->getDataFolder() . "players/");
         $count = 0;
@@ -53,7 +52,7 @@ class IndividualFiles implements Database
      * @param $args
      * @return mixed|void
      */
-    public function getPlayer($player, $callback = null, $args = null)
+    public function getPlayer($player, callable $callback = null, $args = null)
     {
         if (file_exists($this->plugin->getDataFolder() . "players/" . strtolower($player) . "." . $this->extension)) {
             $file = new Config($this->plugin->getDataFolder() . "players/" . strtolower($player) . "." . $this->extension);
@@ -84,11 +83,11 @@ class IndividualFiles implements Database
      * @param $column
      * @param $arg
      * @param int $type
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
      * @return mixed|void
      */
-    public function updatePlayer($player, $column, $arg, $type = 0, $callback = null, $args = null)
+    public function updatePlayer($player, $column, $arg, $type = 0, callable $callback = null, $args = null)
     {
         $file = new Config($this->plugin->getDataFolder() . "players/" . strtolower($player) . "." . $this->extension);
         $file->set($column, $arg);
@@ -104,11 +103,11 @@ class IndividualFiles implements Database
      * @param $email
      * @param $pin
      * @param $xbox
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
      * @return mixed|void
      */
-    public function insertData(Player $player, $password, $email, $pin, $xbox, $callback = null, $args = null)
+    public function insertData(Player $player, $password, $email, $pin, $xbox, callable $callback = null, $args = null)
     {
         $type = Config::YAML;
         switch ($this->extension) {
@@ -126,7 +125,7 @@ class IndividualFiles implements Database
             "uuid" => $player->getUniqueId()->toString(),
             "attempts" => 0,
             "xbox" => $xbox,
-            "language" => $this->plugin->languagemanager->getDefaultLanguage(),
+            "language" => $this->plugin->getLanguageManager()->getDefaultLanguage(),
             "auth" => "PiggyAuth"
         ]);
         if ($callback !== null) {
@@ -140,11 +139,11 @@ class IndividualFiles implements Database
      * @param $email
      * @param $pin
      * @param string $auth
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
      * @return mixed|void
      */
-    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $auth = "PiggyAuth", $callback = null, $args = null)
+    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $auth = "PiggyAuth", callable $callback = null, $args = null)
     {
         $type = Config::YAML;
         switch ($this->extension) {
@@ -162,7 +161,7 @@ class IndividualFiles implements Database
             "uuid" => "uuid",
             "attempts" => 0,
             "xbox" => false,
-            "language" => $this->plugin->languagemanager->getDefaultLanguage(),
+            "language" => $this->plugin->getLanguageManager()->getDefaultLanguage(),
             "auth" => "PiggyAuth"
         ]);
         if ($callback !== null) {
@@ -172,11 +171,11 @@ class IndividualFiles implements Database
 
     /**
      * @param $player
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
      * @return mixed|void
      */
-    public function clearPassword($player, $callback = null, $args = null)
+    public function clearPassword($player, callable $callback = null, $args = null)
     {
         $result = @unlink($this->plugin->getDataFolder() . "players/" . $player . "." . $this->extension);
         if ($callback !== null) {

@@ -13,6 +13,8 @@ use PiggyAuth\FakeAttribute;
  */
 class AttributeTick extends PluginTask
 {
+    private $plugin;
+
     /**
      * AttributeTick constructor.
      * @param \pocketmine\plugin\Plugin $plugin
@@ -29,7 +31,7 @@ class AttributeTick extends PluginTask
     public function onRun($currentTick)
     {
         foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {
-            if ($this->plugin->sessionmanager->getSession($player) !== null && !$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
+            if ($this->plugin->getSessionManager()->getSession($player) !== null && !$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
                 if ($this->plugin->getConfig()->getNested("effects.hide-health")) {
                     $pk = new UpdateAttributesPacket();
                     $pk->entityRuntimeId = $player->getId();

@@ -5,14 +5,13 @@ namespace PiggyAuth\Commands;
 use PiggyAuth\Main;
 
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class SendPinCommand
  * @package PiggyAuth\Commands
  */
-class SendPinCommand extends PluginCommand
+class SendPinCommand extends PiggyAuthCommand
 {
     /**
      * SendPinCommand constructor.
@@ -39,10 +38,10 @@ class SendPinCommand extends PluginCommand
             return true;
         }
         if (!$sender instanceof Player) {
-            $sender->sendMessage($this->getPlugin()->languagemanager->getMessage($sender, "use-in-game"));
+            $sender->sendMessage($this->getPlugin()->getLanguageManager()->getMessage($sender, "use-in-game"));
             return false;
         }
-        $result = $this->getPlugin()->emailmanager->sendEmail($this->getPlugin()->sessionmanager->getSession($sender)->getEmail(), $this->getPlugin()->languagemanager->getMessage($sender, "email-subject-sendpin"), str_replace("{pin}", $this->getPlugin()->sessionmanager->getSession($sender)->getPin(), $this->getPlugin()->languagemanager->getMessage($sender, "email-sendpin")), $sender);
+        $this->getPlugin()->getEmailManager()->sendEmail($this->getPlugin()->getSessionManager()->getSession($sender)->getEmail(), $this->getPlugin()->getLanguageManager()->getMessage($sender, "email-subject-sendpin"), str_replace("{pin}", $this->getPlugin()->getSessionManager()->getSession($sender)->getPin(), $this->getPlugin()->getLanguageManager()->getMessage($sender, "email-sendpin")), $sender);
         return true;
     }
 

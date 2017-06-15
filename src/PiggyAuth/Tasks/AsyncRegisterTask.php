@@ -5,7 +5,6 @@ namespace PiggyAuth\Tasks;
 use PiggyAuth\Main;
 use PiggyAuth\Databases\MySQL;
 use PiggyAuth\Events\PlayerRegisterEvent;
-use PiggyAuth\Events\DelayedPinTask;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\scheduler\AsyncTask;
@@ -16,6 +15,11 @@ use pocketmine\scheduler\AsyncTask;
  */
 class AsyncRegisterTask extends AsyncTask
 {
+    private $xbox;
+    private $pin;
+    private $email;
+    private $playerName;
+    private $password;
 
     /**
      * AsyncRegisterTask constructor.
@@ -45,7 +49,7 @@ class AsyncRegisterTask extends AsyncTask
         if($plugin->isDisabled() || !(($player = $server->getPlayerExact($this->playerName)) instanceof Player)){
             return;
         }
-        $plugin->sessionmanager->getSession($player)->setRegistering(false);
+        $plugin->getSessionManager()->getSession($player)->setRegistering(false);
 
         $password = $this->getResult();
 
@@ -59,13 +63,13 @@ class AsyncRegisterTask extends AsyncTask
                         if ($plugin->database instanceof MySQL) {
                             $plugin->getServer()->getScheduler()->scheduleDelayedTask(new DelayedPinTask($plugin, $player), 5);
                         } else {
-                            $player->sendMessage(str_replace("{pin}", $plugin->sessionmanager->getSession($player)->getPin(), $plugin->languagemanager->getMessage($player, "register-success")));
+                            $player->sendMessage(str_replace("{pin}", $plugin->getSessionManager()->getSession($player)->getPin(), $plugin->getLanguageManager()->getMessage($player, "register-success")));
                         }
                     }
                 }
             };
             $args = array($player->getName(), $this->xbox);
-            $plugin->sessionmanager->getSession($player)->insertData($password, $this->email, $this->pin, $this->xbox, $callback, $args);
+            $plugin->getSessionManager()->getSession($player)->insertData($password, $this->email, $this->pin, $this->xbox, $callback, $args);
             if ($plugin->getConfig()->getNested("progress-reports.enabled")) {
                 $plugin->progressReport($player->getName());
             }

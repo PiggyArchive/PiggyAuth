@@ -10,6 +10,7 @@ use pocketmine\utils\Config;
  */
 class SimpleAuthConverter implements Converter
 {
+    private $plugin;
 
     /**
      * SimpleAuthConverter constructor.
@@ -34,17 +35,17 @@ class SimpleAuthConverter implements Converter
                 $result = $db->query("SELECT * from " . $table);
                 while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                     if ($this->plugin->database->getOfflinePlayer($row["name"])) {
-                        $this->plugin->getLogger()->info(str_replace("{player}", $row["name"], $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "player-account-already-exists")));
+                        $this->plugin->getLogger()->info(str_replace("{player}", $row["name"], $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "player-account-already-exists")));
                         continue;
                     }
                     $this->plugin->database->insertDataWithoutPlayerObject($row["name"], $row["hash"], "none", mt_rand(1000, 9999), "SimpleAuth");
                 }
             } else {
-                $this->plugin->getLogger()->info(str_replace("{file}", $file, $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "file-not-db")));
+                $this->plugin->getLogger()->info(str_replace("{file}", $file, $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "file-not-db")));
                 return false;
             }
         } else {
-            $this->plugin->getLogger()->info(str_replace("{file}", $file, $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "invalid-file")));
+            $this->plugin->getLogger()->info(str_replace("{file}", $file, $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "invalid-file")));
             return false;
         }
         return true;
@@ -73,7 +74,7 @@ class SimpleAuthConverter implements Converter
         if ($result instanceof \mysqli_result) {
             while ($row = $result->fetch_assoc()) {
                 if ($this->plugin->database->getOfflinePlayer($row["name"])) {
-                    $this->plugin->getLogger()->info(str_replace("{player}", $row["name"], $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "player-account-already-exists")));
+                    $this->plugin->getLogger()->info(str_replace("{player}", $row["name"], $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "player-account-already-exists")));
                     continue;
                 }
                 $this->plugin->database->insertDataWithoutPlayerObject($row["name"], $row["hash"], "none", mt_rand(1000, 9999), "SimpleAuth");
@@ -81,6 +82,7 @@ class SimpleAuthConverter implements Converter
             $result->free();
             return true;
         }
+        return false;
     }
 
     /**
@@ -102,19 +104,19 @@ class SimpleAuthConverter implements Converter
                                 $data = $yml->getAll();
                                 $name = str_replace(".yml", "", $file);
                                 if ($this->plugin->database->getOfflinePlayer($name)) {
-                                    $this->plugin->getLogger()->info(str_replace("{player}", $name, $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "player-account-already-exists")));
+                                    $this->plugin->getLogger()->info(str_replace("{player}", $name, $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "player-account-already-exists")));
                                     continue;
                                 }
                                 $this->plugin->database->insertDataWithoutPlayerObject($name, $data["hash"], "none", mt_rand(1000, 9999), "SimpleAuth");
                             } else {
-                                $this->plugin->getLogger()->info(str_replace("{file}", $file, $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "file-not-yml")));
+                                $this->plugin->getLogger()->info(str_replace("{file}", $file, $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "file-not-yml")));
                             }
                         }
                     }
                 }
             }
         } else {
-            $this->plugin->getLogger()->info(str_replace("{file}", $directoryname, $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "invalid-directory")));
+            $this->plugin->getLogger()->info(str_replace("{file}", $directoryname, $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "invalid-directory")));
             return false;
         }
         return true;

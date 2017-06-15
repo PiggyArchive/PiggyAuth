@@ -56,7 +56,7 @@ class EventListener implements Listener
     public function onBreak(BlockBreakEvent $event)
     {
         $player = $event->getPlayer();
-        if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
+        if (!$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
             if (!$this->plugin->getConfig()->getNested("events.allow-block-break")) {
                 $event->setCancelled();
             }
@@ -69,7 +69,7 @@ class EventListener implements Listener
     public function onPlace(BlockPlaceEvent $event)
     {
         $player = $event->getPlayer();
-        if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
+        if (!$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
             if (!$this->plugin->getConfig()->getNested("events.allow-block-place")) {
                 $event->setCancelled();
             }
@@ -82,14 +82,14 @@ class EventListener implements Listener
     public function onDamage(EntityDamageEvent $event)
     {
         $entity = $event->getEntity();
-        if ($entity instanceof Player && !$this->plugin->sessionmanager->getSession($entity)->isAuthenticated($entity)) {
+        if ($entity instanceof Player && !$this->plugin->getSessionManager()->getSession($entity)->isAuthenticated($entity)) {
             if (!$this->plugin->getConfig()->getNested("events.allow-damage")) {
                 $event->setCancelled();
             }
         }
         if ($event instanceof EntityDamageByEntityEvent) {
             $damager = $event->getDamager();
-            if ($damager instanceof Player && !$this->plugin->sessionmanager->getSession($damager)->isAuthenticated($damager)) {
+            if ($damager instanceof Player && !$this->plugin->getSessionManager()->getSession($damager)->isAuthenticated($damager)) {
                 if (!$this->plugin->getConfig()->getNested("events.allow-damage-others")) {
                     $event->setCancelled();
                 }
@@ -103,7 +103,7 @@ class EventListener implements Listener
     public function onHeal(EntityRegainHealthEvent $event)
     {
         $entity = $event->getEntity();
-        if ($entity instanceof Player && !$this->plugin->sessionmanager->getSession($entity)->isAuthenticated($entity)) {
+        if ($entity instanceof Player && !$this->plugin->getSessionManager()->getSession($entity)->isAuthenticated($entity)) {
             if (!$this->plugin->getConfig()->getNested("events.allow-heal")) {
                 $event->setCancelled();
             }
@@ -116,7 +116,7 @@ class EventListener implements Listener
     public function onPickupArrow(InventoryPickupArrowEvent $event)
     {
         $player = $event->getInventory()->getHolder();
-        if ($player instanceof Player && !$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
+        if ($player instanceof Player && !$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
             if (!$this->plugin->getConfig()->getNested("events.allow-arrow-pickup")) {
                 $event->setCancelled();
             }
@@ -129,7 +129,7 @@ class EventListener implements Listener
     public function onPickupItem(InventoryPickupItemEvent $event)
     {
         $player = $event->getInventory()->getHolder();
-        if ($player instanceof Player && !$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
+        if ($player instanceof Player && !$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
             if (!$this->plugin->getConfig()->getNested("events.allow-item-pickup")) {
                 $event->setCancelled();
             }
@@ -138,57 +138,58 @@ class EventListener implements Listener
 
     /**
      * @param PlayerChatEvent $event
+     * @return bool
      */
     public function onChat(PlayerChatEvent $event)
     {
         $player = $event->getPlayer();
         $message = $event->getMessage();
         $recipients = array();
-        if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
+        if (!$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
             if ($this->plugin->getConfig()->getNested("login.chat-login")) {
-                if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
+                if ($this->plugin->getSessionManager()->getSession($player)->isRegistered()) {
                     $this->plugin->getConfig()->get('async') ? $this->plugin->asyncLogin($player, $message, 0) : $this->plugin->login($player, $message, 0);
                 } else {
-                    if (!$this->plugin->sessionmanager->getSession($player)->isConfirmingPassword()) {
-                        if ($this->plugin->sessionmanager->getSession($player)->getSecondPassword() == null) {
-                            $this->plugin->sessionmanager->getSession($player)->setConfirmingPassword();
-                            $this->plugin->sessionmanager->getSession($player)->setFirstPassword($message);
-                            $player->sendMessage($this->plugin->languagemanager->getMessage($player, "confirm-password"));
+                    if (!$this->plugin->getSessionManager()->getSession($player)->isConfirmingPassword()) {
+                        if ($this->plugin->getSessionManager()->getSession($player)->getSecondPassword() == null) {
+                            $this->plugin->getSessionManager()->getSession($player)->setConfirmingPassword();
+                            $this->plugin->getSessionManager()->getSession($player)->setFirstPassword($message);
+                            $player->sendMessage($this->plugin->getLanguageManager()->getMessage($player, "confirm-password"));
                         }
                     } else {
-                        if ($this->plugin->sessionmanager->getSession($player)->getFirstPassword() == $message) {
-                            $this->plugin->sessionmanager->getSession($player)->setConfirmingPassword(false);
-                            $this->plugin->sessionmanager->getSession($player)->setFirstPassword(null);
-                            $this->plugin->sessionmanager->getSession($player)->setSecondPassword($message);
-                            $this->plugin->sessionmanager->getSession($player)->setGivingEmail();
-                            $player->sendMessage($this->plugin->languagemanager->getMessage($player, "email"));
+                        if ($this->plugin->getSessionManager()->getSession($player)->getFirstPassword() == $message) {
+                            $this->plugin->getSessionManager()->getSession($player)->setConfirmingPassword(false);
+                            $this->plugin->getSessionManager()->getSession($player)->setFirstPassword(null);
+                            $this->plugin->getSessionManager()->getSession($player)->setSecondPassword($message);
+                            $this->plugin->getSessionManager()->getSession($player)->setGivingEmail();
+                            $player->sendMessage($this->plugin->getLanguageManager()->getMessage($player, "email"));
                             $event->setCancelled();
                             return true; //Stop the Invalid email message
                         } else {
-                            $player->sendMessage($this->plugin->languagemanager->getMessage($player, "password-not-match"));
-                            $this->plugin->sessionmanager->getSession($player)->setConfirmingPassword(false);
-                            $this->plugin->sessionmanager->getSession($player)->setFirstPassword(null);
+                            $player->sendMessage($this->plugin->getLanguageManager()->getMessage($player, "password-not-match"));
+                            $this->plugin->getSessionManager()->getSession($player)->setConfirmingPassword(false);
+                            $this->plugin->getSessionManager()->getSession($player)->setFirstPassword(null);
                             $this->plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this->plugin, $player, Main::LOGIN, Main::PASSWORDS_NOT_MATCHED));
                         }
                     }
-                    if ($this->plugin->sessionmanager->getSession($player)->isGivingEmail()) {
+                    if ($this->plugin->getSessionManager()->getSession($player)->isGivingEmail()) {
                         $function = function ($result, $args, $plugin) {
                             $player = $plugin->getServer()->getPlayerExact($args[0]);
                             $message = $args[1];
                             if ($player instanceof Player) {
                                 if ($result !== true) {
-                                    $player->sendMessage($plugin->languagemanager->getMessage($player, "invalid-email"));
+                                    $player->sendMessage($plugin->getLanguageManager()->getMessage($player, "invalid-email"));
                                     $plugin->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($plugin, $player, Main::LOGIN, Main::INVALID_EMAIL));
                                 } else {
-                                    $plugin->register($player, $plugin->sessionmanager->getSession($player)->getSecondPassword(), $plugin->sessionmanager->getSession($player)->getSecondPassword(), $message);
-                                    $plugin->getConfig()->get('async') ? $plugin->asyncRegister($player, $plugin->sessionmanager->getSession($player)->getSecondPassword(), $plugin->sessionmanager->getSession($player)->getSecondPassword(), $message) : $plugin->register($player, $plugin->sessionmanager->getSession($player)->getSecondPassword(), $plugin->sessionmanager->getSession($player)->getSecondPassword(), $message);
-                                    $plugin->sessionmanager->getSession($player)->setSecondPassword(null);
-                                    $plugin->sessionmanager->getSession($player)->setGivingEmail(false);
+                                    $plugin->register($player, $plugin->getSessionManager()->getSession($player)->getSecondPassword(), $plugin->getSessionManager()->getSession($player)->getSecondPassword(), $message);
+                                    $plugin->getConfig()->get('async') ? $plugin->asyncRegister($player, $plugin->getSessionManager()->getSession($player)->getSecondPassword(), $plugin->getSessionManager()->getSession($player)->getSecondPassword(), $message) : $plugin->register($player, $plugin->getSessionManager()->getSession($player)->getSecondPassword(), $plugin->getSessionManager()->getSession($player)->getSecondPassword(), $message);
+                                    $plugin->getSessionManager()->getSession($player)->setSecondPassword(null);
+                                    $plugin->getSessionManager()->getSession($player)->setGivingEmail(false);
                                 }
                             }
                         };
                         $arguements = array($player->getName(), $message);
-                        $this->plugin->emailmanager->validateEmail($message, $function, $arguements);
+                        $this->plugin->getEmailManager()->validateEmail($message, $function, $arguements);
                         $event->setCancelled();
                     }
                 }
@@ -196,18 +197,19 @@ class EventListener implements Listener
             $event->setCancelled();
         } else {
             /*if ($this->plugin->isCorrectPassword($player, $message)) {
-            $player->sendMessage($this->plugin->languagemanager->getMessage($player, "dont-say-password"));
+            $player->sendMessage($this->plugin->getLanguageManager()->getMessage($player, "dont-say-password"));
             $event->setCancelled();
             }*/
         }
         if (!$this->plugin->getConfig()->getNested("message.see-message")) {
             foreach ($event->getRecipients() as $recipient) {
-                if (!$recipient instanceof Player || ($this->plugin->sessionmanager->getSession($recipient) !== null && $this->plugin->sessionmanager->getSession($recipient)->isAuthenticated($recipient))) {
+                if (!$recipient instanceof Player || ($this->plugin->getSessionManager()->getSession($recipient) !== null && $this->plugin->getSessionManager()->getSession($recipient)->isAuthenticated($recipient))) {
                     array_push($recipients, $recipient);
                 }
             }
             $event->setRecipients($recipients);
         }
+        return true;
     }
 
     /**
@@ -227,7 +229,7 @@ class EventListener implements Listener
             "/forgetpwd",
             "/fpw",
             "/fpwd");
-        if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
+        if (!$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
             if ($message[0] == "/" || ($message[0] == "." && $message[1] == "/")) {
                 if (!in_array($args[0], $forgotpasswordaliases) && $args[0] !== "/login" && $args[0] !== "/register" && $args[0] !== "/sendpin") {
                     if (!$this->plugin->getConfig()->getNested("events.allow-commands")) {
@@ -244,7 +246,7 @@ class EventListener implements Listener
     public function onDrop(PlayerDropItemEvent $event)
     {
         $player = $event->getPlayer();
-        if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
+        if (!$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
             if (!$this->plugin->getConfig()->getNested("events.allow-item-drop")) {
                 $event->setCancelled();
             }
@@ -257,7 +259,7 @@ class EventListener implements Listener
     public function onExhaust(PlayerExhaustEvent $event)
     {
         $player = $event->getPlayer();
-        if ($player instanceof Player && !$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
+        if ($player instanceof Player && !$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
             if (!$this->plugin->getConfig()->getNested("events.allow-hunger")) {
                 $event->setCancelled();
             }
@@ -270,7 +272,7 @@ class EventListener implements Listener
     public function onInteract(PlayerInteractEvent $event)
     {
         $player = $event->getPlayer();
-        if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
+        if (!$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
             if (!$this->plugin->getConfig()->getNested("events.allow-block-interact")) {
                 $event->setCancelled();
             }
@@ -283,7 +285,7 @@ class EventListener implements Listener
     public function onConsume(PlayerItemConsumeEvent $event)
     {
         $player = $event->getPlayer();
-        if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
+        if (!$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
             if (!$this->plugin->getConfig()->getNested("events.allow-eating")) {
                 $event->setCancelled();
             }
@@ -296,7 +298,7 @@ class EventListener implements Listener
     public function onJoin(PlayerJoinEvent $event)
     {
         $player = $event->getPlayer();
-        $this->plugin->sessionmanager->loadSession($player, false, $event->getJoinMessage());
+        $this->plugin->getSessionManager()->loadSession($player, false, $event->getJoinMessage());
         if ($this->plugin->getConfig()->getNested("message.hold-join-message")) {
             $event->setJoinMessage(null);
         }
@@ -325,7 +327,7 @@ class EventListener implements Listener
     public function onMove(PlayerMoveEvent $event)
     {
         $player = $event->getPlayer();
-        if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
+        if (!$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
             if (!$this->plugin->getConfig()->getNested("events.allow-movement") && (!$this->plugin->getConfig()->getNested("events.allow-head-movement") || floor($event->getFrom()->x) !== floor($player->x) || floor($event->getFrom()->z) !== floor($player->z))) {
                 $event->setCancelled();
             }
@@ -339,7 +341,7 @@ class EventListener implements Listener
         $player = $event->getPlayer();
         if ($this->plugin->getConfig()->getNested("login.single-session")) {
             if (!is_null($p = $this->plugin->getServer()->getPlayerExact($player->getName()))) {
-                if ($this->plugin->sessionmanager->getSession($p)->isAuthenticated() && $player->getUniqueId()->toString() !== $p->getUniqueId()->toString()) {
+                if ($this->plugin->getSessionManager()->getSession($p)->isAuthenticated() && $player->getUniqueId()->toString() !== $p->getUniqueId()->toString()) {
                     $player->close("", "Already logged in!");
                     $event->setCancelled();
                 } else {
@@ -355,7 +357,7 @@ class EventListener implements Listener
     public function onQuit(PlayerQuitEvent $event)
     {
         $player = $event->getPlayer();
-        if (($this->plugin->sessionmanager->getSession($player) == null || !$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) && $this->plugin->getConfig()->getNested("message.hold-join-message")) {
+        if (($this->plugin->getSessionManager()->getSession($player) == null || !$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) && $this->plugin->getConfig()->getNested("message.hold-join-message")) {
             $event->setQuitMessage(null);
         }
         $this->plugin->logout($player);
@@ -369,7 +371,7 @@ class EventListener implements Listener
         $player = $event->getPlayer();
         $packet = $event->getPacket();
         if ($packet instanceof ContainerSetSlotPacket) {
-            if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated() && $this->plugin->getConfig()->getNested("effects.hide-items")) {
+            if (!$this->plugin->getSessionManager()->getSession($player)->isAuthenticated() && $this->plugin->getConfig()->getNested("effects.hide-items")) {
                 if ($player->isSurvival()) {
                     if ($packet->item !== Item::get(Item::AIR)) {
                         $pk = new ContainerSetSlotPacket();
@@ -396,8 +398,8 @@ class EventListener implements Listener
     {
         $player = $event->getPlayer();
         $packet = $event->getPacket();
-        if ($packet instanceof MobEffectPacket && $this->plugin->sessionmanager->getSession($player) !== null) {
-            if (!$this->plugin->sessionmanager->getSession($player)->isAuthenticated() && $this->plugin->getConfig()->getNested("effects.hide-effects")) {
+        if ($packet instanceof MobEffectPacket && $this->plugin->getSessionManager()->getSession($player) !== null) {
+            if (!$this->plugin->getSessionManager()->getSession($player)->isAuthenticated() && $this->plugin->getConfig()->getNested("effects.hide-effects")) {
                 if ($packet->eventId !== MobEffectPacket::EVENT_ADD) {
                     return false;
                 }
@@ -407,6 +409,7 @@ class EventListener implements Listener
                 $event->setCancelled();
             }
         }
+        return true;
     }
 
 }

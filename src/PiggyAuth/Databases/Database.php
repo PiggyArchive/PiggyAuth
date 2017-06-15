@@ -16,7 +16,7 @@ interface Database
      * @param $args
      * @return mixed
      */
-    public function getPlayer($player, $callback, $args);
+    public function getPlayer($player, callable $callback, $args);
 
     /**
      * @param $player
@@ -29,11 +29,11 @@ interface Database
      * @param $column
      * @param $arg
      * @param int $type
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
      * @return mixed
      */
-    public function updatePlayer($player, $column, $arg, $type = SQLITE3_TEXT, $callback = null, $args = null);
+    public function updatePlayer($player, $column, $arg, $type = SQLITE3_TEXT, callable $callback = null, $args = null);
 
     /**
      * @param Player $player
@@ -41,11 +41,11 @@ interface Database
      * @param $email
      * @param $pin
      * @param $xbox
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
      * @return mixed
      */
-    public function insertData(Player $player, $password, $email, $pin, $xbox, $callback = null, $args = null);
+    public function insertData(Player $player, $password, $email, $pin, $xbox, callable $callback = null, $args = null);
 
     /**
      * @param $player
@@ -53,18 +53,18 @@ interface Database
      * @param $email
      * @param $pin
      * @param string $auth
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
      * @return mixed
      */
-    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $auth = "PiggyAuth", $callback = null, $args = null);
+    public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $auth = "PiggyAuth", callable $callback = null, $args = null);
 
     /**
      * @param $player
-     * @param null $callback
+     * @param callable|null $callback
      * @param null $args
      * @return mixed
      */
-    public function clearPassword($player, $callback = null, $args = null);
+    public function clearPassword($player, callable $callback = null, $args = null);
 
 }

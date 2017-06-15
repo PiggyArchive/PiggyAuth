@@ -7,14 +7,13 @@ use PiggyAuth\Main;
 
 use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
-use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class PreregisterCommand
  * @package PiggyAuth\Commands
  */
-class PreregisterCommand extends PluginCommand
+class PreregisterCommand extends PiggyAuthCommand
 {
     /**
      * PreregisterCommand constructor.
@@ -53,7 +52,7 @@ class PreregisterCommand extends PluginCommand
                     if ($result) {
                         $plugin->preregister($sender, $args[1], $args[2], $args[3], $args[4]);
                     } else {
-                        $sender->sendMessage($plugin->languagemanager->getMessage($sender, "invalid-email"));
+                        $sender->sendMessage($plugin->getLanguageManager()->getMessage($sender, "invalid-email"));
                     }
                 }
                 return true;
@@ -64,7 +63,7 @@ class PreregisterCommand extends PluginCommand
                 $args[1],
                 $args[2],
                 $args[3]);
-            $this->getPlugin()->emailmanager->validateEmail($args[3], $function, $arguements);
+            $this->getPlugin()->getEmailManager()->validateEmail($args[3], $function, $arguements);
             return true;
         }
         return true;

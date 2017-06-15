@@ -10,6 +10,8 @@ use pocketmine\scheduler\PluginTask;
  */
 class MessageTick extends PluginTask
 {
+    private $plugin;
+
     /**
      * MessageTick constructor.
      * @param \pocketmine\plugin\Plugin $plugin
@@ -26,16 +28,16 @@ class MessageTick extends PluginTask
     public function onRun($currentTick)
     {
         foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {
-            if ($this->plugin->sessionmanager->getSession($player) !== null && !$this->plugin->sessionmanager->getSession($player)->isAuthenticated()) {
-                if ($this->plugin->sessionmanager->getSession($player)->getMessageTick() == $this->plugin->getConfig()->getNested("message.seconds-til-next-message")) {
-                    $this->plugin->sessionmanager->getSession($player)->setMessageTick(0);
-                    if ($this->plugin->sessionmanager->getSession($player)->isRegistered()) {
-                        $player->sendMessage($this->plugin->languagemanager->getMessage($player, "login-message"));
+            if ($this->plugin->getSessionManager()->getSession($player) !== null && !$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
+                if ($this->plugin->getSessionManager()->getSession($player)->getMessageTick() == $this->plugin->getConfig()->getNested("message.seconds-til-next-message")) {
+                    $this->plugin->getSessionManager()->getSession($player)->setMessageTick(0);
+                    if ($this->plugin->getSessionManager()->getSession($player)->isRegistered()) {
+                        $player->sendMessage($this->plugin->getLanguageManager()->getMessage($player, "login-message"));
                     } else {
-                        $player->sendMessage($this->plugin->languagemanager->getMessage($player, "register-message"));
+                        $player->sendMessage($this->plugin->getLanguageManager()->getMessage($player, "register-message"));
                     }
                 } else {
-                    $this->plugin->sessionmanager->getSession($player)->addMessageTick();
+                    $this->plugin->getSessionManager()->getSession($player)->addMessageTick();
                 }
             }
         }

@@ -17,6 +17,7 @@ class PlayerChangePasswordEvent extends PlayerEvent implements Cancellable
     protected $password; //don't worry, it's encrypted ;)
     protected $pin;
     protected $mode;
+    private $oldpin;
 
     /**
      * PlayerChangePasswordEvent constructor.

@@ -11,6 +11,7 @@ use pocketmine\scheduler\PluginTask;
 class DelayedPinTask extends PluginTask
 {
     private $player;
+    private $plugin;
 
     /**
      * DelayedPinTask constructor.
@@ -29,6 +30,6 @@ class DelayedPinTask extends PluginTask
      */
     public function onRun($currentTick)
     {
-        $this->player->sendMessage(str_replace("{pin}", $this->plugin->sessionmanager->getSession($this->player)->getPin(), $this->plugin->languagemanager->getMessage($this->player, "register-success")));
+        $this->player->sendMessage(str_replace("{pin}", $this->plugin->getSessionManager()->getSession($this->player)->getPin(), $this->plugin->getLanguageManager()->getMessage($this->player, "register-success")));
     }
 }

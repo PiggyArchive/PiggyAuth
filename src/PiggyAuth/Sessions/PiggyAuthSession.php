@@ -164,10 +164,10 @@ class PiggyAuthSession implements Session
      */
     public function getLanguage()
     {
-        if ($this->plugin->languagemanager->isLanguage($this->data["language"])) {
+        if ($this->plugin->getLanguageManager()->isLanguage($this->data["language"])) {
             return $this->data["language"];
         }
-        return $this->plugin->languagemanager->getDefaultLanguage();
+        return $this->plugin->getLanguageManager()->getDefaultLanguage();
     }
 
     /**
@@ -424,7 +424,7 @@ class PiggyAuthSession implements Session
     public function updatePlayer($column, $arg, $callback = null, $args = null)
     {
         $this->plugin->database->updatePlayer($this->getName(), $column, $arg, $callback, $args);
-        $this->plugin->sessionmanager->loadSession($this->player, true); //Reload
+        $this->plugin->getSessionManager()->loadSession($this->player, true); //Reload
     }
 
     /**
@@ -438,7 +438,7 @@ class PiggyAuthSession implements Session
     public function insertData($password, $email, $pin, $xbox, $callback = null, $args = null)
     {
         $this->plugin->database->insertData($this->player, $password, $email, $pin, $xbox, $callback, $args);
-        $this->plugin->sessionmanager->loadSession($this->player, true); //Reload
+        $this->plugin->getSessionManager()->loadSession($this->player, true); //Reload
     }
 
     /**
@@ -453,7 +453,7 @@ class PiggyAuthSession implements Session
             return true;
         }
         if (!$this->isRegistered() && $this->plugin->getConfig()->getNested("message.join-message-for-new-players")) {
-            $this->setJoinMessage(str_replace("{player}", $this->player->getName(), $this->plugin->languagemanager->getMessageFromLanguage($this->plugin->languagemanager->getDefaultLanguage(), "new-player")));
+            $this->setJoinMessage(str_replace("{player}", $this->player->getName(), $this->plugin->getLanguageManager()->getMessageFromLanguage($this->plugin->getLanguageManager()->getDefaultLanguage(), "new-player")));
         }
         if ($this->plugin->getConfig()->getNested("message.hold-join-message")) {
             $this->setJoinMessage($joinmessage);
@@ -466,7 +466,7 @@ class PiggyAuthSession implements Session
             return true;
         }
         /*if ($this->plugin->getConfig()->getNested("login.xbox-bypass") && $this->plugin->getServer()->getName() == "ClearSky" && $player->isAuthenticated()) {
-            if (!$this->plugin->sessionmanager->getSession($player)->isRegistered()) {
+            if (!$this->plugin->getSessionManager()->getSession($player)->isRegistered()) {
                 $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
                 $randompassword = [];
                 $characteramount = strlen($characters) - 1;
@@ -476,7 +476,7 @@ class PiggyAuthSession implements Session
                 }
                 $randompassword = implode("", $randompassword);
                 $this->plugin->register($player, $randompassword, $randompassword, "none", true);
-                $player->sendMessage(str_replace("{pin}", $this->plugin->database->getPin($player->getName()), str_replace("{password}", $randompassword, $this->plugin->languagemanager->getMessage($player, "register-success-xbox"))));
+                $player->sendMessage(str_replace("{pin}", $this->plugin->database->getPin($player->getName()), str_replace("{password}", $randompassword, $this->plugin->getLanguageManager()->getMessage($player, "register-success-xbox"))));
             } else {
                 if (!is_null($data) && $data["xbox"] == true) {
                     $this->plugin->getServer()->getPluginManager()->callEvent($event = new PlayerLoginEvent($this->plugin, $player, Main::XBOX));
@@ -487,7 +487,7 @@ class PiggyAuthSession implements Session
             }
             return true;
         }*/
-        $this->player->sendMessage($this->plugin->languagemanager->getMessage($this->player, "join-message"));
+        $this->player->sendMessage($this->plugin->getLanguageManager()->getMessage($this->player, "join-message"));
         if ($this->plugin->getConfig()->getNested("register.cape-for-registration")) {
             $stevecapes = array(
                 "Minecon_MineconSteveCape2016",
@@ -512,9 +512,9 @@ class PiggyAuthSession implements Session
             }
         }
         if ($this->isRegistered()) {
-            $this->player->sendMessage($this->plugin->languagemanager->getMessage($this->player, "login-message"));
+            $this->player->sendMessage($this->plugin->getLanguageManager()->getMessage($this->player, "login-message"));
         } else {
-            $this->player->sendMessage($this->plugin->languagemanager->getMessage($this->player, "register-message"));
+            $this->player->sendMessage($this->plugin->getLanguageManager()->getMessage($this->player, "register-message"));
         }
         if ($this->plugin->getConfig()->getNested("effects.invisible")) {
             $this->player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, true);
@@ -535,7 +535,7 @@ class PiggyAuthSession implements Session
         if ($this->plugin->getConfig()->getNested("effects.hide-players")) {
             foreach ($this->plugin->getServer()->getOnlinePlayers() as $p) {
                 $this->player->hidePlayer($p);
-                if (!$this->plugin->sessionmanager->getSession($p)->isAuthenticated($p)) {
+                if (!$this->plugin->getSessionManager()->getSession($p)->isAuthenticated($p)) {
                     $p->hidePlayer($this->player);
                 }
             }
@@ -559,7 +559,7 @@ class PiggyAuthSession implements Session
         if ($this->plugin->getConfig()->getNested("message.boss-bar")) {
             $wither = Entity::createEntity("Wither", $this->player->getLevel(), new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $this->player->x + 0.5), new DoubleTag("", $this->player->y - 25), new DoubleTag("", $this->player->z + 0.5)]), "Motion" => new ListTag("Motion", [new DoubleTag("", 0), new DoubleTag("", 0), new DoubleTag("", 0)]), "Rotation" => new ListTag("Rotation", [new FloatTag("", 0), new FloatTag("", 0)])]));
             $wither->spawnTo($this->player);
-            $wither->setNameTag($this->isRegistered() == false ? $this->plugin->languagemanager->getMessage($this->player, "register-boss-bar") : $this->plugin->languagemanager->getMessage($this->player, "login-boss-bar"));
+            $wither->setNameTag($this->isRegistered() == false ? $this->plugin->getLanguageManager()->getMessage($this->player, "register-boss-bar") : $this->plugin->getLanguageManager()->getMessage($this->player, "login-boss-bar"));
             $this->setWither($wither);
             $wither->setMaxHealth($this->plugin->getConfig()->getNested("timeout.timeout-time"));
             $wither->setHealth($this->plugin->getConfig()->getNested("timeout.timeout-time"));
@@ -568,6 +568,7 @@ class PiggyAuthSession implements Session
             $pk->state = 0;
             $this->player->dataPacket($pk);
         }
+        return true;
     }
 
 }

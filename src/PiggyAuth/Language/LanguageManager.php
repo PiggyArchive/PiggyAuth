@@ -51,7 +51,7 @@ class LanguageManager
     public function getMessage($player, $message)
     {
         if ($player instanceof Player) {
-            $language = $this->plugin->sessionmanager->getSession($player)->getLanguage();
+            $language = $this->plugin->getSessionManager()->getSession($player)->getLanguage();
         } else {
             $language = $this->getDefaultLanguage();
         }

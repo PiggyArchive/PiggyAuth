@@ -4,14 +4,13 @@ namespace PiggyAuth\Commands;
 
 use PiggyAuth\Main;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 
 /**
  * Class ConvertCommand
  * @package PiggyAuth\Commands
  */
-class ConvertCommand extends PluginCommand
+class ConvertCommand extends PiggyAuthCommand
 {
     /**
      * ConvertCommand constructor.
@@ -79,7 +78,7 @@ class ConvertCommand extends PluginCommand
                             $this->getPlugin()->simpleauthconverter->convertFromMySQL($args[2], $args[3], $args[4], $args[5], $args[6], $args[7]);
                             break;
                         default:
-                            $sender->sendMessage(str_replace("{db}", "YML, SQLite3, MySQL", $this->getPlugin()->languagemanager->getMessageFromLanguage($this->getPlugin()->languagemanager->getDefaultLanguage(), "invalid-database")));
+                            $sender->sendMessage(str_replace("{db}", "YML, SQLite3, MySQL", $this->getPlugin()->getLanguageManager()->getMessageFromLanguage($this->getPlugin()->getLanguageManager()->getDefaultLanguage(), "invalid-database")));
                             break;
                     }
                     break;
@@ -109,12 +108,12 @@ class ConvertCommand extends PluginCommand
                             $this->getPlugin()->serverauthconverter->convertFromMySQL($args[2], $args[3], $args[4], $args[5], $args[6], $args[7], $args[8]);
                             break;
                         default:
-                            $sender->sendMessage(str_replace("{db}", "YML, MySQL", $this->getPlugin()->languagemanager->getMessageFromLanguage($this->getPlugin()->languagemanager->getDefaultLanguage(), "invalid-database")));
+                            $sender->sendMessage(str_replace("{db}", "YML, MySQL", $this->getPlugin()->getLanguageManager()->getMessageFromLanguage($this->getPlugin()->getLanguageManager()->getDefaultLanguage(), "invalid-database")));
                             break;
                     }
                     break;
                 default:
-                    $sender->sendMessage(str_replace("{auth}", "SimpleAuth, ServerAuth", $this->getPlugin()->languagemanager->getMessageFromLanguage($this->getPlugin()->languagemanager->getDefaultLanguage(), "invalid-auth")));
+                    $sender->sendMessage(str_replace("{auth}", "SimpleAuth, ServerAuth", $this->getPlugin()->getLanguageManager()->getMessageFromLanguage($this->getPlugin()->getLanguageManager()->getDefaultLanguage(), "invalid-auth")));
                     break;
             }
             return true;
