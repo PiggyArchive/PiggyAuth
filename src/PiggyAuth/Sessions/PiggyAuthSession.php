@@ -4,7 +4,7 @@ namespace PiggyAuth\Sessions;
 
 use PiggyAuth\Events\PlayerLoginEvent;
 use PiggyAuth\Main;
-use PiggyAuth\Packet\BossEventPacket;
+use pocketmine\network\mcpe\protocol\BossEventPacket;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 use pocketmine\nbt\tag\CompoundTag;
@@ -42,10 +42,10 @@ class PiggyAuthSession implements Session
     /**
      * PiggyAuthSession constructor.
      * @param Player $player
-     * @param $plugin
+     * @param Main $plugin
      * @param $data
      */
-    public function __construct(Player $player, $plugin, $data)
+    public function __construct(Player $player, Main $plugin, $data)
     {
         $this->player = $player;
         $this->plugin = $plugin;
@@ -557,15 +557,18 @@ class PiggyAuthSession implements Session
             $this->player->setGamemode(2);
         }
         if ($this->plugin->getConfig()->getNested("message.boss-bar")) {
+            $message = $this->isRegistered() == false ? $this->plugin->getLanguageManager()->getMessage($this->player, "register-boss-bar") : $this->plugin->getLanguageManager()->getMessage($this->player, "login-boss-bar");
             $wither = Entity::createEntity("Wither", $this->player->getLevel(), new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $this->player->x + 0.5), new DoubleTag("", $this->player->y - 25), new DoubleTag("", $this->player->z + 0.5)]), "Motion" => new ListTag("Motion", [new DoubleTag("", 0), new DoubleTag("", 0), new DoubleTag("", 0)]), "Rotation" => new ListTag("Rotation", [new FloatTag("", 0), new FloatTag("", 0)])]));
             $wither->spawnTo($this->player);
-            $wither->setNameTag($this->isRegistered() == false ? $this->plugin->getLanguageManager()->getMessage($this->player, "register-boss-bar") : $this->plugin->getLanguageManager()->getMessage($this->player, "login-boss-bar"));
+            $wither->setNameTag($message);
             $this->setWither($wither);
             $wither->setMaxHealth($this->plugin->getConfig()->getNested("timeout.timeout-time"));
             $wither->setHealth($this->plugin->getConfig()->getNested("timeout.timeout-time"));
             $pk = new BossEventPacket();
-            $pk->entityRuntimeId = $wither->getId();
-            $pk->state = 0;
+            $pk->bossEid = $wither->getId();
+            $pk->eventType = BossEventPacket::TYPE_SHOW;
+            $pk->healthPercent = 1;
+            $pk->title = $message;
             $this->player->dataPacket($pk);
         }
         return true;

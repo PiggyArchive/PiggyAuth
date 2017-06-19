@@ -34,7 +34,7 @@ use PiggyAuth\Databases\MySQL;
 use PiggyAuth\Databases\SQLite3;
 use PiggyAuth\Entities\Wither;
 use PiggyAuth\Language\LanguageManager;
-use PiggyAuth\Packet\BossEventPacket;
+use pocketmine\network\mcpe\protocol\BossEventPacket;
 use PiggyAuth\Sessions\SessionManager;
 use PiggyAuth\Tasks\AsyncLoginTask;
 use PiggyAuth\Tasks\AsyncRegisterTask;
