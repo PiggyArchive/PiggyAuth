@@ -174,7 +174,7 @@ class Main extends PluginBase
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         self::$hashCost = $this->getConfig()->getNested("hash.cost");
         foreach ($this->getServer()->getOnlinePlayers() as $player) { //Reload, players still here but plugin restarts!
-            $this->sessionmanager->loadSession($player);
+            $this->sessionmanager->loadSession($player, true);
         }
         $this->getLogger()->info("§aEnabled.");
     }
