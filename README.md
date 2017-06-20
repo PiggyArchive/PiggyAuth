@@ -1,4 +1,4 @@
-# PiggyAuth [![Poggit-CI](https://poggit.pmmp.io/ci.badge/MCPEPIG/PiggyAuth/PiggyAuth/master)](https://poggit.pmmp.io/ci/MCPEPIG/PiggyAuth)
+# PiggyAuth [![Poggit-CI](https://poggit.pmmp.io/ci.badge/DaPigGuy/PiggyAuth/PiggyAuth/master)](https://poggit.pmmp.io/ci/DaPigGuy/PiggyAuth)
 PiggyAuth is a safe and feature-rich auth plugin for PMMP.
 
 ## Information
