@@ -28,7 +28,7 @@ class DelayedPinTask extends PluginTask
     /**
      * @param $currentTick
      */
-    public function onRun($currentTick)
+    public function onRun(int $currentTick)
     {
         $this->player->sendMessage(str_replace("{pin}", $this->plugin->getSessionManager()->getSession($this->player)->getPin(), $this->plugin->getLanguageManager()->getMessage($this->player, "register-success")));
     }
