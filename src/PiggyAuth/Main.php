@@ -140,7 +140,6 @@ class Main extends PluginBase
         }
         if ($this->getConfig()->getNested("message.boss-bar")) {
             Entity::registerEntity(Wither::class);
-            $this->getServer()->getNetwork()->registerPacket(BossEventPacket::NETWORK_ID, BossEventPacket::class);
         }
         switch ($this->getConfig()->getNested("database")) {
             case "mysql":
@@ -826,7 +825,7 @@ class Main extends PluginBase
             $this->getServer()->getPluginManager()->callEvent(new PlayerFailEvent($this, $player, self::FORGET_PASSWORD, self::PASSWORD_USERNAME));
             return false;
         }
-        $newpassword = $this->hashPassword($newpassword);;
+        $newpassword = $this->hashPassword($newpassword);
         $newpin = $this->generatePin($player);
         $this->getServer()->getPluginManager()->callEvent($event = new PlayerForgetPasswordEvent($this, $player, $newpassword, $pin, $newpin));
         if (!$event->isCancelled()) {
@@ -1002,7 +1001,7 @@ class Main extends PluginBase
     /**
      * @return mixed
      */
-    public function getFile()
+    public function getFile(): string
     {
         return parent::getFile();
     }

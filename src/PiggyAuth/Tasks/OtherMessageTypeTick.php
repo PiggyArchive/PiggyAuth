@@ -29,7 +29,7 @@ class OtherMessageTypeTick extends PluginTask
     /**
      * @param $currentTick
      */
-    public function onRun($currentTick)
+    public function onRun(int $currentTick)
     {
         foreach ($this->plugin->getServer()->getOnlinePlayers() as $player) {
             if ($this->plugin->getSessionManager()->getSession($player) !== null && !$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {

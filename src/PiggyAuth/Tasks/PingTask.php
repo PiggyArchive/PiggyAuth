@@ -29,7 +29,7 @@ class PingTask extends PluginTask
     /**
      * @param $currentTick
      */
-    public function onRun($currentTick)
+    public function onRun(int $currentTick)
     {
         $ping = $this->db->db->ping();
         if(!$ping){

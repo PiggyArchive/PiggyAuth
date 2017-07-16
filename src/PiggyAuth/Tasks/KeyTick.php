@@ -25,7 +25,7 @@ class KeyTick extends PluginTask
     /**
      * @param $currentTick
      */
-    public function onRun($currentTick)
+    public function onRun(int $currentTick)
     {
         $this->plugin->keytime += 1;
         if ($this->plugin->keytime >= 300) { //5 Mins

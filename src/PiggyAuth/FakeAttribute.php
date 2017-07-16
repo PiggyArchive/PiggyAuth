@@ -30,7 +30,7 @@ class FakeAttribute extends Attribute
     /**
      * @return mixed
      */
-    public function getMinValue()
+    public function getMinValue(): float
     {
         return $this->min;
     }
@@ -38,7 +38,7 @@ class FakeAttribute extends Attribute
     /**
      * @return mixed
      */
-    public function getMaxValue()
+    public function getMaxValue(): float
     {
         return $this->max;
     }
@@ -46,7 +46,7 @@ class FakeAttribute extends Attribute
     /**
      * @return mixed
      */
-    public function getValue()
+    public function getValue(): float
     {
         return $this->value;
     }
@@ -54,7 +54,7 @@ class FakeAttribute extends Attribute
     /**
      * @return mixed
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -62,7 +62,7 @@ class FakeAttribute extends Attribute
     /**
      * @return mixed
      */
-    public function getDefaultValue()
+    public function getDefaultValue(): float
     {
         return $this->min;
     }
