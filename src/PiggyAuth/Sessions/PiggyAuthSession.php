@@ -568,6 +568,12 @@ class PiggyAuthSession implements Session
             $pk->bossEid = $wither->getId();
             $pk->eventType = BossEventPacket::TYPE_SHOW;
             $pk->healthPercent = 1;
+            $pk->playerEid = $this->player->getId();
+            $pk->unknownShort = 0;
+            $pk->unknownVarint1 = 0;
+            $pk->unknownVarint2 = 0;
+            $pk->color = 0;
+            $pk->overlay = 0;
             $pk->title = $message;
             $this->player->dataPacket($pk);
         }
