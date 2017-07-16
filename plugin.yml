@@ -1,13 +1,13 @@
 name: PiggyAuth
 main: PiggyAuth\Main
-version: 3.0.0.20
-api: [2.0.0, 3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3, 3.0.0-ALPHA4, 3.0.0-ALPHA5]
+version: 3.0.0.21
+api: [3.0.0-ALPHA7]
 load: POSTWORLD
 author: DaPigGuy
 permissions:
  piggyauth:
   default: op
-  description: "Allows using all PiggyAuth features" 
+  description: "Allows using all PiggyAuth features"
   children:
     piggyauth.command:
       default: op
@@ -54,4 +54,4 @@ permissions:
           description: "Allow using /setlanguage"
         piggyauth.command.unregister:
           default: true
-          description: "Allow using /unregister"          
+          description: "Allow using /unregister"
