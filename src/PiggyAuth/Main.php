@@ -1002,7 +1002,7 @@ class Main extends PluginBase
     /**
      * @return mixed
      */
-    public function getFile()
+    public function getFile(): string
     {
         return parent::getFile();
     }

@@ -5,6 +5,7 @@ namespace PiggyAuth\Commands;
 use PiggyAuth\Main;
 use pocketmine\command\PluginCommand;
 use pocketmine\Server;
+use pocketmine\plugin\Plugin;
 
 /**
  * Class PiggyAuthCommand
@@ -15,7 +16,7 @@ class PiggyAuthCommand extends PluginCommand
     /**
      * @return Main
      */
-    public function getPlugin()
+    public function getPlugin(): Plugin
     {
         return Server::getInstance()->getPluginManager()->getPlugin("PiggyAuth");
     }
