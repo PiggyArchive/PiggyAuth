@@ -140,7 +140,6 @@ class Main extends PluginBase
         }
         if ($this->getConfig()->getNested("message.boss-bar")) {
             Entity::registerEntity(Wither::class);
-            $this->getServer()->getNetwork()->registerPacket(BossEventPacket::NETWORK_ID, BossEventPacket::class);
         }
         switch ($this->getConfig()->getNested("database")) {
             case "mysql":
