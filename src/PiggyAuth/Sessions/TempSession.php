@@ -13,7 +13,17 @@ class TempSession extends PiggyAuthSession {
         parent::__construct($player, $plugin, null);
     }
 
+    public function isAuthenticated()
+    {
+        return false;
+    }
+
     public function setAuthenticated($arg = true){
+        return false;
+    }
+
+    public function isRegistered()
+    {
         return false;
     }
 
@@ -21,11 +31,31 @@ class TempSession extends PiggyAuthSession {
         return false;
     }
 
+    public function isRegistering(): bool
+    {
+        return false;
+    }
+
     public function setRegistering(bool $arg = true){
         return false;
     }
 
+    public function isVerifying(): bool
+    {
+        return false;
+    }
+
     public function setVerifying(bool $arg = true){
+        return false;
+    }
+
+    public function isConfirmingPassword()
+    {
+        return false;
+    }
+
+    public function setConfirmingPassword($arg = true)
+    {
         return false;
     }
 }
