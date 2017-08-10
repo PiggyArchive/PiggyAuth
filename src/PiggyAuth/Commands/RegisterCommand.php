@@ -46,32 +46,30 @@ class RegisterCommand extends PiggyAuthCommand
             $sender->sendMessage("/register <password> <confirm password> [email]");
             return false;
         }
-        if($this->getPlugin()->getSessionManager()->getSession($sender) instanceof TempSession){
+        if ($this->getPlugin()->getSessionManager()->getSession($sender) instanceof TempSession) {
             $sender->sendMessage($this->getPlugin()->getLanguageManager()->getMessage($sender, 'session-loading'));
             return true;
         }
         if (!isset($args[2])) {
             $args[2] = "none";
-        } else {
-            $function = function ($result, $args, $plugin) {
-                $sender = $plugin->getServer()->getPlayerExact($args[0]);
-                if ($sender instanceof Player) { //Check to make sure player didn't log off
-                    if ($result) {
-                        $plugin->getConfig()->get('async') ? $plugin->asyncRegister($sender, $args[1], $args[2], $args[3]) : $plugin->register($sender, $args[1], $args[2], $args[3]);
-                    } else {
-                        $sender->sendMessage($plugin->getLanguageManager()->getMessage($sender, "invalid-email"));
-                    }
-                }
-                return true;
-            };
-            $arguements = array(
-                $sender->getName(),
-                $args[0],
-                $args[1],
-                $args[2]);
-            $this->getPlugin()->getEmailManager()->validateEmail($args[2], $function, $arguements);
-            return true;
         }
+        $function = function ($result, $args, $plugin) {
+            $sender = $plugin->getServer()->getPlayerExact($args[0]);
+            if ($sender instanceof Player) { //Check to make sure player didn't log off
+                if ($result) {
+                    $plugin->getConfig()->get('async') ? $plugin->asyncRegister($sender, $args[1], $args[2], $args[3]) : $plugin->register($sender, $args[1], $args[2], $args[3]);
+                } else {
+                    $sender->sendMessage($plugin->getLanguageManager()->getMessage($sender, "invalid-email"));
+                }
+            }
+            return true;
+        };
+        $arguements = array(
+            $sender->getName(),
+            $args[0],
+            $args[1],
+            $args[2]);
+        $this->getPlugin()->getEmailManager()->validateEmail($args[2], $function, $arguements);
         return true;
     }
 

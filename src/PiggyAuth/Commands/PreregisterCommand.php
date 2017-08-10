@@ -45,27 +45,25 @@ class PreregisterCommand extends PiggyAuthCommand
         }
         if (!isset($args[3])) {
             $args[3] = "none";
-        } else {
-            $function = function ($result, $args, $plugin) {
-                $sender = $args[0] instanceof ConsoleCommandSender ? $args[0] : $plugin->getServer()->getPlayerExact($args[0]);
-                if ($sender instanceof Player || $sender instanceof ConsoleCommandSender) { //Check to make sure player didn't log off
-                    if ($result) {
-                        $plugin->preregister($sender, $args[1], $args[2], $args[3], $args[4]);
-                    } else {
-                        $sender->sendMessage($plugin->getLanguageManager()->getMessage($sender, "invalid-email"));
-                    }
-                }
-                return true;
-            };
-            $arguements = array(
-                $sender instanceof ConsoleCommandSender ? $sender : $sender->getName(),
-                $args[0],
-                $args[1],
-                $args[2],
-                $args[3]);
-            $this->getPlugin()->getEmailManager()->validateEmail($args[3], $function, $arguements);
-            return true;
         }
+        $function = function ($result, $args, $plugin) {
+            $sender = $args[0] instanceof ConsoleCommandSender ? $args[0] : $plugin->getServer()->getPlayerExact($args[0]);
+            if ($sender instanceof Player || $sender instanceof ConsoleCommandSender) { //Check to make sure player didn't log off
+                if ($result) {
+                    $plugin->preregister($sender, $args[1], $args[2], $args[3], $args[4]);
+                } else {
+                    $sender->sendMessage($plugin->getLanguageManager()->getMessage($sender, "invalid-email"));
+                }
+            }
+            return true;
+        };
+        $arguements = array(
+            $sender instanceof ConsoleCommandSender ? $sender : $sender->getName(),
+            $args[0],
+            $args[1],
+            $args[2],
+            $args[3]);
+        $this->getPlugin()->getEmailManager()->validateEmail($args[3], $function, $arguements);
         return true;
     }
 
