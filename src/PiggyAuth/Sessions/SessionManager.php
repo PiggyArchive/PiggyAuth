@@ -2,7 +2,6 @@
 
 namespace PiggyAuth\Sessions;
 
-
 use pocketmine\Player;
 
 /**
@@ -45,6 +44,7 @@ class SessionManager
         $callback = function ($result, $args, $plugin) {
             $player = $plugin->getServer()->getPlayerExact($args[0]);
             if ($player instanceof Player) {
+                $plugin->getLogger()->debug('Callback function to load session of player "'.$player->getName().'" returned');
                 $plugin->getSessionManager()->createSession($player, $result);
                 $plugin->getSessionManager()->getSession($player)->setAuthenticated($args[1]);
                 if (!$args[1]) {
@@ -52,8 +52,11 @@ class SessionManager
                 }
             }
         };
+
+        $this->createTempSession($player);
+
         $args = array($player->getName(), $authenticated, $joinmessage);
-        $this->plugin->database->getPlayer($player->getName(), $callback, $args);
+        $this->plugin->database->getPlayer($player->getLowerCaseName(), $callback, $args);
     }
 
     /**
@@ -64,6 +67,17 @@ class SessionManager
     {
         $this->sessions[$player->getLowerCaseName()] = new PiggyAuthSession($player, $this->plugin, $data);
     }
+
+    /**
+     * @param Player $player
+     */
+    public function createTempSession(Player $player)
+    {
+        if($this->getSession($player) === null){
+            $this->plugin->getLogger()->debug('Creating temporary session for player "'.$player->getName().'"');
+
+            $this->sessions[$player->getLowerCaseName()] = new TempSession($player, $this->plugin);
+        }
     }
 
     /**

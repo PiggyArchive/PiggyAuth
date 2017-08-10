@@ -1,6 +1,6 @@
 name: PiggyAuth
 main: PiggyAuth\Main
-version: 3.0.0.21
+version: 3.0.0.22
 api: [3.0.0-ALPHA7]
 load: POSTWORLD
 author: DaPigGuy
