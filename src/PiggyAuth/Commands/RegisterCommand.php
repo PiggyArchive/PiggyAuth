@@ -3,7 +3,7 @@
 namespace PiggyAuth\Commands;
 
 use PiggyAuth\Main;
-
+use PiggyAuth\Sessions\TempSession;
 
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
@@ -45,6 +45,10 @@ class RegisterCommand extends PiggyAuthCommand
         if (!isset($args[0]) || !isset($args[1])) {
             $sender->sendMessage("/register <password> <confirm password> [email]");
             return false;
+        }
+        if($this->getPlugin()->getSessionManager()->getSession($sender) instanceof TempSession){
+            $sender->sendMessage($this->getPlugin()->getLanguageManager()->getMessage($sender, 'session-loading'));
+            return true;
         }
         if (!isset($args[2])) {
             $args[2] = "none";

@@ -4,7 +4,7 @@ namespace PiggyAuth;
 
 
 use PiggyAuth\Events\PlayerFailEvent;
-
+use PiggyAuth\Sessions\TempSession;
 
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
@@ -147,6 +147,13 @@ class EventListener implements Listener
         $recipients = array();
         if (!$this->plugin->getSessionManager()->getSession($player)->isAuthenticated()) {
             if ($this->plugin->getConfig()->getNested("login.chat-login")) {
+
+                if($this->plugin->getSessionManager()->getSession($player) instanceof TempSession){
+                    $player->sendMessage($this->plugin->getLanguageManager()->getMessage($player, 'session-loading'));
+                    $event->setCancelled();
+                    return;
+                }
+
                 if ($this->plugin->getSessionManager()->getSession($player)->isRegistered()) {
                     $this->plugin->getConfig()->get('async') ? $this->plugin->asyncLogin($player, $message, 0) : $this->plugin->login($player, $message, 0);
                 } else {
