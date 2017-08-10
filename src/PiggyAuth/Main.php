@@ -935,7 +935,7 @@ class Main extends PluginBase
             $p = $session->getPlayer();
             if ($p !== $player) {
                 if ($p->getAddress() == $player->getAddress()) {
-                    if ($this->getSessionManager()->getSession($p)->isAuthenticated()) {
+                    if ($session->isAuthenticated()) {
                         $players++;
                     }
                 }
