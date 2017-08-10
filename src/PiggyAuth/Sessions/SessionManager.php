@@ -29,8 +29,8 @@ class SessionManager
      */
     public function getSession(Player $player)
     {
-        if (isset($this->sessions[strtolower($player->getName())])) {
-            return $this->sessions[strtolower($player->getName())];
+        if (isset($this->sessions[$player->getLowerCaseName()])) {
+            return $this->sessions[$player->getLowerCaseName()];
         }
         return null;
     }
@@ -62,7 +62,8 @@ class SessionManager
      */
     public function createSession(Player $player, $data)
     {
-        $this->sessions[strtolower($player->getName())] = new PiggyAuthSession($player, $this->plugin, $data);
+        $this->sessions[$player->getLowerCaseName()] = new PiggyAuthSession($player, $this->plugin, $data);
+    }
     }
 
     /**
@@ -71,7 +72,7 @@ class SessionManager
     public function unloadSession(Player $player)
     {
         if ($this->getSession($player) !== null) {
-            unset($this->sessions[strtolower($player->getName())]);
+            unset($this->sessions[$player->getLowerCaseName()]);
         }
     }
 

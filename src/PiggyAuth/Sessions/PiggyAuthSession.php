@@ -448,7 +448,7 @@ class PiggyAuthSession implements Session
      */
     public function startSession($joinmessage = null)
     {
-        if (in_array(strtolower($this->player->getName()), $this->plugin->getConfig()->getNested("login.accounts-bypassed"))) {
+        if (in_array($this->player->getLowerCaseName(), $this->plugin->getConfig()->getNested("login.accounts-bypassed"))) {
             $this->authenticated = true;
             return true;
         }
