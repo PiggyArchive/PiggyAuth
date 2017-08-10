@@ -368,7 +368,7 @@ class Main extends PluginBase
      */
     public function asyncLogin(Player $player, $password, $mode = 0)
     {
-        if($this->getSessionManager()->getSession($player)->isVerifying()){
+        if ($this->getSessionManager()->getSession($player)->isVerifying()) {
             $player->sendMessage($this->getLanguageManager()->getMessage($player, "already-verifying"));
             return true;
         }
@@ -931,7 +931,8 @@ class Main extends PluginBase
     public function isTooManyIPOnline(Player $player)
     {
         $players = 0;
-        foreach ($this->getServer()->getOnlinePlayers() as $p) {
+        foreach ($this->getSessionManager()->getSessions() as $name => $session) {
+            $p = $session->getPlayer();
             if ($p !== $player) {
                 if ($p->getAddress() == $player->getAddress()) {
                     if ($this->getSessionManager()->getSession($p)->isAuthenticated()) {
