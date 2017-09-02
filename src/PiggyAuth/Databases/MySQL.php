@@ -130,7 +130,7 @@ class MySQL implements Database
      */
     public function insertDataWithoutPlayerObject($player, $password, $email, $pin, $auth = "PiggyAuth", callable $callback = null, $args = null)
     {
-        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language, auth) VALUES ('" . $this->db->escape_string(strtolower($player)) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', 'uuid', '0', 'false', '" . $this->db->escape_string($this->plugin->getLanguageManager()->getDefaultLanguage()) . "', '" . $this->db->escape_string($auth) . "')");
+        $task = new MySQLTask($this->plugin->getConfig()->get("mysql"), "INSERT INTO players (name, password, email, pin, uuid, attempts, xbox, language, auth) VALUES ('" . $this->db->escape_string(strtolower($player)) . "', '" . $this->db->escape_string($password) . "', '" . $this->db->escape_string($email) . "', '" . intval($pin) . "', 'uuid', '0', false, '" . $this->db->escape_string($this->plugin->getLanguageManager()->getDefaultLanguage()) . "', '" . $this->db->escape_string($auth) . "')");
         $this->plugin->getServer()->getScheduler()->scheduleAsyncTask($task);
     }
 
