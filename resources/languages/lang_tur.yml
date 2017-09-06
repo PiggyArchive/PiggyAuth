@@ -1,0 +1,121 @@
+#By @SuperAdam47
+
+#Katıl
+join-message: "&6Bu sunucu kimlik doğrulama gerektiriyor"
+new-player: "&eSunucumuza hoşgeldin {player} !"
+
+#Login
+login-message: "&6Lütfen /login <parola> komutu ile giriş yap\n&6Şifreni mi unuttun? Bunu dene /forgotpassword <pin> <yeni şifre>"
+login-popup: "&6Lütfen giriş yapın."
+login-tip: "&6Lütfen giriş yapın."
+login-title: "&6Lütfen Giriş yapın."
+login-subtitle: "&6Lütfen Giriş yapın."
+login-actionbar: "&6Lütfen giriş yapın."
+login-boss-bar: "&6Lütfen giriş yapın."
+authentication-pending: "&6Şifreniz onaylanırken bekleyin ..."
+authentication-success: "&aKimlik doğrulandı."
+authentication-success-uuid: "&aKimliğiniz UUID ile doğrulandı."
+authentication-success-xbox: "&aKimliğiniz Xbox Live ile doğrulandı."
+attempted-logins: "&6Hesabınıza giriş yapmak için {attempts} girişimde bulundunuz."
+already-verifying: "&6Lütfen sabredin, şifreniz doğrulanmaktadır."
+already-authenticated: "&cZaten giriş yapıldı."
+incorrect-password: "&cHatalı deneme. {tries} kaldı."
+not-registered: "&cKayıtlı değilsin."
+too-many-tries: "&cGiriş için çok fazla deneme"
+timeout-message: "&cGiriş yapma süren doldu"
+too-many-on-ip: "&cÇok fazla oyuncu aynı IP adresi kullanıyor."
+
+#Register
+register-message: "&6/register <şifre> <şifre onayı> [email] yazarak kayıt olun"
+register-popup: "&6Lütfen kayıt olun."
+register-tip: "&6Lütfen kayıt olun."
+register-title: "&6Lütfen kayıt olun."
+register-subtitle: "&6Lütfen kayıt olun."
+register-actionbar: "&6Lütfen kayıt olun."
+register-boss-bar: "&6Lütfen kayıt olun."
+register-pending: "&6Lütfen bekleyin, kayıt oluyorsun ..."
+register-success: "&aKayıt oldunuz. Pin kodunuz &f{pin}."
+register-success-xbox: "&aXbox Live hesabınızla kayıt olundu. Pin kodunuz&f {pin}.&a Şifreniz {password}. Değiştirmek için /changepassword."
+already-registering: "&6Lütfen bekleyin, kayıt oluyorsun ..."
+already-registered: "&cZaten kayıtlısın."
+password-too-short: "&cŞifren çok kısa."
+password-blocked: "&cBu şifre bloke edildi."
+password-username: "&cKullanıcı adı şifre olamaz."
+password-not-match: "&cŞifreler uyuşmuyor."
+confirm-password: "&aŞifrenizi onaylayın."
+
+#Unregister
+unregister-success: "&aKaydınız silindi."
+
+#Preregister
+preregister-success: "&aBu hesap kayıtlı."
+already-registered-two: "&cBu kullanıcı zaten kayıtlı."
+
+#Change password
+change-password-success: "&aŞifreniz değiştirildi. Yeni pin kodunuz&f {pin}."
+incorrect-password-other: "&cYanlış sifre."
+
+#Forget password
+forgot-password-success: "&aParolanız değiştirildi. Yeni pin kodunuz &f{pin}."
+incorrect-pin: "&cYanlış pin. {tries} deneme kaldı."
+cant-use-pin: "Bu hesabın pin kodu kullanılamaz."
+
+#Reset password
+password-reset-success: "&aOyuncu şifresi sıfırlandı."
+not-registered-two: "&cOyuncu kayıtlı değil."
+
+#Email
+email: "&6Şimdi e-postanızı yazın. Atlamak için 'none' yazın."
+email-set: "&aE-posta kuruldu."
+email-change-success:  "&aEmail değiştirildi."
+email-success: "&aEmail gönderildi."
+email-fail: "&cEmail gönderilemedi."
+invalid-email: "&cGeçersiz email."
+no-email: "&cBu,hesaba email bağlı değil."
+
+email-subject-sendpin: "PiggyAuth Pin isteği"
+email-sendpin: "Pin kodunuz {pin}. Eğer pin kodunuzu göndermek için talep etmediyseniz, lütfen bunu göz ardı etmeyin."
+email-subject-attemptedlogin: "PiggyAuth Giriş Bildirimi"
+email-attemptedlogin: "Biri Hesabına giriş yapmaya çalıştı. Eğer bu sen değilsen, /sendpin komutunu kullan. Şifrenizi sıfırlamak için 4 haneli bir pin numarası alacaksınız."
+email-subject-changedpassword: "PiggyAuth Şifre Bildirimi Değişti"
+email-changedpassword: "Parolanız değiştirildi. Eğer siz değistirmediyseniz, /sendpin kullanın. Şifrenizi sıfırlamak için 4 haneli bir pin numarası alacaksınız."
+email-subject-passwordreset: "PiggyAuth Parola Sıfırlama Bildirimi"
+email-passwordreset: "Parolanız bir personel tarafından sıfırlandı. Lütfen devam edin ve hesabınız için kayıt olun."
+email-subject-login-from-new-ip: "PiggyAuth Yeni IP Bildirimi"
+email-login-from-new-ip: "Hesabınız {ip} adresinden giriş yaptı. Bu siz değilseniz, lütfen şifrenizi derhal değiştirin.."
+
+#Pin
+your-pin: "&aPin kodunuz: {pin}"
+
+#Key
+key-expired: "&cBu anahtarın süresi doldu."
+key-disabled: "&cAnahtarlar bu sunucu üzerinde etkin değil."
+
+#Language
+invalid-language: "&cDil mevcut değil.\nMevcut diller: {languages}"
+language-changed: "&aDil değiştirildi."
+
+#Converting
+player-account-already-exists: "&c{player} Hesabı zaten var"
+file-not-yml: "&cDosya {file} YML.türü değil"
+file-not-db: "&cDosya {file} DB türü değil"
+invalid-file: "&cDosya yok"
+invalid-directory: "&cDizin bulunamadı"
+invalid-database: "&cGeçersiz veritabanı.\nMevcut veritabanları: {db}"
+invalid-auth: "&cBu auth eklentisi desteklenmiyor.\nDesteklenen auth eklentileri: {auth}"
+invalid-hash-algorithm: "&c{algorithm} geçerli bir algoritma değil.\nMevcut algoritmalar: {algorithms}."
+
+#Updater
+plugin-outdated: "&cYeni bir sürüm ({version}) çıktı.\nYeni özellikler: {features}"
+plugin-up-to-date: "&aEklenti güncel."
+plugin-auto-updated: "&aEklenti {version} sürümüne yükseltildi.\nYeni özellikler: {features}"
+over-api-rate-limit: "&cYou have passed the api rate limit (60 requests an hour)."
+
+#Database
+connection-lost: "&cConnection to MySQL Database lost."
+
+#General
+dont-say-password: "&cŞifrenizi göstermeyin."
+account-blocked: "&cBu hesap bloke edildi."
+use-in-game: "&cYou must use the command in-game."
+use-on-console: "&cYou must use the command on console."
