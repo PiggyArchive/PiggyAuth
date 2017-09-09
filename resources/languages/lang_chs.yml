@@ -21,7 +21,7 @@ incorrect-password: "&c密码不对. 剩下 {tries} 次尝试"
 not-registered: "&c您还没有注册"
 too-many-tries: "&c太多登入尝试"
 timeout-message: "&c登入超时"
-too-many-on-ip: "&c太多用户有同样IP地址登入"
+too-many-on-ip: "&c太多用户用同样IP地址登入"
 
 #Register
 register-message: "&6请注册通过 /register <密码> <确认密码> [电邮]"
@@ -76,7 +76,7 @@ email-attemptedlogin: "有人已经尝试登入您的账号, 如果那不是您,
 email-subject-changedpassword: "PiggyAuth 密码更改通知"
 email-changedpassword: "您的密码已被更改 如果那不是您, 请用 /sendpin 您将受到一个四数字 pin 用来重设您的密码"
 email-subject-passwordreset: "PiggyAuth 密码重设通知"
-email-passwordreset: "您的密码已被重设由工作人员. 请登入和注册之至收回您的账号"
+email-passwordreset: "您的密码已被由工作人员重设. 请重新注册您的帐号"
 email-subject-login-from-new-ip: "PiggyAuth 新IP地址通知"
 email-login-from-new-ip: "您的账户已被登录在 {ip} (IP地址) 如果那不是您, 请马上更换您的密码"
 
@@ -97,9 +97,9 @@ file-not-yml: "&c存档 {file} 不是YML"
 file-not-db: "&c存档{file}不是DB"
 invalid-file: "&c存档没有发现"
 invalid-directory: "&c数据库不存在"
-invalid-database: "&c错误的数据库\n数据库存在并可使用: {db}"
+invalid-database: "&c错误的数据库\n存在并可使用的数据库: {db}"
 invalid-auth: "&cAUTH 插件不存在或者他们不支持现在的转换器\n插件已经支持现有的AUTH插件: {auth}"
-invalid-hash-algorithm: "&c{algorithm} 不是一个可以使用的hash散列计算.\n可以使用的计算是: {algorithms}"
+invalid-hash-algorithm: "&c{algorithm} 不是一个可用的hash散列算法.\n可用的算法是: {algorithms}"
 
 #Updater
 plugin-outdated: "&c这个插件已经有一个新的版本出来了 ({version})\n新的功能: {features}"
@@ -108,7 +108,7 @@ plugin-auto-updated: "&a插件已经更新到｛version｝\n新的功能: {featu
 over-api-rate-limit: "&c你已经超过API率的极限了（60 请求1小时)"
 
 #Database
-connection-lost: "&c与 MySQL 数据库失去连结"
+connection-lost: "&c与 MySQL 数据库失去连接"
 
 #General
 dont-say-password: "&c请别分享您的密码"
