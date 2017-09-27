@@ -1,6 +1,6 @@
 # PiggyAuth [![Poggit-CI](https://poggit.pmmp.io/ci.badge/DaPigGuy/PiggyAuth/PiggyAuth/master)](https://poggit.pmmp.io/ci/DaPigGuy/PiggyAuth)
 PiggyAuth **was** a safe and **still is** feature-rich auth plugin for PMMP.
-DISCLAIMER: PIGGYAUTH PROJECT IS NOT FULLY STABLE! There are many bugs currently, and with the many API changes, PiggyAuth cannot keep up. Feel free to contribute via Pull Requests to help the project! (Project does **not** support ALPHA8, so please do not update manually *unless* you know what you are doing.)
+### DISCLAIMER: PIGGYAUTH PROJECT IS NOT FULLY STABLE! There are many bugs currently, and with the many API changes, PiggyAuth cannot keep up. Feel free to contribute via Pull Requests to help the project! (Project does **not** support ALPHA8, so please do not update manually *unless* you know what you are doing.)
 
 ## Information
  - The many features of this plugin can be found [here.](https://github.com/MCPEPIG/PiggyAuth/wiki/Features)
